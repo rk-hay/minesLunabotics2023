@@ -1,7 +1,14 @@
+#include "vars.h"
+
+
 float linear_x = 0.0;
 float linear_y = 0.0;
 float angular_z = 0.0;
 bool turn = false;
+long fl_newPos = -999;
+long fr_newPos = -999;
+long bl_newPos = -999;
+long br_newPos = -999;
 
 
 //TODO: NEXT IMPLEMENT A CONTROLLER, I RECCOMEND USING THE SEED LAB ONE HAYDEN, ITS FAIRLY EASY, BUT YOU WILL NEED TO GET THE ENCODERS WORKING
@@ -11,6 +18,8 @@ bool turn = false;
 void setup() {
     Serial.begin(57600);
     motors_init();
+    readEncoders();
+
 }
 
 void loop() {
@@ -31,9 +40,25 @@ void loop() {
       f_dir = true;
       }
     else{ f_dir = false;}
-    //motors_dir(true);
-    //motors_PWM(0);
-    motors_float(false);
+    motors_dir(true);
+    //motors_float(false); //change to false
+    
+    readEncoders();
+
+    if (br_pos > -5264){
+      br_motor_PWM(30);
+      Serial.println(br_pos);
+      }
+    else{
+      br_motor_PWM(0);
+      
+      while(1);
+      
+      
+      }
+    
+
+
 }
 
 void comms() {
