@@ -8,7 +8,6 @@ from geometry_msgs.msg import Twist
 
 ser = serial.Serial('/dev/ttyACM0', baudrate=115200)
 ser.reset_input_buffer()
-ser.timeout = 1
 #prevX = 0
 #prevY = 0
 #prevZ = 0
@@ -37,9 +36,9 @@ class MinimalSubscriber(Node):
             ser.write(struct.pack('<f', float(msg.linear.y)))
             ser.write(struct.pack('<f', float(msg.angular.z)))
             
-            #if ser.in_waiting > 0:
-            #    ch = ser.readline().decode('ascii')
-            #    self.get_logger().info('"%s"' % ch)
+            if ser.in_waiting > 0:
+                ch = ser.readline().decode('ascii')
+                self.get_logger().info('"%s"' % ch)
         #prevX = msg.linear.x
         #prevY = msg.linear.y
         #prevZ = msg.angular.z
