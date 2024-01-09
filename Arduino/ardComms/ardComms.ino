@@ -59,6 +59,9 @@ void comms() {
         Serial.readBytes((char*)&linear_y, sizeof(linear_y));
         Serial.readBytes((char*)&angular_z, sizeof(angular_z));
         Serial.println(linear_x);
+        Serial.println(" ");
+        Serial.println(angular_z);
+        Serial.println(" ");
         // Process the received data
     }
     }
