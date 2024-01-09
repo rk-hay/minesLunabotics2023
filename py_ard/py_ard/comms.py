@@ -1,4 +1,4 @@
-animport rclpy
+import rclpy
 from rclpy.node import Node
 import serial
 from time import sleep
