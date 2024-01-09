@@ -33,18 +33,6 @@ void loop() {
     //motors_float(false); //change to false
     
     //readEncoders();
-
-    if (br_pos > -5264){
-      br_motor_PWM(30);
-      //Serial.println(br_pos);
-      }
-    else{
-      br_motor_PWM(0);
-      
-      while(1);
-      
-      
-      }
     
 
 
