@@ -22,7 +22,7 @@ class MinimalSubscriber(Node):
             Twist,
             'cmd_vel',
             self.listener_callback,
-            10)
+            1)
         self.subscription  # prevent unused variable warning
 
     def listener_callback(self, msg):
@@ -46,24 +46,21 @@ class MinimalSubscriber(Node):
             
             
 
+
 def main(args=None):
     rclpy.init(args=args)
 
     minimal_subscriber = MinimalSubscriber()
+    minimal_subscriber.create_rate(10)
+    rclpy.spin(minimal_subscriber)
 
-    # Set the frequency to check for new messages (10 Hz in this example)
-    frequency = 10  # Hz
-    rate = minimal_subscriber.create_rate(frequency)
+    # Destroy the node explicitly
+    # (optional - otherwise it will be done automatically
+    # when the garbage collector destroys the node object)
+    ser.close()
+    minimal_subscriber.destroy_node()
+    rclpy.shutdown()
 
-    try:
-        while rclpy.ok():
-            rclpy.spin_once(minimal_subscriber, timeout_sec=1.0/frequency)
-            rate.sleep()
-    finally:
-        # Destroy the node explicitly
-        ser.close()
-        minimal_subscriber.destroy_node()
-        rclpy.shutdown()
 
 if __name__ == '__main__':
     main()
