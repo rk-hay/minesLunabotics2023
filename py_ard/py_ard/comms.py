@@ -42,7 +42,7 @@ class MinimalSubscriber(Node):
         #prevX = msg.linear.x
         #prevY = msg.linear.y
         #prevZ = msg.angular.z
-            sleep(0.1)
+            #sleep(0.1)
             
             
 
