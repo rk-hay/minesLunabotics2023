@@ -6,7 +6,7 @@ import struct
 from std_msgs.msg import String
 from geometry_msgs.msg import Twist
 
-ser = serial.Serial('/dev/ttyACM0', baudrate=57600)
+ser = serial.Serial('/dev/ttyACM0', baudrate=9600)
 ser.reset_input_buffer()
 #prevX = 0
 #prevY = 0
