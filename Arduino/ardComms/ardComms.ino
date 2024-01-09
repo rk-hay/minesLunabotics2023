@@ -8,17 +8,17 @@ long fl_newPos = -999;
 long fr_newPos = -999;
 long bl_newPos = -999;
 long br_newPos = -999;
-
+char START_MARKER = 'S';
 
 //TODO: NEXT IMPLEMENT A CONTROLLER, I RECCOMEND USING THE SEED LAB ONE HAYDEN, ITS FAIRLY EASY, BUT YOU WILL NEED TO GET THE ENCODERS WORKING
 //SO 
 // 1. GET ENCODERS WORKING
 //2. MAKE IT SO I CAN SEND ROBOT TO EXACT CORDS RELATIVE TO CURR POS 
 void setup() {
-    Serial.begin(57600);
     motors_init();
-    readEncoders();
-
+    
+    Serial.begin(115200);
+    //readEncoders();
 }
 
 void loop() {
@@ -42,11 +42,11 @@ void loop() {
     motors_dir(true);
     //motors_float(false); //change to false
     
-    readEncoders();
+    //readEncoders();
 
     if (br_pos > -5264){
       br_motor_PWM(30);
-      Serial.println(br_pos);
+      //Serial.println(br_pos);
       }
     else{
       br_motor_PWM(0);
@@ -62,13 +62,16 @@ void loop() {
 
 void comms() {
     if (Serial.available() >= 3 * sizeof(float)) {  // Ensure enough bytes are available
+        
+    char startMarker = Serial.read();
+    if (startMarker == START_MARKER) {
         Serial.readBytes((char*)&linear_x, sizeof(linear_x));
         Serial.readBytes((char*)&linear_y, sizeof(linear_y));
         Serial.readBytes((char*)&angular_z, sizeof(angular_z));
         Serial.println(linear_x);
-        // Your existing delay(10) - consider adjusting as needed
+        // Process the received data
     }
- 
+    }
 }
 
 
