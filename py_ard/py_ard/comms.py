@@ -1,4 +1,4 @@
-import rclpy
+animport rclpy
 from rclpy.node import Node
 import serial
 from time import sleep
@@ -51,7 +51,7 @@ def main(args=None):
     rclpy.init(args=args)
 
     minimal_subscriber = MinimalSubscriber()
-
+    minimal_subscriber.create_rate(10)
     rclpy.spin(minimal_subscriber)
 
     # Destroy the node explicitly
