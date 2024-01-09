@@ -8,6 +8,7 @@ from geometry_msgs.msg import Twist
 
 ser = serial.Serial('/dev/ttyACM0', baudrate=115200)
 ser.reset_input_buffer()
+ser.timeout = 1
 #prevX = 0
 #prevY = 0
 #prevZ = 0
