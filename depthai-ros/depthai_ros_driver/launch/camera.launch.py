@@ -27,7 +27,7 @@ def launch_setup(context, *args, **kwargs):
     parent_frame = LaunchConfiguration('parent_frame',  default = 'oak-d-base-frame')
     cam_pos_x    = LaunchConfiguration('cam_pos_x',     default = '0.0')
     cam_pos_y    = LaunchConfiguration('cam_pos_y',     default = '0.0')
-    cam_pos_z    = LaunchConfiguration('cam_pos_z',     default = '0.0')
+    cam_pos_z    = LaunchConfiguration('cam_pos_z',     default = '1.0')
     cam_roll     = LaunchConfiguration('cam_roll',      default = '0.0')
     cam_pitch    = LaunchConfiguration('cam_pitch',     default = '0.0')
     cam_yaw      = LaunchConfiguration('cam_yaw',       default = '0.0')

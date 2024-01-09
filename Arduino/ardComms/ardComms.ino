@@ -1,5 +1,4 @@
 #include "vars.h"
-// git token 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
 
 float linear_x = 0.0;
 float linear_y = 0.0;
