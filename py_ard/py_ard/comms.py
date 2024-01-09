@@ -36,9 +36,9 @@ class MinimalSubscriber(Node):
             ser.write(struct.pack('<f', float(msg.linear.y)))
             ser.write(struct.pack('<f', float(msg.angular.z)))
             
-            if ser.in_waiting > 0:
-                ch = ser.readline().decode('ascii')
-                self.get_logger().info('"%s"' % ch)
+            #if ser.in_waiting > 0:
+            #    ch = ser.readline().decode('ascii')
+            #    self.get_logger().info('"%s"' % ch)
         #prevX = msg.linear.x
         #prevY = msg.linear.y
         #prevZ = msg.angular.z
