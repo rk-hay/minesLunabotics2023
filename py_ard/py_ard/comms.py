@@ -36,11 +36,6 @@ class MinimalSubscriber(Node):
             ser.write(struct.pack('<f', float(msg.linear.x)))
             ser.write(struct.pack('<f', float(msg.linear.y)))
             ser.write(struct.pack('<f', float(msg.angular.z)))
-        else:
-            ser.write(struct.pack('c', b'S'))
-            ser.write(struct.pack('<f', float(0.0)))
-            ser.write(struct.pack('<f', float(0.0)))
-            ser.write(struct.pack('<f', float(0.0))) 
             #if ser.in_waiting > 0:
             #    ch = ser.readline().decode('ascii')
             #    self.get_logger().info('"%s"' % ch)
