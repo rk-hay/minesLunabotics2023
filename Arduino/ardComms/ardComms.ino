@@ -24,22 +24,12 @@ void setup() {
 void loop() {
     bool f_dir = true;
     comms();
-    if (linear_y > 10){
-      digitalWrite(13, 0);
-      }
-    if (linear_y < 0){
-      digitalWrite(13, 1);
-      }
     linear_x = adjust(linear_x);
     angular_z = adjust(angular_z);
-    
     turnDegrees(angular_z);
-    
-    if (linear_x > 0){
-      f_dir = true;
-      }
-    else{ f_dir = false;}
-    motors_dir(true);
+    f_dir = linear_x > 0;
+    motors_dir(f_dir);
+    motors_PWM(linear_x);
     //motors_float(false); //change to false
     
     //readEncoders();
