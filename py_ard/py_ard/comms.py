@@ -31,11 +31,11 @@ class MinimalSubscriber(Node):
         #global prevZ 
         # ser.reset_input_buffer()
         # self.get_logger().info('I heard: "%s"' % msg.linear.x)  #format msg.linear.x
-        if msg.linear.x > 10 or msg.linear.x  < -10 or msg.linear.y > 10 or msg.linear.y  < -10 or msg.angular.z > 10 or msg.angular.z < -10:
-            ser.write(struct.pack('c', b'S'))
-            ser.write(struct.pack('<f', float(msg.linear.x)))
-            ser.write(struct.pack('<f', float(msg.linear.y)))
-            ser.write(struct.pack('<f', float(msg.angular.z)))
+        #if msg.linear.x > 10 or msg.linear.x  < -10 or msg.linear.y > 10 or msg.linear.y  < -10 or msg.angular.z > 10 or msg.angular.z < -10:
+        ser.write(struct.pack('c', b'S'))
+        ser.write(struct.pack('<f', float(msg.linear.x)))
+        ser.write(struct.pack('<f', float(msg.linear.y)))
+        ser.write(struct.pack('<f', float(msg.angular.z)))
             #if ser.in_waiting > 0:
             #    ch = ser.readline().decode('ascii')
             #    self.get_logger().info('"%s"' % ch)

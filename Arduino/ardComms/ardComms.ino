@@ -26,10 +26,11 @@ void loop() {
     comms();
     linear_x = adjust(linear_x);
     angular_z = adjust(angular_z);
-    turnDegrees(angular_z);
-    f_dir = linear_x > 0;
-    motors_dir(f_dir);
-    motors_PWM(linear_x);
+    oneStep();
+    //turnDegrees(angular_z);
+    //f_dir = linear_x > 0;
+    //motors_dir(f_dir);
+    //motors_PWM(linear_x);
     //motors_float(false); //change to false
     
     //readEncoders();
@@ -47,9 +48,9 @@ void comms() {
         Serial.readBytes((char*)&linear_y, sizeof(linear_y));
         Serial.readBytes((char*)&angular_z, sizeof(angular_z));
         Serial.println(linear_x);
-        Serial.println(" ");
-        Serial.println(angular_z);
-        Serial.println(" ");
+        //Serial.print(" ");
+        //Serial.print(angular_z);
+        //Serial.println(" ");
         // Process the received data
     }
     }

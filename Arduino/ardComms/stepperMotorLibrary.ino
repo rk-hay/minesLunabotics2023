@@ -72,64 +72,77 @@ void motors_init(){
 //--------------------------------------//
 //           Stepper Mode               //
 //--------------------------------------//
-void turnDegrees(float degree){
-  uint8_t pwm = 0;
-  uint8_t dir = 0;
+
+//4 functions to turn each indvidually then 2 for front 2 for back and then 1 more for all together
+//cc is High so setting dir to high will make front left turn left
+
+void f_s_step(int steps, bool dir){
+  fl_s_step(steps, dir);
+  fr_s_step(steps, dir);
+  }
+
+void b_s_step(int steps, bool dir){
+  bl_s_step(steps, dir);
+  br_s_step(steps, dir);
+  }
+
+void fl_s_step(int steps, bool dir){
+  digitalWrite(fl_s_ndir, !dir);
+  digitalWrite(fl_s_pdir, dir);
+  digitalWrite(fl_s_npwm, LOW);
   
-  if (degree > 5){
-    dir = 1;
-    pwm = 1;
+  
+  for (int i = 0; i < abs(steps); i++) {
+    digitalWrite(fl_s_ppwm, HIGH);
+    delayMicroseconds(50000);
+    digitalWrite(fl_s_ppwm, LOW);
+    
   }
-  else if(degree < -5){
-    dir = 0;
-    pwm = 1;
-    }
-  else if((degree > -5) & (degree < 5)){
-    pwm = 0;
-    }
+}
 
-    //front left
-    digitalWrite(fl_s_penable, 1);
-    digitalWrite(fl_s_pdir, 1);
-    digitalWrite(fl_s_ppwm, 1);
+void fr_s_step(int steps, bool dir){
+  digitalWrite(fr_s_ndir, !dir);
+  digitalWrite(fr_s_pdir, dir);
+  digitalWrite(fr_s_npwm, LOW);
+  
+  
+  for (int i = 0; i < abs(steps); i++) {
+    digitalWrite(fr_s_ppwm, HIGH);
+    delayMicroseconds(50000);
+    digitalWrite(fr_s_ppwm, LOW);
     
-    digitalWrite(fl_s_nenable, 1);
-    digitalWrite(fl_s_ndir, dir);
-    digitalWrite(fl_s_npwm, pwm);
-    //front right
-    digitalWrite(fr_s_penable, 1);
-    digitalWrite(fr_s_pdir, 1);
-    digitalWrite(fr_s_ppwm, 1);
-    
-    digitalWrite(fr_s_nenable, 1);
-    digitalWrite(fr_s_ndir, dir);
-    digitalWrite(fr_s_npwm, pwm);
-
-//bl
-    digitalWrite(bl_s_penable, 1);
-    digitalWrite(bl_s_pdir, 1);
-    digitalWrite(bl_s_ppwm, 1);
-    
-    digitalWrite(bl_s_nenable, 1);
-    digitalWrite(bl_s_ndir, !dir);
-    digitalWrite(bl_s_npwm, pwm);
-    //br
-    digitalWrite(br_s_penable, 1);
-    digitalWrite(br_s_pdir, 1);
-    digitalWrite(br_s_ppwm, 1);
-    
-    digitalWrite(br_s_nenable, 1);
-    digitalWrite(br_s_ndir, !dir);
-    digitalWrite(br_s_npwm, pwm);
-
-    delayMicroseconds(150);
-    digitalWrite(fl_s_npwm, 0);
-    digitalWrite(fr_s_npwm, 0);
-    digitalWrite(bl_s_npwm, 0);
-    digitalWrite(br_s_npwm, 0);
-    delayMicroseconds(500);
-   // }
   }
+}
+
+
+void bl_s_step(int steps, bool dir){
+  digitalWrite(bl_s_ndir, !dir);
+  digitalWrite(bl_s_pdir, dir);
+  digitalWrite(bl_s_npwm, LOW);
+  
+  
+  for (int i = 0; i < abs(steps); i++) {
+    digitalWrite(bl_s_ppwm, HIGH);
+    delayMicroseconds(50000);
+    digitalWrite(bl_s_ppwm, LOW);
+    
+  }
+}
+
+void br_s_step(int steps, bool dir){
+  digitalWrite(br_s_ndir, !dir);
+  digitalWrite(br_s_pdir, dir);
+  digitalWrite(br_s_npwm, LOW);
+  
+  
+  for (int i = 0; i < abs(steps); i++) {
+    digitalWrite(br_s_ppwm, HIGH);
+    delayMicroseconds(50000);
+    digitalWrite(br_s_ppwm, LOW);
+    
+  }
+}
+
 
 
 //--------------------------------------//

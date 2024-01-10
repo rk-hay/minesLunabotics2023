@@ -23,7 +23,7 @@
 #define br_d_rev A0
 
 //stepper pos enable -PULL HIGH
-#define fl_s_nenable 22
+#define fl_s_nenable 52
 #define fr_s_nenable 24
 #define bl_s_nenable 43
 #define br_s_nenable 23
