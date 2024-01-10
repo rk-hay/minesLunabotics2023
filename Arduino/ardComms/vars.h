@@ -63,10 +63,58 @@
 #define br_a 19
 #define br_b A1
 
+#define MAX_PWM 200
+#define MAX_LINEAR_PWM 150
+#define MAX_ANGULAR_PWM 100
+#define MAX_INTEGRAL 1
 
-int32_t fl_pos = 0;
-int32_t fr_pos = 0;
-int32_t br_pos = 0;
-int32_t bl_pos = 0;
+float wheel_diameter = .345; //approx .31 without spikes also this is in meters
+float robot_width = .60; // measured from outer edge to outeredge of stepper motor
+float robot_len = .855;
+float enc_per_rev = 5281;
 
+int32_t fl_enc_pos = 0;
+int32_t fr_enc_pos = 0;
+int32_t br_enc_pos = 0;
+int32_t bl_enc_pos = 0;
+
+float fl_s_pos = 0;
+float fr_s_pos = 0;
+float bl_s_pos = 0;
+float br_s_pos = 0;
+
+float fl_target_v = 0;
+float fr_target_v = 0;
+float bl_target_v = 0;
+float br_target_v = 0;
+
+float fl_target_p = 0;
+float fr_target_p = 0;
+float bl_target_p = 0;
+float br_target_p = 0;
+
+float fl_pwm = 0;
+float fr_pwm = 0;
+float bl_pwm = 0;
+float br_pwm = 0;
+
+float fl_linear_pwm = 0;
+float fr_linear_pwm = 0;
+float bl_linear_pwm = 0;
+float br_linear_pwm = 0;
+
+float fl_angular_pwm = 0;
+float fr_angular_pwm = 0;
+float bl_angular_pwm = 0;
+float br_angular_pwm = 0;
+
+bool fl_dir = HIGH;
+bool fr_dir = HIGH;
+bool bl_dir = HIGH;
+bool br_dir = HIGH;
+
+float fl_rotations = 0;
+float fr_rotations = 0;
+float bl_rotations = 0;
+float br_rotations = 0;
 #endif

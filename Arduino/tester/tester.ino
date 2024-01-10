@@ -1,76 +1,46 @@
-
-#ifndef VARS_H
-#define VARS_H
-
-
-//stepper pos enable -PULL HIGH
-#define fl_s_nenable 52
-
-//stepper pos enable - PULL HIGH
-#define fl_s_penable 50
-
-//steppers neg dir - DIR pick
-#define fl_s_ndir 48
-
-//steppers pos dir - PULL HIGH
-#define fl_s_pdir 46
-
-//steppers neg pwm - PULSE TO MOVE
-#define fl_s_npwm 44
-
-//steppers pos pwm - PULL HIGH
-#define fl_s_ppwm 42
+#define fl_a 2
+#define fl_b 9
+#define fr_a 3
+#define fr_b 10
 
 
+#include <Encoder.h>
 
-
-
-float stepper = 0;
+// Change these pin numbers to the pins connected to your encoder.
+//   Best Performance: both pins have interrupt capability
+//   Good Performance: only the first pin has interrupt capability
+//   Low Performance:  neither pin has interrupt capability
+Encoder knobLeft(fl_a, fl_b);
+Encoder knobRight(fr_a, fr_b);
+//   avoid using pins with LEDs attached
 
 void setup() {
-  Serial.begin(115200);
-  pinMode(fl_s_nenable, OUTPUT);
-  pinMode(fl_s_penable, OUTPUT);
-  pinMode(fl_s_ndir, OUTPUT);
-  pinMode(fl_s_pdir, OUTPUT);
-  pinMode(fl_s_npwm, OUTPUT);
-  pinMode(fl_s_ppwm, OUTPUT);
-
-
-  
-
+  Serial.begin(9600);
+  Serial.println("TwoKnobs Encoder Test:");
 }
-//High for CC for Low for CW
-void moveSteps(int steps, int dir) {
-  digitalWrite(fl_s_ndir, !dir);
-  digitalWrite(fl_s_pdir, dir);
-  digitalWrite(fl_s_npwm, LOW);
-  
-  
-  for (int i = 0; i < abs(steps); i++) {
-    digitalWrite(fl_s_ppwm, HIGH);
-    delayMicroseconds(50000);
-    digitalWrite(fl_s_ppwm, LOW);
-    
-    // You can add additional delay if needed
-    //delayMicroseconds(50000); // Adjust the delay based on your requirements
-  }
-}
+
+long positionLeft  = -999;
+long positionRight = -999;
 
 void loop() {
-
-//  // Move 200 steps clockwise (assuming 200 steps per revolution)
-  Serial.println("cc");
-  moveSteps(2500, HIGH);
-  
-  // Pause for a moment
-  delay(1000);
-  
-  // Move 100 steps counterclockwise
-  Serial.println("cw ");
-  moveSteps(2500, LOW);
-  
-  
-   ;
+  long newLeft, newRight;
+  newLeft = knobLeft.read();
+  newRight = knobRight.read();
+  if (newLeft != positionLeft || newRight != positionRight) {
+    Serial.print("Left = ");
+    Serial.print(newLeft);
+    Serial.print(", Right = ");
+    Serial.print(newRight);
+    Serial.println();
+    positionLeft = newLeft;
+    positionRight = newRight;
+  }
+  // if a character is sent from the serial monitor,
+  // reset both back to zero.
+  if (Serial.available()) {
+    Serial.read();
+    Serial.println("Reset both knobs to zero");
+    knobLeft.write(0);
+    knobRight.write(0);
+  }
 }
-#endif
