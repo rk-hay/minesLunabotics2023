@@ -1,0 +1,505 @@
+<?xml version="1.0"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name='LARI'>
+
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="0.3048 0.4826 0.029883"
+        rpy="0 0 0" />
+      <mass
+        value="5.0909" />
+      <inertia
+        ixx="0.17719"
+        ixy="-2.5081E-13"
+        ixz="2.9216E-15"
+        iyy="0.053928"
+        iyz="-2.6812E-10"
+        izz="0.22894" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find LARI_urdf)/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find LARI_urdf)/meshes/base_link_collision.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="fr_steering_link">
+    <inertial>
+      <origin
+        xyz="-0.02622 -2.2204E-16 -0.083039"
+        rpy="0 0 0" />
+      <mass
+        value="0.098856" />
+      <inertia
+        ixx="0.00044959"
+        ixy="7.917E-20"
+        ixz="0.00016664"
+        iyy="0.00060742"
+        iyz="-2.6408E-19"
+        izz="0.00018464" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find LARI_urdf)/meshes/fr_steering_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find LARI_urdf)/meshes/fr_steering_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="fr_steering_joint"
+    type="revolute">
+    <origin
+      xyz="0.5334 0.889 -0.012675"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="fr_steering_link" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="0"
+      upper="6.2832"
+      effort="10"
+      velocity="3.1415" />
+  </joint>
+  <link
+    name="fr_wheel_link">
+    <inertial>
+      <origin
+        xyz="-0.0664892303886351 -1.99840144432528E-15 -5.55111512312578E-16"
+        rpy="0 0 0" />
+      <mass
+        value="2.75275986593305" />
+      <inertia
+        ixx="0.0218845479729468"
+        ixy="-6.39259484282427E-18"
+        ixz="-1.8920538930178E-17"
+        iyy="0.0138310963806751"
+        iyz="4.44522890719E-18"
+        izz="0.0138310963806751" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find LARI_urdf)/meshes/fr_wheel_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find LARI_urdf)/meshes/fr_wheel_link_collision.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="fr_wheel_joint"
+    type="continuous">
+    <origin
+      xyz="0.074424 0 -0.18931"
+      rpy="0 0 0" />
+    <parent
+      link="fr_steering_link" />
+    <child
+      link="fr_wheel_link" />
+    <axis
+      xyz="-1 0 0" />
+    <limit
+      effort="0"
+      velocity="5.236" />
+  </joint>
+  <link
+    name="fl_steering_link">
+    <inertial>
+      <origin
+        xyz="0.0262197804039281 -4.44089209850063E-16 -0.0830391608669484"
+        rpy="0 0 0" />
+      <mass
+        value="0.0988556676979312" />
+      <inertia
+        ixx="0.00044959153970768"
+        ixy="-2.979275117136E-19"
+        ixz="-0.000166636726877408"
+        iyy="0.000607416792941197"
+        iyz="-6.73036831233734E-19"
+        izz="0.000184637184332654" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find LARI_urdf)/meshes/fl_steering_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find LARI_urdf)/meshes/fl_steering_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="fl_steering_joint"
+    type="revolute">
+    <origin
+      xyz="0.0762 0.889 -0.012675"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="fl_steering_link" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="0"
+      upper="6.2832"
+      effort="10"
+      velocity="3.1415" />
+  </joint>
+  <link
+    name="fl_wheel_link">
+    <inertial>
+      <origin
+        xyz="0.066489232317388 6.66133814775094E-16 4.44089209850063E-16"
+        rpy="0 0 0" />
+      <mass
+        value="2.75276091113649" />
+      <inertia
+        ixx="0.0218845510420346"
+        ixy="-5.05149354882982E-18"
+        ixz="-1.39269086220729E-17"
+        iyy="0.0138310985202676"
+        iyz="2.33103467084329E-18"
+        izz="0.0138310985202676" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find LARI_urdf)/meshes/fl_wheel_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find LARI_urdf)/meshes/fl_wheel_link_collision.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="fl_wheel_joint"
+    type="continuous">
+    <origin
+      xyz="-0.074424 0 -0.18931"
+      rpy="0 0 0" />
+    <parent
+      link="fl_steering_link" />
+    <child
+      link="fl_wheel_link" />
+    <axis
+      xyz="-1 0 0" />
+    <limit
+      effort="0"
+      velocity="5.23599" />
+  </joint>
+  <link
+    name="rr_steering_link">
+    <inertial>
+      <origin
+        xyz="-0.0262197804039278 -5.55111512312578E-17 -0.0830391608669484"
+        rpy="0 0 0" />
+      <mass
+        value="0.0988556676979317" />
+      <inertia
+        ixx="0.000449591539707683"
+        ixy="-1.20554509566363E-19"
+        ixz="0.000166636726877409"
+        iyy="0.000607416792941201"
+        iyz="6.97571247904579E-20"
+        izz="0.000184637184332656" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find LARI_urdf)/meshes/rr_steering_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find LARI_urdf)/meshes/rr_steering_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="rr_steering_joint"
+    type="revolute">
+    <origin
+      xyz="0.5334 0.0762 -0.012675"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="rr_steering_link" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="0"
+      upper="6.2832"
+      effort="10"
+      velocity="3.1415" />
+  </joint>
+  <link
+    name="rr_wheel_link">
+    <inertial>
+      <origin
+        xyz="-0.066489230388635 -1.4432899320127E-15 -6.66133814775094E-16"
+        rpy="0 0 0" />
+      <mass
+        value="2.75275986593303" />
+      <inertia
+        ixx="0.0218845479729468"
+        ixy="4.31119591614716E-18"
+        ixz="-1.12993865357308E-17"
+        iyy="0.0138310963806751"
+        iyz="-1.15023275134098E-17"
+        izz="0.013831096380675" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find LARI_urdf)/meshes/rr_wheel_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find LARI_urdf)/meshes/rr_wheel_link_collision.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="rr_wheel_joint"
+    type="continuous">
+    <origin
+      xyz="0.074424 0 -0.18931"
+      rpy="0 0 0" />
+    <parent
+      link="rr_steering_link" />
+    <child
+      link="rr_wheel_link" />
+    <axis
+      xyz="-1 0 0" />
+    <limit
+      effort="0"
+      velocity="5.23599" />
+  </joint>
+  <link
+    name="rl_steering_link">
+    <inertial>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <mass
+        value="0" />
+      <inertia
+        ixx="0"
+        ixy="0"
+        ixz="0"
+        iyy="0"
+        iyz="0"
+        izz="0" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find LARI_urdf)/meshes/rl_steering_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find LARI_urdf)/meshes/rl_steering_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="rl_steering_joint"
+    type="revolute">
+    <origin
+      xyz="0.0762 0.0762 -0.012675"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="rl_steering_link" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="0"
+      upper="6.2832"
+      effort="10"
+      velocity="3.1415" />
+  </joint>
+  <link
+    name="rl_wheel_link">
+    <inertial>
+      <origin
+        xyz="0.0664892303886349 1.94289029309402E-15 -5.55111512312578E-16"
+        rpy="0 0 0" />
+      <mass
+        value="2.75275986593305" />
+      <inertia
+        ixx="0.0218845479729469"
+        ixy="-4.4125899754636E-18"
+        ixz="-3.1580215704308E-18"
+        iyy="0.0138310963806751"
+        iyz="-9.15399094009611E-18"
+        izz="0.0138310963806751" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find LARI_urdf)/meshes/rl_wheel_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find LARI_urdf)/meshes/rl_wheel_link_collision.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="rl_wheel_joint"
+    type="continuous">
+    <origin
+      xyz="-0.074424 0 -0.18931"
+      rpy="-1 0 0" />
+    <parent
+      link="rl_steering_link" />
+    <child
+      link="rl_wheel_link" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      effort="0"
+      velocity="5.23599" />
+  </joint>
+
+
+</robot>

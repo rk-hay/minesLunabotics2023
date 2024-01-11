@@ -1,0 +1,13 @@
+<launch>
+  <arg name="model" />
+  
+  <param name="robot_description" textfile="$(find LARI_urdf)/urdf/LARI_urdf.urdf" />
+
+  <node name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" exec="joint_state_publisher_gui" />
+  
+  <node name="robot_state_publisher" pkg="robot_state_publisher" exec="robot_state_publisher">
+    <rosparam command="load" file="$(find LARI_urdf)/config/robot_state_publisher_params.yaml" />
+  </node>
+
+  <node name="rviz" pkg="rviz2" exec="rviz2" args="-d $(find LARI_urdf)/urdf.rviz" />
+</launch>
