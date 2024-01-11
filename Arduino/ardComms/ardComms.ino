@@ -36,11 +36,11 @@ void loop() {
     
     //motors_PWM(150, LOW);
 
-    //control_vel(.35, 0);
+    control_vel(.5, 0);
     
-    control_pos(.5);
+    //control_pos(.5);
     
-    if(millis()- control_loop_timer > 16){
+    if(millis()- control_loop_timer > 5){
       //Serial.println(millis()- control_loop_timer);
       control_loop();
       control_loop_timer = millis();
@@ -53,7 +53,7 @@ void loop() {
 //      Serial.print("  ");
 //      Serial.print(bl_d_vel());
 //      Serial.print("  ");
-//      Serial.println(br_d_vel());
+//      Serial.print(br_d_vel());
 
       Serial.print(fl_pwm);
       Serial.print("  ");
@@ -61,15 +61,15 @@ void loop() {
 //      Serial.print("  ");
 //      Serial.print(bl_pwm);
 //      Serial.print("  ");
-//      Serial.println(br_pwm);
+//      Serial.print(br_pwm);
 
-      Serial.print(fl_enc_pos);
-      Serial.print("  ");
+//      Serial.print(fl_enc_pos);
+//      Serial.print("  ");
 //      Serial.print(fr_enc_pos);
 //      Serial.print("  ");
 //      Serial.print(bl_enc_pos);
 //      Serial.print("  ");
-//      Serial.println(br_enc_pos);
+//      Serial.print(br_enc_pos);
 
       Serial.print(fl_pos());
       Serial.println("  ");
@@ -77,8 +77,9 @@ void loop() {
 //      Serial.print("  ");
 //      Serial.print(bl_pos());
 //      Serial.print("  ");
-//      Serial.println(br_pos());
-      
+//      Serial.print(br_pos());
+
+        Serial.println();
       //print_timer = millis();
     }
 }
