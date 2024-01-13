@@ -13,7 +13,7 @@ void setup() {
 
   motors_init();
   setupEncoders();
-  Serial.begin(1000000);
+  Serial.begin(9600);
   readEncoders();
 
 
@@ -108,13 +108,13 @@ void loop() {
 //            Serial.print(br_s_pos);
 
 //
-          Serial.print(linear_x);
+      //    Serial.print(linear_x);
 //          Serial.print("  ");
 //          Serial.print(linear_y);
 //          Serial.print("  ");
 //          Serial.print(angular_z);
 //          Serial.print("  ");
-           Serial.println();
+       //    Serial.println();
     print_timer = millis();
   }
 }
@@ -134,8 +134,8 @@ void comms() {
     
       // Process the received data as needed
       // For example, print the values to the Serial Monitor
-      Serial.print("Linear X: ");
-      Serial.println(linear_x);
+     // Serial.print("Linear X: ");
+     // Serial.println(linear_x);
 //      Serial.print("Linear Y: ");
 //      Serial.println(linear_y);
 //      Serial.print("Angular Z: ");
