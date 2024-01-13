@@ -135,7 +135,7 @@ void comms() {
       // Process the received data as needed
       // For example, print the values to the Serial Monitor
      // Serial.print("Linear X: ");
-     // Serial.println(linear_x);
+     Serial.println(linear_x);
 //      Serial.print("Linear Y: ");
 //      Serial.println(linear_y);
 //      Serial.print("Angular Z: ");
