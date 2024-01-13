@@ -37,7 +37,7 @@ class MinimalSubscriber(Node):
             ser.write(struct.pack('<f', float(msg.linear.y)))
             ser.write(struct.pack('<f', float(msg.angular.z)))
             self.get_logger().info('test\n')
-            self.get_logger().info(ser.readline())
+            #self.get_logger().info(ser.readline())
             prevX = msg.linear.x
             prevY = msg.linear.y
             prevZ = msg.angular.z
