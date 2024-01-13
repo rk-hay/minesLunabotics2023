@@ -48,7 +48,7 @@ void loop() {
   
   
   if (stepper_locked == false && millis()-step_timer > 30) {
-  //  Serial.println("step");
+    //Serial.println("step");
     opp_s_step_fast(angular_z);
     step_timer = millis();
   }
@@ -108,13 +108,13 @@ void loop() {
 //            Serial.print(br_s_pos);
 
 //
-//          Serial.print(linear_x);
+          Serial.print(linear_x);
 //          Serial.print("  ");
 //          Serial.print(linear_y);
 //          Serial.print("  ");
 //          Serial.print(angular_z);
 //          Serial.print("  ");
-//           Serial.println();
+           Serial.println();
     print_timer = millis();
   }
 }
@@ -131,11 +131,11 @@ void comms() {
       Serial.readBytes((char*)&linear_x, sizeof(float));
       Serial.readBytes((char*)&linear_y, sizeof(float));
       Serial.readBytes((char*)&angular_z, sizeof(float));
-
+    
       // Process the received data as needed
       // For example, print the values to the Serial Monitor
-//      Serial.print("Linear X: ");
-//      Serial.println(linear_x);
+      Serial.print("Linear X: ");
+      Serial.println(linear_x);
 //      Serial.print("Linear Y: ");
 //      Serial.println(linear_y);
 //      Serial.print("Angular Z: ");

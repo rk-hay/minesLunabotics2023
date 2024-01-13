@@ -21,20 +21,23 @@ class MinimalSubscriber(Node):
             Twist,
             'cmd_vel',
             self.listener_callback,
-            1)
+            10)
         self.subscription  # prevent unused variable warning
 
     def listener_callback(self, msg):
+        #self.get_logger().info('I heard: "%s"' % msg.linear.x)
         global prevX, prevY, prevZ
         # ser.reset_input_buffer()
-
-        if msg.linear.x != prevX or msg.linear.y != prevY or msg.angular.z != prevZ:
+        
+        if abs(msg.linear.x) - abs(prevX) > .05 or abs(msg.linear.y) - abs(prevY) > .02 or abs(msg.angular.z) - abs(prevZ) > .5 :
             ser.reset_input_buffer
             ser.reset_output_buffer
             ser.write(struct.pack('c', b'S'))
             ser.write(struct.pack('<f', float(msg.linear.x)))
             ser.write(struct.pack('<f', float(msg.linear.y)))
             ser.write(struct.pack('<f', float(msg.angular.z)))
+            self.get_logger().info('test\n')
+            self.get_logger().info(ser.readline())
             prevX = msg.linear.x
             prevY = msg.linear.y
             prevZ = msg.angular.z
@@ -47,7 +50,7 @@ def main(args=None):
     rclpy.init(args=args)
 
     minimal_subscriber = MinimalSubscriber()
-    minimal_subscriber.create_rate(10)
+    #minimal_subscriber.create_rate(10)
     rclpy.spin(minimal_subscriber)
 
     # Destroy the node explicitly
