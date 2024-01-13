@@ -1,7 +1,7 @@
 //
 const float Kp_vel = 2;
-const float Ki_vel = 1;
-const float Kd_vel = 3;
+const float Ki_vel = 0;
+const float Kd_vel = 0;
 
 const float Kp_pos = 2;
 const float Ki_pos = 1;

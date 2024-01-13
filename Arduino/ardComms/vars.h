@@ -74,10 +74,10 @@ float robot_width = .60; // measured from outer edge to outeredge of stepper mot
 float robot_len = .855;
 float enc_per_rev = 5281;
 
-int32_t fl_enc_pos = 0;
-int32_t fr_enc_pos = 0;
-int32_t br_enc_pos = 0;
-int32_t bl_enc_pos = 0;
+float fl_enc_pos = 0;
+float fr_enc_pos = 0;
+float br_enc_pos = 0;
+float bl_enc_pos = 0;
 
 float fl_s_pos = 0;
 float fr_s_pos = 0;
@@ -118,4 +118,6 @@ float fl_rotations = 0;
 float fr_rotations = 0;
 float bl_rotations = 0;
 float br_rotations = 0;
+
+bool stepper_locked = false;
 #endif

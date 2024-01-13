@@ -76,7 +76,9 @@ void motors_init(){
 //              all at once
 //--------------------------------------//
 //4 options front 2 at once, back 2 at once, all three at once same angle, opposite angle
-void opp_s_step_fast(int degree, bool dir){
+void opp_s_step_fast(int degree){
+  stepper_locked = true;
+  bool dir = degree > 0;
   int steps = deg_to_step(degree);
   fl_s_pos_update(degree, dir);
   fr_s_pos_update(degree, dir);
@@ -127,9 +129,12 @@ if (br_s_pos > 90 || br_s_pos < -90){
     digitalWrite(bl_s_ppwm, LOW);
     digitalWrite(br_s_ppwm, LOW);
     }
+  stepper_locked = false;  
 }
 
-void same_s_step_fast(int degree, bool dir){
+void same_s_step_fast(int degree){
+  stepper_locked = true;
+  bool dir = degree > 0;
   int steps = deg_to_step(degree);
   fl_s_pos_update(degree, dir);
   fr_s_pos_update(degree, dir);
@@ -181,9 +186,12 @@ if (br_s_pos > 90 || br_s_pos < -90){
     digitalWrite(bl_s_ppwm, LOW);
     digitalWrite(br_s_ppwm, LOW);
     }
+    stepper_locked = false;
 }
 
-void f_s_step_fast(int degree, bool dir){
+void f_s_step_fast(int degree){
+  stepper_locked = true;
+  bool dir = degree > 0;
   int steps = deg_to_step(degree);
   fl_s_pos_update(degree, dir);
   fr_s_pos_update(degree, dir);
@@ -212,9 +220,12 @@ if (fr_s_pos > 90 || fr_s_pos < -90){
     digitalWrite(fr_s_ppwm, LOW);
     
   }
+  stepper_locked = false;
   }
   
-void b_s_step_fast(int degree, bool dir){
+void b_s_step_fast(int degree){
+  stepper_locked = true;
+  bool dir = degree > 0;
   int steps = deg_to_step(degree);
   bl_s_pos_update(degree, dir);
   br_s_pos_update(degree, dir);
@@ -244,6 +255,7 @@ if (br_s_pos > 90 || br_s_pos < -90){
     digitalWrite(br_s_ppwm, LOW);
     
   }
+  stepper_locked = false;
   }
 //--------------------------------------//
 //           Stepper Motor steps
@@ -372,7 +384,13 @@ void fl_s_pos_update(int degree, bool dir){
       sign = 1;
       break;
     }
-  fl_s_pos += sign*degree;
+  fl_s_pos += sign*abs(degree);
+  if (fl_s_pos > 90){
+    fl_s_pos = 91;
+    }
+  if (fl_s_pos < -90){
+    fl_s_pos = -91;
+    }
   }
 
 void fr_s_pos_update(int degree, bool dir){
@@ -385,8 +403,15 @@ void fr_s_pos_update(int degree, bool dir){
       sign = 1;
       break;
     }
-  fr_s_pos += sign*degree;
+  fr_s_pos += sign*abs(degree);
+  if (fr_s_pos > 90){
+    fr_s_pos = 91;
+    }
+  if (fr_s_pos < -90){
+    fr_s_pos = -91;
+    }
   }
+
 void bl_s_pos_update(int degree, bool dir){
   int sign = 0;
   switch(dir){
@@ -397,7 +422,13 @@ void bl_s_pos_update(int degree, bool dir){
       sign = 1;
       break;
     }
-  bl_s_pos += sign*degree;
+  bl_s_pos += sign*abs(degree);
+    if (bl_s_pos > 90){
+    bl_s_pos = 91;
+    }
+  if (bl_s_pos < -90){
+    bl_s_pos = -91;
+    }
   }
 
 void br_s_pos_update(int degree, bool dir){
@@ -410,7 +441,13 @@ void br_s_pos_update(int degree, bool dir){
       sign = 1;
       break;
     }
-  br_s_pos += sign*degree;
+  br_s_pos += sign*abs(degree);
+    if (br_s_pos > 90){
+    br_s_pos = 91;
+    }
+  if (br_s_pos < -90){
+    br_s_pos = -91;
+    }
   }
 
   

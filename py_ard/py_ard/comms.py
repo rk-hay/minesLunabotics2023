@@ -6,12 +6,11 @@ import struct
 from std_msgs.msg import String
 from geometry_msgs.msg import Twist
 
-ser = serial.Serial('/dev/ttyACM0', baudrate=115200)
+ser = serial.Serial('/dev/ttyACM0', baudrate=1000000)
 ser.reset_input_buffer()
-#prevX = 0
-#prevY = 0
-#prevZ = 0
-
+prevX = 0
+prevY = 0
+prevZ = 0
 class MinimalSubscriber(Node):
     
 
@@ -26,23 +25,20 @@ class MinimalSubscriber(Node):
         self.subscription  # prevent unused variable warning
 
     def listener_callback(self, msg):
-        #global prevX 
-        #global prevY 
-        #global prevZ 
+        global prevX, prevY, prevZ
         # ser.reset_input_buffer()
-        # self.get_logger().info('I heard: "%s"' % msg.linear.x)  #format msg.linear.x
-        #if msg.linear.x > 10 or msg.linear.x  < -10 or msg.linear.y > 10 or msg.linear.y  < -10 or msg.angular.z > 10 or msg.angular.z < -10:
-        ser.write(struct.pack('c', b'S'))
-        ser.write(struct.pack('<f', float(msg.linear.x)))
-        ser.write(struct.pack('<f', float(msg.linear.y)))
-        ser.write(struct.pack('<f', float(msg.angular.z)))
-            #if ser.in_waiting > 0:
-            #    ch = ser.readline().decode('ascii')
-            #    self.get_logger().info('"%s"' % ch)
-        #prevX = msg.linear.x
-        #prevY = msg.linear.y
-        #prevZ = msg.angular.z
-            #sleep(0.1)
+
+        if msg.linear.x != prevX or msg.linear.y != prevY or msg.angular.z != prevZ:
+            ser.reset_input_buffer
+            ser.reset_output_buffer
+            ser.write(struct.pack('c', b'S'))
+            ser.write(struct.pack('<f', float(msg.linear.x)))
+            ser.write(struct.pack('<f', float(msg.linear.y)))
+            ser.write(struct.pack('<f', float(msg.angular.z)))
+            prevX = msg.linear.x
+            prevY = msg.linear.y
+            prevZ = msg.angular.z
+            sleep(0.1)
             
             
 
