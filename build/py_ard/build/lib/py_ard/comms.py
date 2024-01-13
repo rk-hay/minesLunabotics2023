@@ -30,8 +30,8 @@ class MinimalSubscriber(Node):
         # ser.reset_input_buffer()
         
         if abs(msg.linear.x) - abs(prevX) > .05 or abs(msg.linear.y) - abs(prevY) > .02 or abs(msg.angular.z) - abs(prevZ) > .5 :
-            #ser.reset_input_buffer
-            #ser.reset_output_buffer
+            ser.reset_input_buffer
+            ser.reset_output_buffer
             ser.write(struct.pack('c', b'S'))
             ser.write(struct.pack('<f', float(msg.linear.x)))
             ser.write(struct.pack('<f', float(msg.linear.y)))

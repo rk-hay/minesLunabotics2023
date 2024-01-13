@@ -1,0 +1,39 @@
+[1.668s] Invoking command in '/home/hay-laptop/ros2_ws/src/py_ard': PYTHONPATH=/home/hay-laptop/ros2_ws/src/build/py_ard/prefix_override:/home/hay-laptop/ros2_ws/src/install/py_ard/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../build/py_ard build --build-base /home/hay-laptop/ros2_ws/src/build/py_ard/build install --record /home/hay-laptop/ros2_ws/src/build/py_ard/install.log --single-version-externally-managed
+[1.876s] running egg_info
+[1.877s] creating ../build/py_ard/py_ard.egg-info
+[1.877s] writing ../build/py_ard/py_ard.egg-info/PKG-INFO
+[1.877s] writing dependency_links to ../build/py_ard/py_ard.egg-info/dependency_links.txt
+[1.877s] writing entry points to ../build/py_ard/py_ard.egg-info/entry_points.txt
+[1.878s] writing requirements to ../build/py_ard/py_ard.egg-info/requires.txt
+[1.878s] writing top-level names to ../build/py_ard/py_ard.egg-info/top_level.txt
+[1.878s] writing manifest file '../build/py_ard/py_ard.egg-info/SOURCES.txt'
+[1.879s] reading manifest file '../build/py_ard/py_ard.egg-info/SOURCES.txt'
+[1.880s] writing manifest file '../build/py_ard/py_ard.egg-info/SOURCES.txt'
+[1.880s] running build
+[1.880s] running build_py
+[1.880s] creating /home/hay-laptop/ros2_ws/src/build/py_ard/build
+[1.880s] creating /home/hay-laptop/ros2_ws/src/build/py_ard/build/lib
+[1.880s] creating /home/hay-laptop/ros2_ws/src/build/py_ard/build/lib/py_ard
+[1.880s] copying py_ard/comms.py -> /home/hay-laptop/ros2_ws/src/build/py_ard/build/lib/py_ard
+[1.880s] copying py_ard/__init__.py -> /home/hay-laptop/ros2_ws/src/build/py_ard/build/lib/py_ard
+[1.880s] running install
+[1.995s] /usr/lib/python3/dist-packages/setuptools/command/install.py:34: SetuptoolsDeprecationWarning: setup.py install is deprecated. Use build and pip and other standards-based tools.
+[1.995s]   warnings.warn(
+[1.996s] running install_lib
+[1.998s] creating /home/hay-laptop/ros2_ws/src/install/py_ard/lib/python3.10/site-packages/py_ard
+[1.999s] copying /home/hay-laptop/ros2_ws/src/build/py_ard/build/lib/py_ard/comms.py -> /home/hay-laptop/ros2_ws/src/install/py_ard/lib/python3.10/site-packages/py_ard
+[1.999s] copying /home/hay-laptop/ros2_ws/src/build/py_ard/build/lib/py_ard/__init__.py -> /home/hay-laptop/ros2_ws/src/install/py_ard/lib/python3.10/site-packages/py_ard
+[2.001s] byte-compiling /home/hay-laptop/ros2_ws/src/install/py_ard/lib/python3.10/site-packages/py_ard/comms.py to comms.cpython-310.pyc
+[2.003s] byte-compiling /home/hay-laptop/ros2_ws/src/install/py_ard/lib/python3.10/site-packages/py_ard/__init__.py to __init__.cpython-310.pyc
+[2.004s] running install_data
+[2.005s] creating /home/hay-laptop/ros2_ws/src/install/py_ard/share/ament_index
+[2.006s] creating /home/hay-laptop/ros2_ws/src/install/py_ard/share/ament_index/resource_index
+[2.007s] creating /home/hay-laptop/ros2_ws/src/install/py_ard/share/ament_index/resource_index/packages
+[2.007s] copying resource/py_ard -> /home/hay-laptop/ros2_ws/src/install/py_ard/share/ament_index/resource_index/packages
+[2.007s] copying package.xml -> /home/hay-laptop/ros2_ws/src/install/py_ard/share/py_ard
+[2.008s] running install_egg_info
+[2.012s] Copying ../build/py_ard/py_ard.egg-info to /home/hay-laptop/ros2_ws/src/install/py_ard/lib/python3.10/site-packages/py_ard-0.0.0-py3.10.egg-info
+[2.015s] running install_scripts
+[2.054s] Installing py_ard script to /home/hay-laptop/ros2_ws/src/install/py_ard/lib/py_ard
+[2.054s] writing list of installed files to '/home/hay-laptop/ros2_ws/src/build/py_ard/install.log'
+[2.071s] Invoked command in '/home/hay-laptop/ros2_ws/src/py_ard' returned '0': PYTHONPATH=/home/hay-laptop/ros2_ws/src/build/py_ard/prefix_override:/home/hay-laptop/ros2_ws/src/install/py_ard/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../build/py_ard build --build-base /home/hay-laptop/ros2_ws/src/build/py_ard/build install --record /home/hay-laptop/ros2_ws/src/build/py_ard/install.log --single-version-externally-managed

@@ -1,0 +1,3 @@
+[console_scripts]
+py_ard = py_ard.comms:main
+
