@@ -2,6 +2,19 @@
 // an intial PWM value then tracks the encoder updates and if the encoders seem too slow, it speeds 
 // it up and if they are two fast, it'll slow it down.
 
+//return the angular speed *aprox*
+float ang_vel(){
+  float front_angle = PI/180*((fl_s_pos+fr_s_pos)/2);
+  float rear_angle = PI/180*(-(bl_s_pos+br_s_pos)/2);
+  float linear_velocity_approx = (fl_d_vel()*cos(fl_s_pos*PI/180)+fr_d_vel()*cos(fr_s_pos*PI/180)+bl_d_vel()*cos(-bl_s_pos*PI/180)+br_d_vel()*cos(-br_s_pos*PI/180))/4;
+  float angular_velocity = ((linear_velocity_approx*cos((front_angle+rear_angle)/2))/(front_angle + rear_angle))*(front_angle - rear_angle);
+  
+  return angular_velocity;
+}
+
+
+
+
 float fl_d_vel(){
     unsigned long myTime = micros();
     static float prevTime = 0;

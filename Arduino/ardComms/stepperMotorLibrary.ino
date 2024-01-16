@@ -75,8 +75,94 @@ void motors_init(){
 //              this will do them
 //              all at once
 //--------------------------------------//
-//4 options front 2 at once, back 2 at once, all three at once same angle, opposite angle
+//5 options front 2 at once, back 2 at once, all three at once same angle, opposite angle, front angles and back angles pick same time
+
+void global_angle_select(int fl, int fr, int bl, int br){
+ 
+  stepper_locked = true;
+
+  int fl_del = max(-MAX_ANGLE, min(MAX_ANGLE, fl - fl_s_pos)); 
+  int fr_del = max(-MAX_ANGLE, min(MAX_ANGLE, fr - fr_s_pos));
+  int bl_del = max(-MAX_ANGLE, min(MAX_ANGLE, bl - bl_s_pos));
+  int br_del = max(-MAX_ANGLE, min(MAX_ANGLE, br - br_s_pos));
+
+  bool fl_dir_ang = fl_del > 0;
+  bool fr_dir_ang = fr_del > 0;
+  bool bl_dir_ang = bl_del > 0;
+  bool br_dir_ang = br_del > 0;
+
+  int fl_steps = deg_to_step(fl_del);
+  int fr_steps = deg_to_step(fr_del);
+  int bl_steps = deg_to_step(bl_del);
+  int br_steps = deg_to_step(br_del);
+
+  fl_s_pos_update(fl_del, fl_dir_ang);
+  fr_s_pos_update(fr_del, fr_dir_ang);
+  bl_s_pos_update(bl_del, !bl_dir_ang);
+  br_s_pos_update(br_del, !br_dir_ang);
+
+if (fl_s_pos > 90 || fl_s_pos < -90){
+    fl_steps = 0;
+    fl_s_pos_update(fl_del, !fl_dir_ang);
+    }
+if (fr_s_pos > 90 || fr_s_pos < -90){
+    fr_steps = 0;
+    fr_s_pos_update(fr_del, !fr_dir_ang);
+    }
+if (bl_s_pos > 90 || bl_s_pos < -90){
+    bl_steps = 0;
+    bl_s_pos_update(bl_del, !bl_dir_ang);
+    }
+if (br_s_pos > 90 || br_s_pos < -90){
+    br_steps = 0;
+    br_s_pos_update(br_del, !br_dir_ang);
+    }   
+
+  digitalWrite(fl_s_ndir, !fl_dir_ang);
+  digitalWrite(fl_s_pdir, fl_dir_ang);
+  digitalWrite(fl_s_npwm, LOW);
+  
+  digitalWrite(fr_s_ndir, !fr_dir_ang);
+  digitalWrite(fr_s_pdir, fr_dir_ang);
+  digitalWrite(fr_s_npwm, LOW);
+
+  digitalWrite(bl_s_ndir, bl_dir_ang);
+  digitalWrite(bl_s_pdir, !bl_dir_ang);
+  digitalWrite(bl_s_npwm, LOW);
+  
+  digitalWrite(br_s_ndir, br_dir_ang);
+  digitalWrite(br_s_pdir, !br_dir_ang);
+  digitalWrite(br_s_npwm, LOW);
+
+  int fl_cnt = 0;
+  int fr_cnt = 0;
+  int bl_cnt = 0;
+  int br_cnt = 0;
+  while ( (fl_cnt++ < abs(fl_steps))
+        &&(fr_cnt++ < abs(fr_steps))
+        &&(bl_cnt++ < abs(bl_steps))
+        &&(br_cnt++ < abs(br_steps))){
+
+
+
+        if (fl_cnt < abs(fl_steps)){digitalWrite(fl_s_ppwm, HIGH); }
+        if (fr_cnt < abs(fr_steps)){digitalWrite(fr_s_ppwm, HIGH); }
+        if (bl_cnt < abs(bl_steps)){digitalWrite(bl_s_ppwm, HIGH); }
+        if (br_cnt < abs(br_steps)){digitalWrite(br_s_ppwm, HIGH); }
+    
+        delayMicroseconds(50000);
+        digitalWrite(fl_s_ppwm, LOW);
+        digitalWrite(fr_s_ppwm, LOW);
+        digitalWrite(bl_s_ppwm, LOW);
+        digitalWrite(br_s_ppwm, LOW);
+        
+        stepper_locked = false;  
+}
+}//end while loop
+
+
 void opp_s_step_fast(int degree){
+  
   stepper_locked = true;
   bool dir = degree > 0;
   int steps = deg_to_step(degree);

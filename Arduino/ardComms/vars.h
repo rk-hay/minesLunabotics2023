@@ -68,7 +68,7 @@
 #define MAX_ANGULAR_PWM 100
 #define MAX_INTEGRAL 1
 #define MAX_V_INTEGRAL 5
-
+#define MAX_ANGLE 90.0 
 float wheel_diameter = .345; //approx .31 without spikes also this is in meters
 float robot_width = .60; // measured from outer edge to outeredge of stepper motor
 float robot_len = .855;
@@ -118,6 +118,9 @@ float fl_rotations = 0;
 float fr_rotations = 0;
 float bl_rotations = 0;
 float br_rotations = 0;
+
+float target_angular_velocity = 0;
+
 
 bool stepper_locked = false;
 #endif

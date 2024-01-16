@@ -6,7 +6,7 @@ import struct
 from std_msgs.msg import String
 from geometry_msgs.msg import Twist
 
-ser = serial.Serial('/dev/ttyACM0', baudrate=9600)
+ser = serial.Serial('/dev/ttyACM0', baudrate=115200)
 ser.reset_input_buffer()
 prevX = 0
 prevY = 0
@@ -32,10 +32,18 @@ class MinimalSubscriber(Node):
         if abs(msg.linear.x) - abs(prevX) > .05 or abs(msg.linear.y) - abs(prevY) > .02 or abs(msg.angular.z) - abs(prevZ) > .5 :
             #ser.reset_input_buffer
             #ser.reset_output_buffer
-            ser.write(struct.pack('c', b'S'))
+            ser.write(struct.pack('c', b'L'))
+            ser.write(struct.pack('c', b'X'))
             ser.write(struct.pack('<f', float(msg.linear.x)))
+            #ser.write(struct.pack('c', b'\n'))
+            ser.write(struct.pack('c', b'Y'))
             ser.write(struct.pack('<f', float(msg.linear.y)))
+            #ser.write(struct.pack('c', b'\n'))
+            ser.write(struct.pack('c', b'A'))
+            ser.write(struct.pack('c', b'Z'))
             ser.write(struct.pack('<f', float(msg.angular.z)))
+            #ser.write(struct.pack('c', b'\n'))
+            ser.write(struct.pack('c', b'S'))
             self.get_logger().info('test\n')
             #self.get_logger().info(ser.readline())
             prevX = msg.linear.x
