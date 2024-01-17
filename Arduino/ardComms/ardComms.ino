@@ -5,7 +5,7 @@ float linear_y = 0.0;
 float angular_z = 0.0;
 char START_MARKER;
 
-//HELLO FUTURE ME, START IN THE CONTROLLER SECTION AND FIGURE OUT THE WHOLE PID LOOP DEAL. the current issue it seems is that intially all the wheels are at an angle 0 which results in division by 0. I suspect u can fix this with a  max min function or smthn idk. gl
+//good start 1/17/24 u fixed the steppers moving, now they move right. But in the ang vel if they want to go to a negative direction they cant. fix it. nm u did
 void setup() {
 
   motors_init();
@@ -54,9 +54,9 @@ void loop() {
   if (millis() - control_loop_timer > 16) {
   //  Serial.println("cl");
     //control_vel(linear_x, linear_y);
-    //control_vel(.50, 0.0);
-    global_angle_select(40,-10,-10,40);
-    //control_ang_v(-0.99);
+    control_vel(.50, 0.0);
+    //global_angle_select(40,-10,-10,40);
+    control_ang_v(-0.99);
     control_loop();
     control_loop_timer = millis();
   }

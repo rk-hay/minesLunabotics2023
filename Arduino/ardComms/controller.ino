@@ -107,9 +107,9 @@ void control_loop(){
   
   //begin angular velocity
   
-  // v_error = abs(target_angular_velocity) - abs(ang_vel());
-  // total_angle = max(-MAX_ANGLE, min(MAX_ANGLE, total_angle+Kp_ang*v_error));
-  // global_angle_select(total_angle, total_angle, total_angle/4, total_angle/4);
+  v_error = target_angular_velocity - ang_vel();
+  total_angle = max(-MAX_ANGLE, min(MAX_ANGLE, total_angle+Kp_ang*v_error));
+  global_angle_select(total_angle, total_angle, -total_angle/4, -total_angle/4);
 
 
   }//end control loop
