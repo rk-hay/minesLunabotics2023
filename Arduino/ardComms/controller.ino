@@ -7,7 +7,7 @@ const int Kp_pos = 2;
 const int Ki_pos = 1;
 const int Kd_pos = 5;
 
-const int Kp_ang = 2;
+const int Kp_ang = 10;
 
 uint32_t last_millis = 0;
 float postional_mode = false;
@@ -107,9 +107,9 @@ void control_loop(){
   
   //begin angular velocity
   
-  v_error = abs(target_angular_velocity) - abs(ang_vel());
-  total_angle = max(-MAX_ANGLE, min(MAX_ANGLE, total_angle+Kp_ang*v_error));
-  global_angle_select(total_angle, total_angle, total_angle/4, total_angle/4);
+  // v_error = abs(target_angular_velocity) - abs(ang_vel());
+  // total_angle = max(-MAX_ANGLE, min(MAX_ANGLE, total_angle+Kp_ang*v_error));
+  // global_angle_select(total_angle, total_angle, total_angle/4, total_angle/4);
 
 
   }//end control loop

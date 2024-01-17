@@ -98,8 +98,8 @@ void global_angle_select(int fl, int fr, int bl, int br){
 
   fl_s_pos_update(fl_del, fl_dir_ang);
   fr_s_pos_update(fr_del, fr_dir_ang);
-  bl_s_pos_update(bl_del, !bl_dir_ang);
-  br_s_pos_update(br_del, !br_dir_ang);
+  bl_s_pos_update(bl_del, bl_dir_ang);
+  br_s_pos_update(br_del, br_dir_ang);
 
 if (fl_s_pos > 90 || fl_s_pos < -90){
     fl_steps = 0;
@@ -118,12 +118,12 @@ if (br_s_pos > 90 || br_s_pos < -90){
     br_s_pos_update(br_del, !br_dir_ang);
     }   
 
-  digitalWrite(fl_s_ndir, !fl_dir_ang);
-  digitalWrite(fl_s_pdir, fl_dir_ang);
+  digitalWrite(fl_s_ndir, fl_dir_ang);
+  digitalWrite(fl_s_pdir, !fl_dir_ang);
   digitalWrite(fl_s_npwm, LOW);
   
-  digitalWrite(fr_s_ndir, !fr_dir_ang);
-  digitalWrite(fr_s_pdir, fr_dir_ang);
+  digitalWrite(fr_s_ndir, fr_dir_ang);
+  digitalWrite(fr_s_pdir, !fr_dir_ang);
   digitalWrite(fr_s_npwm, LOW);
 
   digitalWrite(bl_s_ndir, bl_dir_ang);
@@ -138,11 +138,26 @@ if (br_s_pos > 90 || br_s_pos < -90){
   int fr_cnt = 0;
   int bl_cnt = 0;
   int br_cnt = 0;
-  while ( (fl_cnt++ < abs(fl_steps))
-        &&(fr_cnt++ < abs(fr_steps))
-        &&(bl_cnt++ < abs(bl_steps))
-        &&(br_cnt++ < abs(br_steps))){
-
+            // Serial.print(fl_steps);
+            // Serial.print(" ");
+            // Serial.print(fr_steps);
+            // Serial.print(" ");
+            // Serial.print(bl_steps);
+            // Serial.print(" ");
+            // Serial.print(br_steps);
+            // Serial.println(" ");
+  while ( (fl_cnt <= abs(fl_steps))
+        ||(fr_cnt <= abs(fr_steps))
+        ||(bl_cnt <= abs(bl_steps))
+        ||(br_cnt <= abs(br_steps))){
+            // Serial.print(fl_cnt);
+            // Serial.print(" ");
+            // Serial.print(fr_cnt);
+            // Serial.print(" ");
+            // Serial.print(bl_cnt);
+            // Serial.print(" ");
+            // Serial.print(br_cnt);
+            // Serial.println(" ");
 
 
         if (fl_cnt < abs(fl_steps)){digitalWrite(fl_s_ppwm, HIGH); }
@@ -156,6 +171,10 @@ if (br_s_pos > 90 || br_s_pos < -90){
         digitalWrite(bl_s_ppwm, LOW);
         digitalWrite(br_s_ppwm, LOW);
         
+        fl_cnt++;
+        fr_cnt++;
+        bl_cnt++;
+        br_cnt++;
         stepper_locked = false;  
 }
 }//end while loop
@@ -464,10 +483,10 @@ void fl_s_pos_update(int degree, bool dir){
   int sign = 0;
   switch(dir){
     case true:
-      sign = -1;
+      sign = 1;
       break;
     case false:
-      sign = 1;
+      sign = -1;
       break;
     }
   fl_s_pos += sign*abs(degree);
@@ -483,10 +502,10 @@ void fr_s_pos_update(int degree, bool dir){
   int sign = 0;
   switch(dir){
     case true:
-      sign = -1;
+      sign = 1;
       break;
     case false:
-      sign = 1;
+      sign = -1;
       break;
     }
   fr_s_pos += sign*abs(degree);
@@ -502,10 +521,10 @@ void bl_s_pos_update(int degree, bool dir){
   int sign = 0;
   switch(dir){
     case true:
-      sign = -1;
+      sign = 1;
       break;
     case false:
-      sign = 1;
+      sign = -1;
       break;
     }
   bl_s_pos += sign*abs(degree);
@@ -521,10 +540,10 @@ void br_s_pos_update(int degree, bool dir){
   int sign = 0;
   switch(dir){
     case true:
-      sign = -1;
+      sign = 1;
       break;
     case false:
-      sign = 1;
+      sign = -1;
       break;
     }
   br_s_pos += sign*abs(degree);

@@ -54,8 +54,9 @@ void loop() {
   if (millis() - control_loop_timer > 16) {
   //  Serial.println("cl");
     //control_vel(linear_x, linear_y);
-    control_vel(.50, 0.0);
-    control_ang_v(.50);
+    //control_vel(.50, 0.0);
+    global_angle_select(40,-10,-10,40);
+    //control_ang_v(-0.99);
     control_loop();
     control_loop_timer = millis();
   }
