@@ -5,7 +5,7 @@ float linear_y = 0.0;
 float angular_z = 0.0;
 char START_MARKER;
 
-//good start 1/17/24 u fixed the steppers moving, now they move right. But in the ang vel if they want to go to a negative direction they cant. fix it. nm u did
+
 void setup() {
 
   motors_init();
