@@ -63,12 +63,13 @@
 #define br_a 19
 #define br_b A1
 
-#define MAX_PWM 200
-#define MAX_LINEAR_PWM 150
-#define MAX_ANGULAR_PWM 100
+#define MAX_PWM 255
+#define MAX_LINEAR_PWM 255
+#define MAX_ANGULAR_PWM 255
 #define MAX_INTEGRAL 1
 #define MAX_V_INTEGRAL 5
 #define MAX_ANGLE 90.0 
+#define MAX_ANGULAR_VEL .99
 float wheel_diameter = .345; //approx .31 without spikes also this is in meters
 float robot_width = .60; // measured from outer edge to outeredge of stepper motor
 float robot_len = .855;
@@ -108,11 +109,6 @@ float fl_angular_pwm = 0;
 float fr_angular_pwm = 0;
 float bl_angular_pwm = 0;
 float br_angular_pwm = 0;
-
-bool fl_dir = HIGH;
-bool fr_dir = HIGH;
-bool bl_dir = HIGH;
-bool br_dir = HIGH;
 
 float fl_rotations = 0;
 float fr_rotations = 0;

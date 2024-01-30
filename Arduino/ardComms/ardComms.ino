@@ -140,13 +140,16 @@ void comms() {
           case 'X':{Serial.readBytes((char*)&linear_x, sizeof(float)); break;}
           case 'Y':{Serial.readBytes((char*)&linear_y, sizeof(float)); break;}
          // case 'Z': {break;}
-        }//end switch(cm2)
+        }//end cmd2 L
         break;
       }//end case L
       case 'A':{
+        char cmd2 = Serial.read();
+        switch (cmd2){
          // case 'X':{Serial.readBytes((char*)&angular_x, sizeof(float)); break;}
          // case 'Y':{Serial.readBytes((char*)&angular_y, sizeof(float)); break;}
           case 'Z': {Serial.readBytes((char*)&angular_z, sizeof(float)); break;}
+        }//end cmd2 A
       }
       
       

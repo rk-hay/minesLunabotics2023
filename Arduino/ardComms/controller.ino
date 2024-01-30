@@ -1,115 +1,130 @@
-//
+//tunable variables
 const int Kp_vel = 2;
-const int Ki_vel = 0;
+const int Ki_vel = 1;
 const int Kd_vel = 0;
 
 const int Kp_pos = 2;
 const int Ki_pos = 1;
-const int Kd_pos = 5;
+const int Kd_pos = 0;
 
 const int Kp_ang = 10;
+const int Ki_ang = 1;
+const int Kd_ang = 1;
 
+//random globals I need
 uint32_t last_millis = 0;
 float postional_mode = false;
 
-//goal to take angular velocities and produce a desired wheel angle
-void angV_to_deg(float ang_V){
-  float del = 0;
-  float time_change = millis()-del;
-  del = millis();
-  return ang_V*time_change*.001*(180/PI);  //rads/S * mS * 1s/10^3 mS * 180 degree's/PI rads 
-}
 
 
 
 void control_loop(){
   
-  float v_error = 0;
-  float p_error = 0;
-  static float fl_int = 0;
-  static float fr_int = 0;
-  static float bl_int = 0;
-  static float br_int = 0;
-  static float fl_v_int = 0;
-  static float fr_v_int = 0;
-  static float bl_v_int = 0;
-  static float br_v_int = 0;
-  static float fl_v_error = 0; 
-  static float fr_v_error = 0; 
-  static float bl_v_error = 0; 
-  static float br_v_error = 0; 
-  static float fl_p_error = 0; 
-  static float fr_p_error = 0; 
-  static float bl_p_error = 0; 
-  static float br_p_error = 0; 
-  
-  static float total_angle = 0;
+  float v_error = 0; //reusable P term for vel
+  float p_error = 0;  //reusable P term for postion
 
-  static float fl_last_error = 0;
-  static float fr_last_error = 0;
-  static float bl_last_error = 0;
-  static float br_last_error = 0;
+  static float fl_p_I = 0;    // I terms
+  static float fr_p_I = 0;
+  static float bl_p_I = 0;
+  static float br_p_I = 0;
+  static float fl_v_I = 0;
+  static float fr_v_I = 0;
+  static float bl_v_I = 0;
+  static float br_v_I = 0;
 
-  static float fl_v_last_error = 0;
+  static float fl_v_D = 0;  // D terms
+  static float fr_v_D = 0; 
+  static float bl_v_D = 0; 
+  static float br_v_D = 0; 
+
+  static float fl_p_D = 0; //
+  static float fr_p_D = 0; 
+  static float bl_p_D = 0; 
+  static float br_p_D = 0; 
+
+  static float fl_p_last_error = 0; // d term prev error for pos
+  static float fr_p_last_error = 0;
+  static float bl_p_last_error = 0;
+  static float br_p_last_error = 0;
+
+  static float fl_v_last_error = 0; // d term prev error for vel
   static float fr_v_last_error = 0;
   static float bl_v_last_error = 0;
   static float br_v_last_error = 0;
   
-  float time_change = (millis() - last_millis)/1000.0f;
-  last_millis = millis();
+  static float angular_velocity_I = 0;
+  static float angular_velocity_D = 0;
+
+  float time_change = (millis() - last_millis)/1000.0f; // del D
+  last_millis = millis(); 
+  //Postional controller // needs work //
   if (postional_mode == true){
     
       p_error = fl_target_p - fl_pos();
-      fl_int = max(-MAX_INTEGRAL, min(MAX_INTEGRAL, fl_int + p_error*time_change));
-      fl_p_error = p_error - fl_last_error;
-      fl_last_error = p_error;
-      fl_target_v = Kp_pos*p_error+Ki_pos*fl_int+fl_p_error*Kd_pos;
+      fl_p_I = max(-MAX_INTEGRAL, min(MAX_INTEGRAL, fl_p_I + p_error*time_change));
+      fl_p_D = (p_error - fl_p_last_error)/time_change;
+      fl_p_last_error = p_error;
+      fl_target_v = Kp_pos*p_error+Ki_pos*fl_p_I+fl_p_D*Kd_pos;
   
       p_error = fr_target_p - fr_pos();
-      fr_int = max(-MAX_INTEGRAL, min(MAX_INTEGRAL, fr_int + p_error*time_change));
-      fr_target_v = Kp_pos*p_error+Ki_pos*fr_int;
+      fr_p_I = max(-MAX_INTEGRAL, min(MAX_INTEGRAL, fr_p_I + p_error*time_change));
+      fr_p_D = (p_error - fr_p_last_error)/time_change;
+      fr_p_last_error = p_error;
+      fr_target_v = Kp_pos*p_error+Ki_pos*fr_p_I+fr_p_D*Kd_pos;
 
       p_error = bl_target_p - bl_pos();
-      bl_int = max(-MAX_INTEGRAL, min(MAX_INTEGRAL, bl_int + p_error*time_change));
-      bl_target_v = Kp_pos*p_error+Ki_pos*bl_int;
-
+      bl_p_I = max(-MAX_INTEGRAL, min(MAX_INTEGRAL, bl_p_I + p_error*time_change));
+      bl_p_D = (p_error - bl_p_last_error)/time_change;
+      bl_p_last_error = p_error;
+      bl_target_v = Kp_pos*p_error+Ki_pos*bl_p_I+bl_p_D*Kd_pos;
+  
       p_error = br_target_p - br_pos();
-      br_int = max(-MAX_INTEGRAL, min(MAX_INTEGRAL, br_int + p_error*time_change));
-      br_target_v = Kp_pos*p_error+Ki_pos*br_int;
+      br_p_I = max(-MAX_INTEGRAL, min(MAX_INTEGRAL, br_p_I + p_error*time_change));
+      br_p_D = (p_error - br_p_last_error)/time_change;
+      br_p_last_error = p_error;
+      br_target_v = Kp_pos*p_error+Ki_pos*br_p_I+br_p_D*Kd_pos;
     }
   
   //fl PD loop (no I integrated yet)
   // add derivative and integral term to velocity controller see fl above
-  v_error = abs(fl_target_v) - abs(fl_d_vel());
-  fl_v_int = max(-MAX_V_INTEGRAL, min(MAX_V_INTEGRAL, fl_v_int+v_error*time_change));
-  fl_v_error = v_error - fl_v_last_error;
+  v_error = fl_target_v - fl_d_vel();
+  fl_v_I = max(-MAX_V_INTEGRAL, min(MAX_V_INTEGRAL, fl_v_I+v_error*time_change));
+  fl_v_D = (v_error - fl_v_last_error)/time_change;
   fl_v_last_error = v_error;
-  fl_pwm = max(0, min(MAX_PWM, fl_pwm+Kp_vel*v_error+Kd_vel*fl_v_error+Kp_vel*fl_v_int));
-  fl_dir = fl_target_v > 0;
-  fl_motor_PWM(fl_pwm, fl_dir);
+  float fl_updated_vel = max(0, min(MAX_PWM, Kp_vel*v_error+Kd_vel*fl_v_D+Ki_vel*fl_v_I));
+  fl_motor_PWM(vel_to_pwm(fl_updated_vel));
 
+  v_error = fr_target_v - fr_d_vel();
+  fr_v_I = max(-MAX_V_INTEGRAL, min(MAX_V_INTEGRAL, fr_v_I+v_error*time_change));
+  fr_v_D = (v_error - fr_v_last_error)/time_change;
+  fr_v_last_error = v_error;
+  float fr_updated_vel = max(0, min(MAX_PWM, Kp_vel*v_error+Kd_vel*fr_v_D+Ki_vel*fr_v_I));
+  fr_motor_PWM(vel_to_pwm(fr_updated_vel));
 
+  v_error = bl_target_v - bl_d_vel();
+  bl_v_I = max(-MAX_V_INTEGRAL, min(MAX_V_INTEGRAL, bl_v_I+v_error*time_change));
+  bl_v_D = (v_error - fl_v_last_error)/time_change;
+  bl_v_last_error = v_error;
+  float bl_updated_vel = max(0, min(MAX_PWM, Kp_vel*v_error+Kd_vel*bl_v_D+Ki_vel*fl_v_I));
+  bl_motor_PWM(vel_to_pwm(bl_updated_vel));
 
-  v_error = abs(fr_target_v) - abs(fr_d_vel());
-  fr_pwm = max(0, min(MAX_PWM, fr_pwm +Kp_vel*v_error));
-  fr_dir = fr_target_v > 0;
-  fr_motor_PWM(fr_pwm, fr_dir);
-
-  v_error = abs(bl_target_v) - abs(bl_d_vel());
-  bl_pwm = max(0, min(MAX_PWM, bl_pwm +Kp_vel*v_error));
-  bl_dir = fl_target_v > 0;
-  bl_motor_PWM(bl_pwm, bl_dir);
-
-  v_error = abs(br_target_v) - abs(br_d_vel());
-  br_pwm = max(0, min(MAX_PWM, br_pwm +Kp_vel*v_error));
-  br_dir = br_target_v > 0;
-  br_motor_PWM(br_pwm, br_dir);
+  v_error = br_target_v - br_d_vel();
+  br_v_I = max(-MAX_V_INTEGRAL, min(MAX_V_INTEGRAL, br_v_I+v_error*time_change));
+  br_v_D = (v_error - br_v_last_error)/time_change;
+  br_v_last_error = v_error;
+  float br_updated_vel = max(0, min(MAX_PWM, Kp_vel*v_error+Kd_vel*br_v_D+Ki_vel*br_v_I));
+  br_motor_PWM(vel_to_pwm(br_updated_vel));
   
-  //begin angular velocity
-  
+
+  //----------------------//
+  //begin angular velocity//
+  //----------------------// 
+  static float angular_velocity_last_error = 0;
   v_error = target_angular_velocity - ang_vel();
-  total_angle = max(-MAX_ANGLE, min(MAX_ANGLE, total_angle+Kp_ang*v_error));
-  global_angle_select(total_angle, total_angle, -total_angle/4, -total_angle/4);
+  angular_velocity_I = max(-MAX_ANGULAR_VEL, min(MAX_ANGULAR_VEL, angular_velocity_I+(v_error*time_change)));
+  angular_velocity_D = (v_error-angular_velocity_last_error)/time_change;
+  float updated_angular_vel = (v_error*Kp_ang)+(Ki_ang*angular_velocity_I)+(Kd_ang*angular_velocity_D);
+  global_angle_select(updated_angular_vel, updated_angular_vel, -updated_angular_vel/3, -updated_angular_vel/3);
 
 
   }//end control loop
@@ -173,3 +188,17 @@ void control_pos_br(float p){
   br_target_p = p;
   postional_mode = true;
   }
+
+//UPDATE FROM .4
+float vel_to_pwm(float vel){
+  float pwm = (255/.4)*vel;
+  return pwm;
+}
+
+//goal to take angular velocities and produce a desired wheel angle
+void angV_to_deg(float ang_V){
+  float del = 0;
+  float time_change = millis()-del;
+  del = millis();
+  return ang_V*time_change*.001*(180/PI);  //rads/S * mS * 1s/10^3 mS * 180 degree's/PI rads 
+}
