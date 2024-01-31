@@ -62,7 +62,7 @@ void motors_init(){
   pinMode(br_b, INPUT);
   pinMode(bl_a, INPUT);
   pinMode(bl_b, INPUT);
-  motors_PWM(0, HIGH);
+  motors_PWM(0);
   motors_float(false);
   setupEncoders();
   motors_dir(true);
@@ -630,48 +630,44 @@ void br_motor_dir(bool reverse){
 //--------------------------------------//
 //           Drive Motors PWM           //
 //--------------------------------------//
-void motors_PWM(float duty,bool dir){
-  front_motors_PWM(duty, dir);
-  back_motors_PWM(duty, dir);
+void motors_PWM(float duty){
+  front_motors_PWM(duty);
+  back_motors_PWM(duty);
   }
 
-void front_motors_PWM(float duty, bool dir){
-  fl_motor_PWM(duty, dir);
-  fr_motor_PWM(duty, dir);
+void front_motors_PWM(float duty){
+  fl_motor_PWM(duty);
+  fr_motor_PWM(duty);
   }
 
-void back_motors_PWM(float duty, bool dir){
-  bl_motor_PWM(duty, dir);
-  br_motor_PWM(duty, dir);
+void back_motors_PWM(float duty){
+  bl_motor_PWM(duty);
+  br_motor_PWM(duty);
   }
 
 
-void fl_motor_PWM(float duty, bool dir){
-  fl_pwm = duty;
-  fl_dir = dir;
-  analogWrite(fl_d_pwm, duty);
+void fl_motor_PWM(float duty){
+  bool dir = duty > 0;
   fl_motor_dir(dir);
+  analogWrite(fl_d_pwm, abs(duty));
   }
 
-void fr_motor_PWM(float duty, bool dir){
-  fr_pwm = duty;
-  fr_dir = dir;
-  analogWrite(fr_d_pwm, duty);
+void fr_motor_PWM(float duty){
+  bool dir = duty > 0;
   fr_motor_dir(dir);
+  analogWrite(fr_d_pwm, abs(duty));
   }
 //back left
-void bl_motor_PWM(float duty, bool dir){
-  bl_pwm = duty;
-  bl_dir = dir;
-  analogWrite(bl_d_pwm, duty);
+void bl_motor_PWM(float duty){
+  bool dir = duty > 0;
   bl_motor_dir(dir);
+  analogWrite(bl_d_pwm, abs(duty));
   }
 //back right
-void br_motor_PWM(float duty, bool dir){
-  br_pwm = duty;
-  br_dir = dir;
-  analogWrite(br_d_pwm, duty);
+void br_motor_PWM(float duty){
+  bool dir = duty > 0;
   br_motor_dir(dir);
+  analogWrite(br_d_pwm, abs(duty));
   }
 //
 ////--------------------------------------//
