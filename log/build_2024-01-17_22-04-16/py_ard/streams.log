@@ -1,0 +1,26 @@
+[0.636s] Invoking command in '/home/hay-laptop/ros2_ws/src/py_ard': PYTHONPATH=/home/hay-laptop/ros2_ws/src/build/py_ard/prefix_override:/home/hay-laptop/ros2_ws/src/install/py_ard/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../build/py_ard build --build-base /home/hay-laptop/ros2_ws/src/build/py_ard/build install --record /home/hay-laptop/ros2_ws/src/build/py_ard/install.log --single-version-externally-managed
+[0.838s] running egg_info
+[0.838s] writing ../build/py_ard/py_ard.egg-info/PKG-INFO
+[0.838s] writing dependency_links to ../build/py_ard/py_ard.egg-info/dependency_links.txt
+[0.838s] writing entry points to ../build/py_ard/py_ard.egg-info/entry_points.txt
+[0.839s] writing requirements to ../build/py_ard/py_ard.egg-info/requires.txt
+[0.839s] writing top-level names to ../build/py_ard/py_ard.egg-info/top_level.txt
+[0.840s] reading manifest file '../build/py_ard/py_ard.egg-info/SOURCES.txt'
+[0.893s] writing manifest file '../build/py_ard/py_ard.egg-info/SOURCES.txt'
+[0.893s] running build
+[0.893s] running build_py
+[0.893s] copying py_ard/comms.py -> /home/hay-laptop/ros2_ws/src/build/py_ard/build/lib/py_ard
+[0.894s] running install
+[0.894s] /usr/lib/python3/dist-packages/setuptools/command/install.py:34: SetuptoolsDeprecationWarning: setup.py install is deprecated. Use build and pip and other standards-based tools.
+[0.894s]   warnings.warn(
+[0.894s] running install_lib
+[0.895s] copying /home/hay-laptop/ros2_ws/src/build/py_ard/build/lib/py_ard/comms.py -> /home/hay-laptop/ros2_ws/src/install/py_ard/lib/python3.10/site-packages/py_ard
+[0.895s] byte-compiling /home/hay-laptop/ros2_ws/src/install/py_ard/lib/python3.10/site-packages/py_ard/comms.py to comms.cpython-310.pyc
+[0.896s] running install_data
+[0.896s] running install_egg_info
+[0.898s] removing '/home/hay-laptop/ros2_ws/src/install/py_ard/lib/python3.10/site-packages/py_ard-0.0.0-py3.10.egg-info' (and everything under it)
+[0.898s] Copying ../build/py_ard/py_ard.egg-info to /home/hay-laptop/ros2_ws/src/install/py_ard/lib/python3.10/site-packages/py_ard-0.0.0-py3.10.egg-info
+[0.899s] running install_scripts
+[0.917s] Installing py_ard script to /home/hay-laptop/ros2_ws/src/install/py_ard/lib/py_ard
+[0.918s] writing list of installed files to '/home/hay-laptop/ros2_ws/src/build/py_ard/install.log'
+[0.933s] Invoked command in '/home/hay-laptop/ros2_ws/src/py_ard' returned '0': PYTHONPATH=/home/hay-laptop/ros2_ws/src/build/py_ard/prefix_override:/home/hay-laptop/ros2_ws/src/install/py_ard/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../build/py_ard build --build-base /home/hay-laptop/ros2_ws/src/build/py_ard/build install --record /home/hay-laptop/ros2_ws/src/build/py_ard/install.log --single-version-externally-managed
