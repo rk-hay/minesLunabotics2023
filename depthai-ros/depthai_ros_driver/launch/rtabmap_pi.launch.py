@@ -38,22 +38,7 @@ def launch_setup(context, *args, **kwargs):
             launch_arguments={"name": name,
                               "params_file": params_file}.items()),
 
-        LoadComposableNodes(
-            condition=IfCondition(LaunchConfiguration("rectify_rgb")),
-            target_container=name+"_container",
-            composable_node_descriptions=[
-                ComposableNode(
-                    package="image_proc",
-                    plugin="image_proc::RectifyNode",
-                    name="rectify_color_node",
-                    remappings=[('image', name+'/rgb/image_raw'),
-                                ('camera_info', name+'/rgb/camera_info'),
-                                ('image_rect', name+'/rgb/image_rect'),
-                                ('image_rect/compressed', name+'/rgb/image_rect/compressed'),
-                                ('image_rect/compressedDepth', name+'/rgb/image_rect/compressedDepth'),
-                                ('image_rect/theora', name+'/rgb/image_rect/theora')]
-                )
-            ])
+
 ]
 def generate_launch_description():
     depthai_prefix = get_package_share_directory("depthai_ros_driver")
