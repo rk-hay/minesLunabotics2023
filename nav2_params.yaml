@@ -187,11 +187,11 @@ local_costmap:
       update_frequency: 5.0
       publish_frequency: 2.0
       global_frame: map
-      robot_base_frame: oak
+      robot_base_frame: odom
       use_sim_time: True
       rolling_window: true
-      width: 5
-      height: 5
+      width: 8
+      height: 8
       resolution: 0.005
       robot_radius: 0.22
       plugins: ["static_layer", "voxel_layer", "inflation_layer"] # add denoise maybe and obstacle_layer
@@ -210,15 +210,15 @@ local_costmap:
         mark_threshold: 0
         observation_sources: point_cloud
         point_cloud:
-          topic: /cloud_map
+          topic: /cloud_obstacles
           max_obstacle_height: .5
           clearing: True
           marking: True
           data_type: "PointCloud2"  # Change data_type to "PointCloud2"
-          raytrace_max_range: 6.0
-          raytrace_min_range: 0.0
-          obstacle_max_range: 2.0
-          obstacle_min_range: 0.0
+          raytrace_max_range: 10.0
+          raytrace_min_range: 0.5
+          obstacle_max_range: 5.0
+          obstacle_min_range: 0.5
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
         map_subscribe_transient_local: True
@@ -230,9 +230,9 @@ global_costmap:
       update_frequency: 1.0
       publish_frequency: 1.0
       global_frame: map
-      robot_base_frame: oak
+      robot_base_frame: odom
       use_sim_time: True
-      robot_radius: 0.22
+      robot_radius: 0.65
       resolution: 0.05
       track_unknown_space: true
       plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
@@ -241,8 +241,8 @@ global_costmap:
         enabled: True
         observation_sources: point_cloud
         point_cloud:
-          topic: /cloud_map
-          max_obstacle_height: 2.0
+          topic: /cloud_obstacles
+          max_obstacle_height: .5
           clearing: True
           marking: True
           data_type: "PointCloud2"  # Change data_type to "PointCloud2"
