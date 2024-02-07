@@ -20,7 +20,7 @@ def launch_setup(context, *args, **kwargs):
             "subscribe_rgb": True,
             "subscribe_depth": True,
             "subscribe_odom_info": True,
-            "approx_sync": False,
+            "approx_sync": True,
             "Rtabmap/DetectionRate": "3.5",
         }
     ]
