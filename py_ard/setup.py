@@ -20,7 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-        	'py_ard = py_ard.comms:main',
+        	'comms = py_ard.comms:main',
+        	'updated_comms = py_ard.updated_comms:main',
         ],
     },
 )
