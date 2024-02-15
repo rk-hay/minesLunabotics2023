@@ -11,15 +11,15 @@ ser.reset_input_buffer()
 prevX = 0
 prevY = 0
 prevZ = 0
-class MinimalSubscriber(Node):
-    
+prevButton = 0
+velSub = 'cmd_vel'
 
+class VelocityComm(Node):
     def __init__(self):
-        super().__init__('minimal_subscriber')
-        
+        super().__init__('VelocityComm')
         self.subscription = self.create_subscription(
             Twist,
-            'cmd_vel',
+            velSub,
             self.listener_callback,
             10)
         self.subscription  # prevent unused variable warning
@@ -53,20 +53,48 @@ class MinimalSubscriber(Node):
             sleep(0.1)
             
             
+class ButtonPressComm(Node):
+    def __init__(self):
+        super().__init__('ButtonPressComm')
+        self.subscription = self.create_subscription(
+            Joy,
+            'joy',
+            self.listener_callback,
+            10)
+        self.subscription  # prevent unused variable warning
+
+    def listener_callback(self, msg):
+        global prevbutton
+        global velSub
+
+        if msg.buttons[3] != prevButton :
+            ser.write(struct.pack('c', b'B'))
+            ser.write(struct.pack('c', b'Y'))
+            ser.write(struct.pack('?', bool(msg.buttons[3])))
+            prevButton = msg.buttons[3] # Y toggle autonomy
+            if velSub == 'cmd_vel':
+                velSub = '/cmd_vel_nav2' #CHANGE?
+            else:
+                velSub = 'cmd_vel'
+            sleep(0.1)
+
 
 
 def main(args=None):
     rclpy.init(args=args)
 
-    minimal_subscriber = MinimalSubscriber()
+    velocityComm = VelocityComm()
+    buttonPressComm = ButtonPressComm()
     #minimal_subscriber.create_rate(10)
-    rclpy.spin(minimal_subscriber)
+    rclpy.spin(velocityComm)
+    rclpy.spin(buttonPressComm)
 
     # Destroy the node explicitly
     # (optional - otherwise it will be done automatically
     # when the garbage collector destroys the node object)
     ser.close()
-    minimal_subscriber.destroy_node()
+    velocityComm.destroy_node()
+    buttonPressComm.destroy_node()
     rclpy.shutdown()
 
 

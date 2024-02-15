@@ -117,6 +117,9 @@ float br_rotations = 0;
 
 float target_angular_velocity = 0;
 
-
+bool toggleAuto = false;
 bool stepper_locked = false;
+
+float lin_vels[4] = {0, 0, 0, 0}; 
+float pos_angs[4] = {0, 0, 0, 0}; 
 #endif

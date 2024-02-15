@@ -77,6 +77,95 @@ void motors_init(){
 //--------------------------------------//
 //5 options front 2 at once, back 2 at once, all three at once same angle, opposite angle, front angles and back angles pick same time
 
+void step_pos(float p[3]){
+  
+  stepper_locked = true;
+  float fl = p[0] * 180/3.14159265359;
+  float fr = p[1] * 180/3.14159265359;
+  float bl = p[2] * 180/3.14159265359;
+  float br = p[3] * 180/3.14159265359;
+  float fl_del = max(-MAX_ANGLE, min(MAX_ANGLE, fl - fl_s_pos)); 
+  float fr_del = max(-MAX_ANGLE, min(MAX_ANGLE, fr - fr_s_pos));
+  float bl_del = max(-MAX_ANGLE, min(MAX_ANGLE, bl - bl_s_pos));
+  float br_del = max(-MAX_ANGLE, min(MAX_ANGLE, br - br_s_pos));
+
+  bool fl_dir_ang = fl_del > 0;
+  bool fr_dir_ang = fr_del > 0;
+  bool bl_dir_ang = bl_del > 0;
+  bool br_dir_ang = br_del > 0;
+
+  int fl_steps = deg_to_step(fl_del);
+  int fr_steps = deg_to_step(fr_del);
+  int bl_steps = deg_to_step(bl_del);
+  int br_steps = deg_to_step(br_del);
+
+  fl_s_pos_update(fl_del, fl_dir_ang);
+  fr_s_pos_update(fr_del, fr_dir_ang);
+  bl_s_pos_update(bl_del, bl_dir_ang);
+  br_s_pos_update(br_del, br_dir_ang);
+//saftey first
+if (fl_s_pos > 90 || fl_s_pos < -90){
+    fl_steps = 0;
+    fl_s_pos_update(fl_del, !fl_dir_ang);
+    }
+if (fr_s_pos > 90 || fr_s_pos < -90){
+    fr_steps = 0;
+    fr_s_pos_update(fr_del, !fr_dir_ang);
+    }
+if (bl_s_pos > 90 || bl_s_pos < -90){
+    bl_steps = 0;
+    bl_s_pos_update(bl_del, !bl_dir_ang);
+    }
+if (br_s_pos > 90 || br_s_pos < -90){
+    br_steps = 0;
+    br_s_pos_update(br_del, !br_dir_ang);
+    }   
+
+  digitalWrite(fl_s_ndir, fl_dir_ang);
+  digitalWrite(fl_s_pdir, !fl_dir_ang);
+  digitalWrite(fl_s_npwm, LOW);
+  
+  digitalWrite(fr_s_ndir, fr_dir_ang);
+  digitalWrite(fr_s_pdir, !fr_dir_ang);
+  digitalWrite(fr_s_npwm, LOW);
+
+  digitalWrite(bl_s_ndir, bl_dir_ang);
+  digitalWrite(bl_s_pdir, !bl_dir_ang);
+  digitalWrite(bl_s_npwm, LOW);
+  
+  digitalWrite(br_s_ndir, br_dir_ang);
+  digitalWrite(br_s_pdir, !br_dir_ang);
+  digitalWrite(br_s_npwm, LOW);
+
+  int fl_cnt = 0;
+  int fr_cnt = 0;
+  int bl_cnt = 0;
+  int br_cnt = 0;
+
+  while ( (fl_cnt <= abs(fl_steps))
+        ||(fr_cnt <= abs(fr_steps))
+        ||(bl_cnt <= abs(bl_steps))
+        ||(br_cnt <= abs(br_steps))){
+
+        if (fl_cnt < abs(fl_steps)){digitalWrite(fl_s_ppwm, HIGH); }
+        if (fr_cnt < abs(fr_steps)){digitalWrite(fr_s_ppwm, HIGH); }
+        if (bl_cnt < abs(bl_steps)){digitalWrite(bl_s_ppwm, HIGH); }
+        if (br_cnt < abs(br_steps)){digitalWrite(br_s_ppwm, HIGH); }
+    
+        delayMicroseconds(50000);
+        digitalWrite(fl_s_ppwm, LOW);
+        digitalWrite(fr_s_ppwm, LOW);
+        digitalWrite(bl_s_ppwm, LOW);
+        digitalWrite(br_s_ppwm, LOW);
+        
+        fl_cnt++;
+        fr_cnt++;
+        bl_cnt++;
+        br_cnt++;
+        stepper_locked = false;  
+}
+}//end while loop
+
 void global_angle_select(int fl, int fr, int bl, int br){
  
   stepper_locked = true;
@@ -180,7 +269,7 @@ if (br_s_pos > 90 || br_s_pos < -90){
 }//end while loop
 
 
-void opp_s_step_fast(int degree){
+void opp_s_step_fast(float degree){
   
   stepper_locked = true;
   bool dir = degree > 0;
@@ -237,7 +326,7 @@ if (br_s_pos > 90 || br_s_pos < -90){
   stepper_locked = false;  
 }
 
-void same_s_step_fast(int degree){
+void same_s_step_fast(float degree){
   stepper_locked = true;
   bool dir = degree > 0;
   int steps = deg_to_step(degree);
@@ -294,7 +383,7 @@ if (br_s_pos > 90 || br_s_pos < -90){
     stepper_locked = false;
 }
 
-void f_s_step_fast(int degree){
+void f_s_step_fast(float degree){
   stepper_locked = true;
   bool dir = degree > 0;
   int steps = deg_to_step(degree);
@@ -328,7 +417,7 @@ if (fr_s_pos > 90 || fr_s_pos < -90){
   stepper_locked = false;
   }
   
-void b_s_step_fast(int degree){
+void b_s_step_fast(float degree){
   stepper_locked = true;
   bool dir = degree > 0;
   int steps = deg_to_step(degree);
@@ -371,29 +460,29 @@ if (br_s_pos > 90 || br_s_pos < -90){
 //4 functions to turn each indvidually then 2 for front 2 for back and then 1 more for all together
 //cc is High so setting dir to high will make front left turn left
 //front and back go same angle opposite directions
-void opp_s_step(int degree, bool dir){
+void opp_s_step(float degree, bool dir){
   f_s_step(degree, dir);
   b_s_step(degree, !dir);
   }
 
 
 //same direction
-void same_s_step(int degree, bool dir){
+void same_s_step(float degree, bool dir){
   f_s_step(degree, dir);
   b_s_step(degree, dir);
   }
 
-void f_s_step(int degree, bool dir){
+void f_s_step(float degree, bool dir){
   fl_s_step(degree, dir);
   fr_s_step(degree, dir);
   }
 
-void b_s_step(int degree, bool dir){
+void b_s_step(float degree, bool dir){
   bl_s_step(degree, dir);
   br_s_step(degree, dir);
   }
 // if dir is high go cc, cc is considered negative in counting (i.e -90 degree's)
-void fl_s_step(int degree, bool dir){
+void fl_s_step(float degree, bool dir){
   int steps = deg_to_step(degree);
   fl_s_pos_update(degree, dir);
   if (fl_s_pos > 90 || fl_s_pos < -90){
@@ -413,7 +502,7 @@ void fl_s_step(int degree, bool dir){
   }
 }
 
-void fr_s_step(int degree, bool dir){
+void fr_s_step(float degree, bool dir){
   int steps = deg_to_step(degree);
   fr_s_pos_update(degree, dir);
   if (fr_s_pos > 90 || fr_s_pos < -90){
@@ -434,7 +523,7 @@ void fr_s_step(int degree, bool dir){
 }
 
 
-void bl_s_step(int degree, bool dir){
+void bl_s_step(float degree, bool dir){
   int steps = deg_to_step(degree);
   bl_s_pos_update(degree, dir);
   if (bl_s_pos > 90 || bl_s_pos < -90){
@@ -454,7 +543,7 @@ void bl_s_step(int degree, bool dir){
   }
 }
 
-void br_s_step(int degree, bool dir){
+void br_s_step(float degree, bool dir){
   int steps = deg_to_step(degree);
   br_s_pos_update(degree, dir);
   if (br_s_pos > 90 || br_s_pos < -90){
@@ -474,12 +563,12 @@ void br_s_step(int degree, bool dir){
   }
 }
 
-int deg_to_step(int degree){
-  int steps = degree*(10000/360); // 10,000 steps/360 degree's times the number of degree's = steps to take
+int deg_to_step(float degree){
+  float steps = degree*(10000/360); // 10,000 steps/360 degree's times the number of degree's = steps to take
   return steps;
   }
 
-void fl_s_pos_update(int degree, bool dir){
+void fl_s_pos_update(float degree, bool dir){
   int sign = 0;
   switch(dir){
     case true:
@@ -498,7 +587,7 @@ void fl_s_pos_update(int degree, bool dir){
     }
   }
 
-void fr_s_pos_update(int degree, bool dir){
+void fr_s_pos_update(float degree, bool dir){
   int sign = 0;
   switch(dir){
     case true:
@@ -517,7 +606,7 @@ void fr_s_pos_update(int degree, bool dir){
     }
   }
 
-void bl_s_pos_update(int degree, bool dir){
+void bl_s_pos_update(float degree, bool dir){
   int sign = 0;
   switch(dir){
     case true:
@@ -536,7 +625,7 @@ void bl_s_pos_update(int degree, bool dir){
     }
   }
 
-void br_s_pos_update(int degree, bool dir){
+void br_s_pos_update(float degree, bool dir){
   int sign = 0;
   switch(dir){
     case true:
