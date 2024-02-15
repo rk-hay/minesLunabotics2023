@@ -54,13 +54,13 @@ class ButtonPressComm(Node):
         self.subscription  # prevent unused variable warning
 
     def listener_callback(self, msg):
-        global prevbutton
-        global velSub
+        #global prevButton 
+        #global velSub
 
-        if msg.buttons[3] != prevButton :
-            ser.write(struct.pack('c', b'B'))
-            ser.write(struct.pack('?', bool(msg.buttons[3]))) #MIGHT THROW ERROR
-            prevButton = msg.buttons[3] # Y toggle autonomy
+        #if msg.buttons[3] != prevButton:
+        #    ser.write(struct.pack('c', b'B'))
+        #    ser.write(struct.pack('?', bool(msg.buttons[3]))) #MIGHT THROW ERROR
+        #    prevButton = msg.buttons[3] # Y toggle autonomy
             sleep(0.1)
 
 def main(args=None):

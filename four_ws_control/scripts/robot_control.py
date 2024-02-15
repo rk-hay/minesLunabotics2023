@@ -40,17 +40,21 @@ class Commander(Node):
             
             vel_steerring_offset = vel_msg.angular.z * self.wheel_steering_y_offset
             sign = np.sign(vel_msg.linear.x)
-
+            
             self.vel[0] = sign*math.hypot(vel_msg.linear.x - vel_msg.angular.z*self.steering_track/2, vel_msg.angular.z*self.wheel_base/2) - vel_steerring_offset
             self.vel[1] = sign*math.hypot(vel_msg.linear.x + vel_msg.angular.z*self.steering_track/2, vel_msg.angular.z*self.wheel_base/2) + vel_steerring_offset
             self.vel[2] = sign*math.hypot(vel_msg.linear.x - vel_msg.angular.z*self.steering_track/2, vel_msg.angular.z*self.wheel_base/2) - vel_steerring_offset
             self.vel[3] = sign*math.hypot(vel_msg.linear.x + vel_msg.angular.z*self.steering_track/2, vel_msg.angular.z*self.wheel_base/2) + vel_steerring_offset
-
-            self.pos[0] = math.atan(vel_msg.angular.z*self.wheel_base/(2*vel_msg.linear.x + vel_msg.angular.z*self.steering_track))
-            self.pos[1] = math.atan(vel_msg.angular.z*self.wheel_base/(2*vel_msg.linear.x - vel_msg.angular.z*self.steering_track))
-            self.pos[2] = -self.pos[0]
-            self.pos[3] = -self.pos[1]
-
+            if vel_msg.linear.x != 0.0 & vel_msg.angular.z != 0.0:
+                self.pos[0] = math.atan(vel_msg.angular.z*self.wheel_base/(2*vel_msg.linear.x + vel_msg.angular.z*self.steering_track))
+                self.pos[1] = math.atan(vel_msg.angular.z*self.wheel_base/(2*vel_msg.linear.x - vel_msg.angular.z*self.steering_track))
+                self.pos[2] = -self.pos[0]
+                self.pos[3] = -self.pos[1]
+            else:
+                self.pos[0] = 0.0 
+                self.pos[1] = 0.0
+                self.pos[2] = 0.0
+                self.pos[3] = 0.0
         # in-phase
         elif(mode_selection == 2):
 
