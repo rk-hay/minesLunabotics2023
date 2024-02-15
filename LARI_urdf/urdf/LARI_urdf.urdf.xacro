@@ -4,6 +4,8 @@
      For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name='LARI'>
 
+<xacro:include filename="$(find depthai_descriptions)/urdf/include/base_macro.urdf.xacro"/>
+
   <link
     name="base_link">
     <inertial>
@@ -499,6 +501,39 @@
     <limit
       effort="0"
       velocity="5.23599" />
+  </joint>
+  
+  
+  
+  <link name="camera_link">
+ <visual>
+ <origin xyz="-0.022 0 0.1" rpy="0 0 0" />
+ <geometry>
+       <mesh filename= "$(find depthai_descriptions)/urdf/include/base_macro.urdf.xacro"/>
+     </geometry>
+</visual>
+ <inertial>
+ <mass value="0.001"/>
+ <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/>
+ </inertial>
+</link>
+<joint
+    name="camera_joint"
+    type="revolute">
+    <origin
+      xyz="-0.022 0 0.1"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="camera_link" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="0"
+      upper="6.2832"
+      effort="10"
+      velocity="3.1415" />
   </joint>
 
 
