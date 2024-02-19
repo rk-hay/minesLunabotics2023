@@ -69,13 +69,13 @@ void loop() {
         //  Serial.print(br_d_vel());
         //  Serial.print("  ");
 
-    //      Serial.print(fl_pwm);
-    //      Serial.print("  ");
-    //      Serial.print(fr_pwm);
-    //      Serial.print("  ");
-    //      Serial.print(bl_pwm);
-    //      Serial.print("  ");
-    //      Serial.print(br_pwm);
+          Serial.print(lin_vels[0]);
+          Serial.print("  ");
+          Serial.print(lin_vels[1]);
+          Serial.print("  ");
+          Serial.print(lin_vels[2]);
+          Serial.print("  ");
+          Serial.print(lin_vels[3]);
 
     //      Serial.print(fl_enc_pos);
     //      Serial.print("  ");
@@ -118,7 +118,7 @@ void loop() {
             // Serial.print("  ");
             // Serial.print(ang_vel());
             // Serial.print("  ");
-            // Serial.println();
+             Serial.println();
     print_timer = millis();
   }
 }
