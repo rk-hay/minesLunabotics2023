@@ -37,21 +37,25 @@ void loop() {
   //angular_z = adjust(angular_z, 2.0);
   readEncoders();
  
-  //motors_PWM(50, LOW);
-  //br_motor_PWM(50, HIGH);
-  
+  //motors_PWM(50);
+  //br_motor_PWM(50);  
   //run the control loop on a 16 ms timer
   if (millis() - control_loop_timer > 16) {
     //static bool autonomous = true;
     //  Serial.println("cl");
-    //control_vel(linear_x, linear_y);
+    control_vel(.5, 0.0);
     //global_angle_select(40,-10,-10,40);
-    four_ws_control(linear_x, linear_y, angular_z, 1);
-    control_vel_updated(lin_vels);
+    //four_ws_control(.7, 0.0, 0.0, 1);
+    //control_vel_updated(lin_vels);
+//    br_motor_PWM(50);
+//    br_s_step(45,HIGH);
     if (stepper_locked == false && millis()-step_timer > 32) {
-      step_pos(pos_angs);
+      //step_pos(pos_angs);
+      //global_angle_select(0, 0, 45, 0);
+      
       step_timer = millis();
     }
+    control_loop_timer = millis();
   }
 
 
@@ -66,21 +70,21 @@ void loop() {
         //  Serial.print(br_d_vel());
         //  Serial.print("  ");
 
-          Serial.print(lin_vels[0]);
-          Serial.print("  ");
-          Serial.print(lin_vels[1]);
-          Serial.print("  ");
-          Serial.print(lin_vels[2]);
-          Serial.print("  ");
-          Serial.print(lin_vels[3]);
+//          Serial.print(lin_vels[0]);
+//          Serial.print("  ");
+//          Serial.print(lin_vels[1]);
+//          Serial.print("  ");
+//          Serial.print(lin_vels[2]);
+//          Serial.print("  ");
+//          Serial.print(lin_vels[3]);
 
-    //      Serial.print(fl_enc_pos);
-    //      Serial.print("  ");
-    //      Serial.print(fr_enc_pos);
-    //      Serial.print("  ");
-    //      Serial.print(bl_enc_pos);
-    //      Serial.print("  ");
-    //      Serial.print(br_enc_pos);
+//          Serial.print(fl_enc_pos);
+//          Serial.print("  ");
+//          Serial.print(fr_enc_pos);
+//          Serial.print("  ");
+//          Serial.print(bl_enc_pos);
+//          Serial.print("  ");
+//          Serial.print(br_enc_pos);
 
         //  Serial.print(fl_pos());
         //  Serial.print("  ");
@@ -100,12 +104,12 @@ void loop() {
           //  Serial.print(br_s_pos);
           //  Serial.print("  ");
 
-            //Serial.print(linear_x);
-            //Serial.print("  ");
-            //Serial.print(linear_y);
-            //Serial.print("  ");
-            //Serial.print(angular_z);
-            //Serial.print("  ");
+//            Serial.print(linear_x);
+//            Serial.print("  ");
+//            Serial.print(linear_y);
+//            Serial.print("  ");
+//            Serial.print(angular_z);
+//            Serial.print("  ");
             
             // Serial.print((3.14/180)*((fl_s_pos+fr_s_pos)/2));
             // Serial.print("  ");
@@ -151,7 +155,7 @@ void comms() {
         break;
       }  
     }//end switch(command)
-      //Serial.print("Linear X: ");
+      //Serial.print(" Linear X: ");
       //Serial.println(linear_x);
       //Serial.print("Linear Y: ");
       //Serial.println(linear_y);

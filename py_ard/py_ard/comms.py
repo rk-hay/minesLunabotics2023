@@ -19,7 +19,7 @@ class VelocityComm(Node):
         super().__init__('VelocityComm')
         self.subscription = self.create_subscription(
             Twist,
-            velSub,
+            'cmd_vel',
             self.listener_callback,
             10)
         self.subscription  # prevent unused variable warning
@@ -29,8 +29,8 @@ class VelocityComm(Node):
         global prevX, prevY, prevZ
         # ser.reset_input_buffer()
         
-        if abs(msg.linear.x) - abs(prevX) > .05 or abs(msg.linear.y) - abs(prevY) > .02 or abs(msg.angular.z) - abs(prevZ) > .5 :
-            #ser.reset_input_buffer
+        if abs(msg.linear.x - prevX) > .05 or abs(msg.linear.y - prevY) > .02 or abs(msg.angular.z - prevZ) > .5:
+            ser.reset_input_buffer
             #ser.reset_output_buffer
             ser.write(struct.pack('c', b'L'))
             ser.write(struct.pack('c', b'X'))
@@ -67,16 +67,16 @@ class ButtonPressComm(Node):
         global prevbutton
         global velSub
 
-        if msg.buttons[3] != prevButton :
-            ser.write(struct.pack('c', b'B'))
-            ser.write(struct.pack('c', b'Y'))
-            ser.write(struct.pack('?', bool(msg.buttons[3])))
-            prevButton = msg.buttons[3] # Y toggle autonomy
-            if velSub == 'cmd_vel':
-                velSub = '/cmd_vel_nav2' #CHANGE?
-            else:
-                velSub = 'cmd_vel'
-            sleep(0.1)
+       # if msg.buttons[3] != prevButton :
+       #     ser.write(struct.pack('c', b'B'))
+       #     ser.write(struct.pack('c', b'Y'))
+       #     ser.write(struct.pack('?', bool(msg.buttons[3])))
+       #     prevButton = msg.buttons[3] # Y toggle autonomy
+       #     if velSub == 'cmd_vel':
+       #         velSub = '/cmd_vel_nav2' #CHANGE?
+       #     else:
+       #         velSub = 'cmd_vel'
+       #     sleep(0.1)
 
 
 
@@ -84,7 +84,7 @@ def main(args=None):
     rclpy.init(args=args)
 
     velocityComm = VelocityComm()
-    buttonPressComm = ButtonPressComm()
+    #buttonPressComm = ButtonPressComm()
     #minimal_subscriber.create_rate(10)
     rclpy.spin(velocityComm)
     rclpy.spin(buttonPressComm)
@@ -94,7 +94,7 @@ def main(args=None):
     # when the garbage collector destroys the node object)
     ser.close()
     velocityComm.destroy_node()
-    buttonPressComm.destroy_node()
+    #buttonPressComm.destroy_node()
     rclpy.shutdown()
 
 
