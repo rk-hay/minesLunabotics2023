@@ -255,7 +255,7 @@ void controller_control_loop(){
 
   }//end control loop
 
-void control_vel_updated(float v[3]){
+void control_vel_updated(float v[4]){
   control_vel_fl(v[0]);
   control_vel_fr(v[1]);
   control_vel_bl(v[2]);

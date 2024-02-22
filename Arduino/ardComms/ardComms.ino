@@ -27,7 +27,7 @@ void loop() {
   //first update vars from the system
   if (millis()-comms_timer > 15){
   //Serial.println("comm");
-  //comms();
+  comms();
   //updated_comms();
   comms_timer = millis();
   } 
@@ -42,19 +42,16 @@ void loop() {
   
   //run the control loop on a 16 ms timer
   if (millis() - control_loop_timer > 16) {
-    static bool autonomous = true;
+    //static bool autonomous = true;
     //  Serial.println("cl");
     //control_vel(linear_x, linear_y);
     //global_angle_select(40,-10,-10,40);
-    //control_vel_updated(lin_vels);
-    //if (stepper_locked == false && millis()-step_timer > 32) {
-    //  step_pos(pos_angs);
-    //  step_timer = millis();
-    ///}
-    //if (toggleAuto){ autonomous = !autonomous;}
-    //if (autonomous) {auto_control_loop();}
-    //else {controller_control_loop();}
-    //control_loop_timer = millis();
+    four_ws_control(linear_x, linear_y, angular_z, 1);
+    control_vel_updated(lin_vels);
+    if (stepper_locked == false && millis()-step_timer > 32) {
+      step_pos(pos_angs);
+      step_timer = millis();
+    }
   }
 
 
