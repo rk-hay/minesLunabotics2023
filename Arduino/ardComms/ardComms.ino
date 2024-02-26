@@ -42,19 +42,30 @@ void loop() {
   //run the control loop on a 16 ms timer
   if (millis() - control_loop_timer > 16) {
     //static bool autonomous = true;
-    //  Serial.println("cl");
-    control_vel(.5, 0.0);
-    //global_angle_select(40,-10,-10,40);
-    //four_ws_control(.7, 0.0, 0.0, 1);
-    //control_vel_updated(lin_vels);
+    //  Serial.println("cl"); TESTING
+    //control_vel(-0.5, 0.0); OLD
+    //global_angle_select(40,-10,-10,40); OLD
+    four_ws_control(.4, 0.2, 0.4, 3); 
+    control_vel_updated(lin_vels);
 //    br_motor_PWM(50);
 //    br_s_step(45,HIGH);
     if (stepper_locked == false && millis()-step_timer > 32) {
-      //step_pos(pos_angs);
+      step_pos(pos_angs);
       //global_angle_select(0, 0, 45, 0);
       
       step_timer = millis();
     }
+    controller_control_loop();
+  //TEST
+ // global_angle_select(45, 45,  45, 45); //stepperer tester
+  //motors_PWM(50.0);
+  //fl_motor_PWM(50); //does not turn with neg value
+  //fr_motor_PWM(-50);
+  //bl_motor_PWM(-50);
+  //br_motor_PWM(255);
+  //control_vel(0.5, 0.0);
+  //four_ws_co
+  //TEST
     control_loop_timer = millis();
   }
 
@@ -70,13 +81,21 @@ void loop() {
         //  Serial.print(br_d_vel());
         //  Serial.print("  ");
 
-//          Serial.print(lin_vels[0]);
-//          Serial.print("  ");
-//          Serial.print(lin_vels[1]);
-//          Serial.print("  ");
-//          Serial.print(lin_vels[2]);
-//          Serial.print("  ");
-//          Serial.print(lin_vels[3]);
+         Serial.print(lin_vels[0]);
+         Serial.print("  ");
+         Serial.print(lin_vels[1]);
+         Serial.print("  ");
+         Serial.print(lin_vels[2]);
+         Serial.print("  ");
+         Serial.print(lin_vels[3]);
+         Serial.print("  ");
+         Serial.print(pos_angs[0]);
+         Serial.print("  ");
+         Serial.print(pos_angs[1]);
+         Serial.print("  ");
+         Serial.print(pos_angs[2]);
+         Serial.print("  ");
+         Serial.print(pos_angs[3]);
 
 //          Serial.print(fl_enc_pos);
 //          Serial.print("  ");

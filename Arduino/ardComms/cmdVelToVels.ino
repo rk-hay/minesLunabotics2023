@@ -7,13 +7,15 @@ float steering_track = (wheel_seperation - 2*wheel_steering_y_offset);
 
 
 void four_ws_control(float x, float y, float z, int mode){
-static float vel[4] = {0, 0, 0, 0}; 
-static float pos[4] = {0, 0, 0, 0}; 
+       float vel[4] = {0, 0, 0, 0}; 
+       float pos[4] = {0, 0, 0, 0}; 
+        float ang = 0.0;
+        float V = 0.0;
+        float vel_steerring_offset = z * wheel_steering_y_offset;
+        int sign = sgn(x);
+
   switch(mode){
     case 1: // opposite phase
-        float vel_steerring_offset = z * wheel_steering_y_offset;
-        float sign = sgn(x);
-        
         vel[0] = sign*sqrt(sq(x - z*steering_track/2) + sq(z*wheel_base/2)) - vel_steerring_offset;
         vel[1] = sign*sqrt(sq(x + z*steering_track/2) + sq(z*wheel_base/2)) + vel_steerring_offset; 
         vel[2] = sign*sqrt(sq(x - z*steering_track/2) + sq(z*wheel_base/2)) - vel_steerring_offset; 
@@ -32,10 +34,11 @@ static float pos[4] = {0, 0, 0, 0};
             pos[3] = -pos[1];
         }//End else
       break;
+
     case 2: // in phase
-        float ang = 0;
-        float V = sqrt(sq(x)+sq(y));
-        sign = sgn(x);
+        ang = 0;
+        V = sqrt(sq(x)+sq(y));
+
 
         if(x != 0) { ang = y / x; }
         else { ang = 0; }
@@ -51,6 +54,7 @@ static float pos[4] = {0, 0, 0, 0};
         vel[3] = sign*V;
       break;
     case 3: // pivot
+
         pos[0] = -atan(wheel_base/steering_track);
         pos[1] = atan(wheel_base/steering_track);
         pos[2] = atan(wheel_base/steering_track);

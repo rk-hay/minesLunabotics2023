@@ -11,47 +11,47 @@
 #define br_d_pwm 5
 
 //drivers pos dir
-#define fl_d_for 41
+#define fl_d_for 39 //was 41
 #define fr_d_for 40
-#define bl_d_for 37
+#define bl_d_for 36 //was 37
 #define br_d_for 12
 
 //drivers neg dir
-#define fl_d_rev 39
+#define fl_d_rev 41 //was 39
 #define fr_d_rev 38
-#define bl_d_rev 36
+#define bl_d_rev 37 // was 36
 #define br_d_rev A0
 
 //stepper pos enable -PULL HIGH
-#define fl_s_nenable 52
-#define fr_s_nenable 24
-#define bl_s_nenable 43
-#define br_s_nenable 23
+#define fl_s_nenable 22  //was 52
+#define fr_s_nenable 23  //was 34
+#define bl_s_nenable 52 //was 43
+#define br_s_nenable 43 //was 23
 //stepper pos enable - PULL HIGH
-#define fl_s_penable 50
-#define fr_s_penable 26
-#define bl_s_penable 45
-#define br_s_penable 25
+#define fl_s_penable 24  // was 50
+#define fr_s_penable 25  //was26
+#define bl_s_penable 50 //was 45
+#define br_s_penable 45 //was 25
 //steppers neg dir - DIR pick
-#define fl_s_ndir 48
-#define fr_s_ndir 28
-#define bl_s_ndir 47
-#define br_s_ndir 27
+#define fl_s_ndir 26  //was 48
+#define fr_s_ndir 27  //was 28
+#define bl_s_ndir 48 //was 47
+#define br_s_ndir 47 //was 27
 //steppers pos dir - PULL HIGH
-#define fl_s_pdir 46
-#define fr_s_pdir 30
-#define bl_s_pdir 49
-#define br_s_pdir 29
+#define fl_s_pdir 28  //was 46
+#define fr_s_pdir 29  //was 30
+#define bl_s_pdir 46 //was 49
+#define br_s_pdir 49 //was 29
 //steppers neg pwm - PULSE TO MOVE
-#define fl_s_npwm 44
-#define fr_s_npwm 32
-#define bl_s_npwm 51
-#define br_s_npwm 31
+#define fl_s_npwm 30 //was 44
+#define fr_s_npwm 31 //was 32
+#define bl_s_npwm 44 //was 51
+#define br_s_npwm 51 //was 31
 //steppers pos pwm - PULL HIGH
-#define fl_s_ppwm 42
-#define fr_s_ppwm 34
-#define bl_s_ppwm 53
-#define br_s_ppwm 33
+#define fl_s_ppwm 32 //was 42
+#define fr_s_ppwm 33 //was 34
+#define bl_s_ppwm 42 //was 53
+#define br_s_ppwm 53 //was 33
 
 //motor encoders 
 #define fl_a 2

@@ -324,7 +324,7 @@ void control_pos_br(float p){
 
 //UPDATE FROM .4
 float vel_to_pwm(float vel){
-  float pwm = (255/.4)*vel;
+  float pwm = (255/1)*vel;
   return pwm;
 }
 
