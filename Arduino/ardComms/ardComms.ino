@@ -25,7 +25,7 @@ void loop() {
   static float comms_timer = 0;
   static float step_timer = 0;
   //first update vars from the system
-  if (millis()-comms_timer > 15){
+  if (millis()-comms_timer > 10){
   //Serial.println("comm");
   comms();
   //updated_comms();
@@ -45,12 +45,13 @@ void loop() {
     //  Serial.println("cl"); TESTING
     //control_vel(-0.5, 0.0); OLD
     //global_angle_select(40,-10,-10,40); OLD
-    four_ws_control(.4, 0.2, 0.4, 3); 
-    control_vel_updated(lin_vels);
+    four_ws_control(linear_x, linear_y, angular_z, 1); 
+    
 //    br_motor_PWM(50);
 //    br_s_step(45,HIGH);
-    if (stepper_locked == false && millis()-step_timer > 32) {
+    if (stepper_locked == false) {
       step_pos(pos_angs);
+      control_vel_updated(lin_vels);
       //global_angle_select(0, 0, 45, 0);
       
       step_timer = millis();
@@ -81,21 +82,21 @@ void loop() {
         //  Serial.print(br_d_vel());
         //  Serial.print("  ");
 
-         Serial.print(lin_vels[0]);
-         Serial.print("  ");
-         Serial.print(lin_vels[1]);
-         Serial.print("  ");
-         Serial.print(lin_vels[2]);
-         Serial.print("  ");
-         Serial.print(lin_vels[3]);
-         Serial.print("  ");
-         Serial.print(pos_angs[0]);
-         Serial.print("  ");
-         Serial.print(pos_angs[1]);
-         Serial.print("  ");
-         Serial.print(pos_angs[2]);
-         Serial.print("  ");
-         Serial.print(pos_angs[3]);
+//         Serial.print(lin_vels[0]);
+//         Serial.print("  ");
+//         Serial.print(lin_vels[1]);
+//         Serial.print("  ");
+//         Serial.print(lin_vels[2]);
+//         Serial.print("  ");
+//         Serial.print(lin_vels[3]);
+//         Serial.print("  ");
+//         Serial.print(pos_angs[0]);
+//         Serial.print("  ");
+//         Serial.print(pos_angs[1]);
+//         Serial.print("  ");
+//         Serial.print(pos_angs[2]);
+//         Serial.print("  ");
+//         Serial.print(pos_angs[3]);
 
 //          Serial.print(fl_enc_pos);
 //          Serial.print("  ");
@@ -121,8 +122,8 @@ void loop() {
           //  Serial.print(bl_s_pos);
           //  Serial.print("  ");
           //  Serial.print(br_s_pos);
-          //  Serial.print("  ");
-
+//            Serial.print("  ");
+//
 //            Serial.print(linear_x);
 //            Serial.print("  ");
 //            Serial.print(linear_y);
@@ -138,7 +139,7 @@ void loop() {
             // Serial.print("  ");
             // Serial.print(ang_vel());
             // Serial.print("  ");
-             Serial.println();
+             //Serial.println();
     print_timer = millis();
   }
 }

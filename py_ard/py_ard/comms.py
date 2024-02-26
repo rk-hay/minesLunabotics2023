@@ -29,8 +29,9 @@ class VelocityComm(Node):
         global prevX, prevY, prevZ
         # ser.reset_input_buffer()
         
-        if abs(msg.linear.x - prevX) > .05 or abs(msg.linear.y - prevY) > .02 or abs(msg.angular.z - prevZ) > .5:
+        if abs(msg.linear.x - prevX) > .05 or abs(msg.linear.y - prevY) > .02 or abs(msg.angular.z - prevZ) > .05:
             ser.reset_input_buffer
+            #ser.reset_output_buffer
             #ser.reset_output_buffer
             ser.write(struct.pack('c', b'L'))
             ser.write(struct.pack('c', b'X'))
