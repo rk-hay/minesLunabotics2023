@@ -10,7 +10,7 @@ void setup() {
 
   motors_init();
   setupEncoders();
-  Serial.begin(115200);
+  Serial.begin(19200);
   readEncoders();
   //Serial.println("setup");
 }
@@ -82,21 +82,21 @@ void loop() {
         //  Serial.print(br_d_vel());
         //  Serial.print("  ");
 
-//         Serial.print(lin_vels[0]);
-//         Serial.print("  ");
-//         Serial.print(lin_vels[1]);
-//         Serial.print("  ");
-//         Serial.print(lin_vels[2]);
-//         Serial.print("  ");
-//         Serial.print(lin_vels[3]);
-//         Serial.print("  ");
-//         Serial.print(pos_angs[0]);
-//         Serial.print("  ");
-//         Serial.print(pos_angs[1]);
-//         Serial.print("  ");
-//         Serial.print(pos_angs[2]);
-//         Serial.print("  ");
-//         Serial.print(pos_angs[3]);
+         Serial.print(lin_vels[0]);
+         Serial.print("  ");
+         Serial.print(lin_vels[1]);
+         Serial.print("  ");
+         Serial.print(lin_vels[2]);
+         Serial.print("  ");
+         Serial.print(lin_vels[3]);
+         Serial.print("  ");
+         Serial.print(pos_angs[0]);
+         Serial.print("  ");
+         Serial.print(pos_angs[1]);
+         Serial.print("  ");
+         Serial.print(pos_angs[2]);
+         Serial.print("  ");
+         Serial.print(pos_angs[3]);
 
 //          Serial.print(fl_enc_pos);
 //          Serial.print("  ");
@@ -122,14 +122,14 @@ void loop() {
           //  Serial.print(bl_s_pos);
           //  Serial.print("  ");
           //  Serial.print(br_s_pos);
-//            Serial.print("  ");
+            Serial.print("  ");
 //
-//            Serial.print(linear_x);
-//            Serial.print("  ");
-//            Serial.print(linear_y);
-//            Serial.print("  ");
-//            Serial.print(angular_z);
-//            Serial.print("  ");
+            Serial.print(linear_x);
+            Serial.print("  ");
+            Serial.print(linear_y);
+            Serial.print("  ");
+            Serial.print(angular_z);
+            Serial.print("  ");
             
             // Serial.print((3.14/180)*((fl_s_pos+fr_s_pos)/2));
             // Serial.print("  ");
@@ -139,7 +139,7 @@ void loop() {
             // Serial.print("  ");
             // Serial.print(ang_vel());
             // Serial.print("  ");
-             //Serial.println();
+               Serial.println();
     print_timer = millis();
   }
 }
