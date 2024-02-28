@@ -327,11 +327,3 @@ float vel_to_pwm(float vel){
   float pwm = (255/1)*vel;
   return pwm;
 }
-
-//goal to take angular velocities and produce a desired wheel angle
-// void angV_to_deg(float ang_V){
-//   float del = 0;
-//   float time_change = millis()-del;
-//   del = millis();
-//   return ang_V*time_change*.001*(180/PI);  //rads/S * mS * 1s/10^3 mS * 180 degree's/PI rads 
-// }

@@ -25,7 +25,7 @@ void loop() {
   static float comms_timer = 0;
   static float step_timer = 0;
   //first update vars from the system
-  if (millis()-comms_timer > 10){
+  if (millis()-comms_timer > 1){
   //Serial.println("comm");
   comms();
   //updated_comms();
@@ -147,34 +147,12 @@ void loop() {
 void comms() {
   // Check if there is data available to read
   if (Serial.available() > 0) {
-      char command = Serial.read();
-    switch (command) {
-      case 'L':{
         char cmd2 = Serial.read();
         switch (cmd2){
-          case 'X':{Serial.readBytesUntil('\n', (char*)&linear_x, sizeof(float)+sizeof{'\n')); break;}
-          case 'Y':{Serial.readBytesUntil('\n', (char*)&linear_y, sizeof(float)+sizeof{'\n')); break;}
-         // case 'Z': {break;}
-        }//end cmd2 L
-        break;
-      }//end case L
-      case 'A':{
-        char cmd2 = Serial.read();
-        switch (cmd2){
-         // case 'X':{Serial.readBytes((char*)&angular_x, sizeof(float)); break;}
-         // case 'Y':{Serial.readBytes((char*)&angular_y, sizeof(float)); break;}
-          case 'Z': {Serial.readBytesUntil('\n', (char*)&angular_z, sizeof(float)+sizeof{'\n')); break;}
-        }//end cmd2 A
-        break;
-      }
-      case 'B':{
-        char cmd2 = Serial.read();
-        switch(cmd2){
-          case 'Y': {Serial.readBytes((char*)&toggleAuto, sizeof(bool)); break;}        
-          }
-        break;
-      }  
-    }//end switch(command)
+          case 'X':{Serial.readBytesUntil('\n', (char*)&linear_x, sizeof(float)+sizeof('\n')); break;}
+          case 'Y':{Serial.readBytesUntil('\n', (char*)&linear_y, sizeof(float)+sizeof('\n')); break;}
+          case 'Z': {Serial.readBytesUntil('\n', (char*)&angular_z, sizeof(float)+sizeof('\n')); break;}
+        }//end cmd2
       //Serial.print(" Linear X: ");
       //Serial.println(linear_x);
       //Serial.print("Linear Y: ");

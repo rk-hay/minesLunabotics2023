@@ -33,17 +33,12 @@ class VelocityComm(Node):
             ser.reset_input_buffer
             #ser.reset_output_buffer
             #ser.reset_output_buffer
-            ser.write(struct.pack('c', b'L'))
             ser.write(struct.pack('c', b'X'))
             ser.write(struct.pack('<f', float(msg.linear.x)))
             ser.write(struct.pack('c', b'\n'))
-            
-            ser.write(struct.pack('c', b'L'))
             ser.write(struct.pack('c', b'Y'))
             ser.write(struct.pack('<f', float(msg.linear.y)))
             ser.write(struct.pack('c', b'\n'))
-
-            ser.write(struct.pack('c', b'A'))
             ser.write(struct.pack('c', b'Z'))
             ser.write(struct.pack('<f', float(msg.angular.z)))
             ser.write(struct.pack('c', b'\n'))
