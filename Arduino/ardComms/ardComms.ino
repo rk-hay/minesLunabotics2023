@@ -1,5 +1,5 @@
 #include "vars.h"
-
+#include "float.h"
 float linear_x = 0.0;
 float linear_y = 0.0;
 float angular_z = 0.0;
@@ -25,11 +25,28 @@ void loop() {
   static float comms_timer = 0;
   static float step_timer = 0;
   //first update vars from the system
-  if (millis()-comms_timer > 1){
+  if (millis()-comms_timer > 6){
   //Serial.println("comm");
   comms();
   //updated_comms();
   comms_timer = millis();
+  
+    if (maInc < 3){
+      prevLinX[maInc] = linear_x;
+      prevLinY[maInc] = linear_y;
+      prevAngZ[maInc] = angular_z;
+      maInc += 1;
+      }
+    else{
+      prevLinX[maInc] = linear_x;
+      prevLinY[maInc] = linear_y;
+      prevAngZ[maInc] = angular_z;
+      maInc = 0;
+      }
+    maX = movingAverage(prevLinX, maX);
+    maY = movingAverage(prevLinY, maY);
+    maZ = movingAverage(prevAngZ, maX);
+    
   } 
 
   //linear_x = adjust(linear_x, .09);
@@ -40,25 +57,21 @@ void loop() {
   //motors_PWM(50);
   //br_motor_PWM(50);  
   //run the control loop on a 16 ms timer
-  if (millis() - control_loop_timer > 16) {
-    //static bool autonomous = true;
+  if (millis() - control_loop_timer > 24) {
     //  Serial.println("cl"); TESTING
     //control_vel(-0.5, 0.0); OLD
     //global_angle_select(40,-10,-10,40); OLD
-    four_ws_control(linear_x, linear_y, angular_z, 1); 
     
-//    br_motor_PWM(50);
-//    br_s_step(45,HIGH);
+    four_ws_control(maX, maY, maZ, 1); 
     if (stepper_locked == false) {
       step_pos(pos_angs);
       control_vel_updated(lin_vels);
       //global_angle_select(0, 0, 45, 0);
-      
       step_timer = millis();
     }
     controller_control_loop();
-  //TEST
- // global_angle_select(45, 45,  45, 45); //stepperer tester
+  //------------------------------------------------------------------------------//
+  //global_angle_select(45, 45,  45, 45); //stepperer tester
   //motors_PWM(50.0);
   //fl_motor_PWM(50); //does not turn with neg value
   //fr_motor_PWM(-50);
@@ -66,13 +79,14 @@ void loop() {
   //br_motor_PWM(255);
   //control_vel(0.5, 0.0);
   //four_ws_co
-  //TEST
+  //TESTS
+  //------------------------------------------------------------------------------//
     control_loop_timer = millis();
   }
 
 
   //DEBUGGING STATEMENTS (print every 50 millis)
-  if (millis() - print_timer > 50) {
+  if (millis() - print_timer > 24) {
         //  Serial.print(fl_d_vel());
         //  Serial.print("  ");
         //  Serial.print(fr_d_vel());
@@ -81,10 +95,9 @@ void loop() {
         //  Serial.print("  ");
         //  Serial.print(br_d_vel());
         //  Serial.print("  ");
-
-         Serial.print(lin_vels[0]);
-         Serial.print("  ");
-         Serial.print(lin_vels[1]);
+            Serial.print(lin_vels[0]);
+            Serial.print("  ");
+/**         Serial.print(lin_vels[1]);
          Serial.print("  ");
          Serial.print(lin_vels[2]);
          Serial.print("  ");
@@ -96,8 +109,8 @@ void loop() {
          Serial.print("  ");
          Serial.print(pos_angs[2]);
          Serial.print("  ");
-         Serial.print(pos_angs[3]);
-
+         Serial.print(pos_angs[3]
+**/  
 //          Serial.print(fl_enc_pos);
 //          Serial.print("  ");
 //          Serial.print(fr_enc_pos);
@@ -125,11 +138,25 @@ void loop() {
             Serial.print("  ");
 //
             Serial.print(linear_x);
+//            Serial.print("  ");
+//            Serial.print(linear_y);
+//            Serial.print("  ");
+//            Serial.print(angular_z);
             Serial.print("  ");
-            Serial.print(linear_y);
-            Serial.print("  ");
-            Serial.print(angular_z);
-            Serial.print("  ");
+//
+            Serial.print(maX);
+//            Serial.print("  ");
+//            Serial.print(maY);
+//            Serial.print("  ");
+//            Serial.print(prevLinX[0]);
+//            Serial.print("  ");
+//            Serial.print(prevLinX[1]);
+//            Serial.print("  ");
+//                        Serial.print("  ");
+//            Serial.print(prevLinX[2]);
+//            Serial.print("  ");
+//            Serial.print(prevLinX[3]);
+//            Serial.print("  ");
             
             // Serial.print((3.14/180)*((fl_s_pos+fr_s_pos)/2));
             // Serial.print("  ");
@@ -162,29 +189,40 @@ void comms() {
   }//end if
 }//end comms
 
-void updated_comms(){
-  if (Serial.available() > 1){
-    char command = Serial.read();
-    switch(command){
-      case 'V':{
-          Serial.readBytes((char*)&lin_vels, sizeof(lin_vels));
-        break;
-      }//end L
-      case 'P':{
-          Serial.readBytes((char*)&pos_angs, sizeof(pos_angs));
-        break;
-      }//end P
-      case 'B':{
-          Serial.readBytes((char*)&toggleAuto, sizeof(bool));      
-        break;
-      }  
-    }//end switch(Comma..
-  }//end if (Serial...
-}//end updated_comms
+//void updated_comms(){
+//  if (Serial.available() > 1){
+//    char command = Serial.read();
+//    switch(command){
+//      case 'V':{
+//          Serial.readBytes((char*)&lin_vels, sizeof(lin_vels));
+//        break;
+//      }//end L
+//      case 'P':{
+//          Serial.readBytes((char*)&pos_angs, sizeof(pos_angs));
+//        break;
+//      }//end P
+//      case 'B':{
+//          Serial.readBytes((char*)&toggleAuto, sizeof(bool));      
+//        break;
+//      }  
+//    }//end switch(Comma..
+//  }//end if (Serial...
+//}//end updated_comms
+//
+//float adjust(float val, int limit) {
+//  if ((val < limit && val > -limit)) {
+//    val = 0;
+//  }
+//  return val;
+//}
 
-float adjust(float val, int limit) {
-  if ((val < limit && val > -limit)) {
-    val = 0;
+float movingAverage(float in[4], float prevAvg){
+  float avg = 0.0;
+//  if (in[0] >= FLT_MAX || in[1] >= FLT_MAX || in[2] >= FLT_MAX|| in[3] >= FLT_MAX || in[0] <= FLT_MIN || in[1] <= FLT_MIN || in[2] <= FLT_MIN || in[3] <= FLT_MIN){
+//    avg = prevAvg;
+//    }
+//  else {
+    avg = (in[0]+in[1]+in[2]+in[3])/4;
+ // }
+  return avg;
   }
-  return val;
-}

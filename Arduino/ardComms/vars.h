@@ -122,4 +122,11 @@ bool stepper_locked = false;
 
 float lin_vels[4] = {0, 0, 0, 0}; 
 float pos_angs[4] = {0, 0, 0, 0}; 
+float prevLinX[4] = {0, 0, 0, 0};
+float prevLinY[4] = {0, 0, 0, 0};
+float prevAngZ[4] = {0, 0, 0, 0};
+float maX = 0.0;
+float maY = 0.0;
+float maZ = 0.0;
+int maInc = 0;
 #endif
