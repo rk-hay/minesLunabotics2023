@@ -31,7 +31,7 @@ class VelocityComm(Node):
         
         if abs(msg.linear.x - prevX) > .05 or abs(msg.linear.y - prevY) > .02 or abs(msg.angular.z - prevZ) > .05:
             ser.reset_input_buffer()
-            #ser.reset_output_buffer
+            ser.reset_output_buffer()
             #ser.reset_output_buffer
             ser.write(struct.pack('c', b'X'))
             ser.write(struct.pack('<f', float(msg.linear.x)))

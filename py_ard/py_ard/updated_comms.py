@@ -33,17 +33,17 @@ class VelocityComm(Node):
             #ser.reset_input_buffer()
             #ser.reset_output_buffer
             #ser.reset_output_buffer
-        x =1000* msg.linear.x
-        y =1000* msg.linear.y
-        z =1000* msg.angular.z
+        x =msg.linear.x
+        y =msg.linear.y
+        z =msg.angular.z
         ser.write(struct.pack('c', b'X'))
-        ser.write(struct.pack('<i', int(x)))
+        ser.write(x.encode())
         ser.write(struct.pack('c', b'\n'))
         ser.write(struct.pack('c', b'Y'))
-        ser.write(struct.pack('<i', int(y)))
+        ser.write(y.encode())
         ser.write(struct.pack('c', b'\n'))
         ser.write(struct.pack('c', b'Z'))
-        ser.write(struct.pack('<i', int(z)))
+        ser.write(z.encode())
         ser.write(struct.pack('c', b'\n'))
         #self.get_logger().info('test\n')
         #self.get_logger().info(ser.readline())

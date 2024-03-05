@@ -95,8 +95,8 @@ void loop() {
         //  Serial.print("  ");
         //  Serial.print(br_d_vel());
         //  Serial.print("  ");
-            Serial.print(lin_vels[0]);
-            Serial.print("  ");
+//            Serial.print(lin_vels[0]);
+//            Serial.print("  ");
 /**         Serial.print(lin_vels[1]);
          Serial.print("  ");
          Serial.print(lin_vels[2]);
@@ -138,13 +138,13 @@ void loop() {
             Serial.print("  ");
 //
             Serial.print(linear_x);
-//            Serial.print("  ");
-//            Serial.print(linear_y);
-//            Serial.print("  ");
-//            Serial.print(angular_z);
+            Serial.print("  ");
+            Serial.print(linear_y);
+            Serial.print("  ");
+            Serial.print(angular_z);
             Serial.print("  ");
 //
-            Serial.print(maX);
+//            Serial.print(maX);
 //            Serial.print("  ");
 //            Serial.print(maY);
 //            Serial.print("  ");
@@ -192,9 +192,9 @@ void comms2() {
   if (Serial.available() > 0) {
         char cmd2 = Serial.read();
         switch (cmd2){
-          case 'X':{Serial.readBytesUntil('\n', (char*)&linear_x, sizeof(int)); linear_x =linear_x/1000;  break;}
-          case 'Y':{Serial.readBytesUntil('\n', (char*)&linear_y, sizeof(int)); linear_y =linear_y/1000; break;}
-          case 'Z': {Serial.readBytesUntil('\n', (char*)&angular_z, sizeof(int)); angular_z =angular_z/1000; break;}
+         // case 'X':{Serial.readStringUntil('\n', (char*)&linear_x, sizeof(float)+sizeof('\n')); linear_x =linear_x/1000;  break;}
+         // case 'Y':{Serial.readStringUntil('\n', (char*)&linear_y, sizeof(float)+sizeof('\n')); linear_y =linear_y/1000; break;}
+         // case 'Z': {Serial.readStringUntil('\n', (char*)&angular_z, sizeof(float)+sizeof('\n')); angular_z =angular_z/1000; break;}
         }//end cmd2
   }//end if
 }//end comms
