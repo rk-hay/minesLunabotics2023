@@ -97,7 +97,7 @@ def main(args=None):
     #buttonPressComm = ButtonPressComm()
     #minimal_subscriber.create_rate(10)
     rclpy.spin(velocityComm)
-    rclpy.spin(buttonPressComm)
+    #rclpy.spin(buttonPressComm)
 
     # Destroy the node explicitly
     # (optional - otherwise it will be done automatically

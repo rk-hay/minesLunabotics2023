@@ -187,32 +187,21 @@ void comms() {
   }//end if
 }//end comms
 
-//void updated_comms(){
-//  if (Serial.available() > 1){
-//    char command = Serial.read();
-//    switch(command){
-//      case 'V':{
-//          Serial.readBytes((char*)&lin_vels, sizeof(lin_vels));
-//        break;
-//      }//end L
-//      case 'P':{
-//          Serial.readBytes((char*)&pos_angs, sizeof(pos_angs));
-//        break;
-//      }//end P
-//      case 'B':{
-//          Serial.readBytes((char*)&toggleAuto, sizeof(bool));      
-//        break;
-//      }  
-//    }//end switch(Comma..
-//  }//end if (Serial...
-//}//end updated_comms
-//
-//float adjust(float val, int limit) {
-//  if ((val < limit && val > -limit)) {
-//    val = 0;
-//  }
-//  return val;
-//}
+void comms2() {
+  // Check if there is data available to read
+  if (Serial.available() > 0) {
+        char cmd2 = Serial.read();
+        switch (cmd2){
+          case 'X':{Serial.readBytesUntil('\n', (char*)&linear_x, sizeof(int)); linear_x =linear_x/1000;  break;}
+          case 'Y':{Serial.readBytesUntil('\n', (char*)&linear_y, sizeof(int)); linear_y =linear_y/1000; break;}
+          case 'Z': {Serial.readBytesUntil('\n', (char*)&angular_z, sizeof(int)); angular_z =angular_z/1000; break;}
+        }//end cmd2
+  }//end if
+}//end comms
+
+
+
+
 
 float movingAverage(float in[4], float prevAvg){
   float avg = 0.0;
