@@ -26,7 +26,7 @@ class VelocityComm(Node):
 
     def listener_callback(self, msg):
         #self.get_logger().info('I heard: "%s"' % msg.linear.x)
-        global prevX, prevY, prevZ
+        #global prevX, prevY, prevZ
         # ser.reset_input_buffer()
         
         #if abs(msg.linear.x - prevX) > .05 or abs(msg.linear.y - prevY) > .02 or abs(msg.angular.z - prevZ) > .05:
@@ -45,12 +45,12 @@ class VelocityComm(Node):
         ser.write(struct.pack('c', b'Z'))
         ser.write(struct.pack('<i', int(z)))
         ser.write(struct.pack('c', b'\n'))
-        self.get_logger().info('test\n')
+        #self.get_logger().info('test\n')
         #self.get_logger().info(ser.readline())
-        prevX = x
-        prevY = y
-        prevZ = z
-        sleep(0.1)
+        #prevX = x
+        #prevY = y
+        #prevZ = z
+        #sleep(0.1)
             
             
 
