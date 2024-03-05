@@ -62,7 +62,7 @@ void loop() {
     //control_vel(-0.5, 0.0); OLD
     //global_angle_select(40,-10,-10,40); OLD
     
-    four_ws_control(maX, maY, maZ, 1); 
+    four_ws_control(maX, maY, maZ, 4); 
     if (stepper_locked == false) {
       step_pos(pos_angs);
       control_vel_updated(lin_vels);

@@ -65,6 +65,18 @@ void four_ws_control(float x, float y, float z, int mode){
         vel[2] = vel[0];
         vel[3] = vel[1];
       break;
+    case 4: // sideways
+
+        pos[0] = 1.5708; //fl
+        pos[1] = -1.5708; //fr
+        pos[2] = -1.5708; //bl
+        pos[3] = 1.5708; //br
+        
+        vel[0] = x;
+        vel[1] = -x;
+        vel[2] = -x;
+        vel[3] = x;
+      break;
     default:
         vel[0] = 0.0;
         vel[1] = 0.0;
