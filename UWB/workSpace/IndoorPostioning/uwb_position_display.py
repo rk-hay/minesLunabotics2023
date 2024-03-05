@@ -13,7 +13,7 @@ sock.bind((UDP_IP, UDP_PORT))
 sock.listen(1)  # 接收的连接数
 data, addr = sock.accept()
 
-distance_a1_a2 = 3.0
+distance_a1_a2 = 2.74
 meter2pixel = 100
 range_offset = 0.9
 
@@ -126,9 +126,7 @@ def draw_uwb_tag(x, y, txt, t):
 def read_data():
     try:
         data.settimeout(3)  # Set a timeout of 1 second
-        print("Before recv")
         line = data.recv(1024).decode('UTF-8')
-        print("After recv")
         data.settimeout(None)  # Reset the timeout
 
         uwb_list = []
@@ -192,7 +190,7 @@ def main():
         list = read_data()
 
         for one in list:
-            if one["A"] == "1782":
+            if one["A"] == "1784":
                 clean(t_a1)
                 a1_range = uwb_range_offset(float(one["R"]))
                 draw_uwb_anchor(-250, 150, "A1782(0,0)", a1_range, t_a1)

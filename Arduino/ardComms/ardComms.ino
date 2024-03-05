@@ -180,12 +180,10 @@ void comms() {
           case 'Y':{Serial.readBytesUntil('\n', (char*)&linear_y, sizeof(float)+sizeof('\n')); break;}
           case 'Z': {Serial.readBytesUntil('\n', (char*)&angular_z, sizeof(float)+sizeof('\n')); break;}
         }//end cmd2
-      //Serial.print(" Linear X: ");
-      //Serial.println(linear_x);
-      //Serial.print("Linear Y: ");
-      //Serial.println(linear_y);
-      //Serial.print("Angular Z: ");
-      //Serial.println(angular_z); 
+        //TRY NO SWITCH????
+        //Serial.readBytesUntil('X', (char*)&linear_x, sizeof(float)+sizeof('X'));
+        //Serial.readBytesUntil('Y', (char*)&linear_y, sizeof(float)+sizeof('Y'));
+        //Serial.readBytesUntil('Z', (char*)&angular_z, sizeof(float)+sizeof('Z'));
   }//end if
 }//end comms
 

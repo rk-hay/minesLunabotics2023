@@ -30,7 +30,7 @@ class VelocityComm(Node):
         # ser.reset_input_buffer()
         
         if abs(msg.linear.x - prevX) > .05 or abs(msg.linear.y - prevY) > .02 or abs(msg.angular.z - prevZ) > .05:
-            ser.reset_input_buffer
+            ser.reset_input_buffer()
             #ser.reset_output_buffer
             #ser.reset_output_buffer
             ser.write(struct.pack('c', b'X'))
@@ -42,6 +42,18 @@ class VelocityComm(Node):
             ser.write(struct.pack('c', b'Z'))
             ser.write(struct.pack('<f', float(msg.angular.z)))
             ser.write(struct.pack('c', b'\n'))
+
+            #
+            #ser.write(struct.pack('<f', float(msg.linear.x)))
+            #ser.write(struct.pack('c', b'X'))
+
+            #
+            #ser.write(struct.pack('<f', float(msg.linear.y)))
+            #ser.write(struct.pack('c', b'Y'))
+            #
+            #ser.write(struct.pack('<f', float(msg.angular.z)))
+            #ser.write(struct.pack('c', b'Z'))
+            
             #ser.write(struct.pack('c', b'S'))
             self.get_logger().info('test\n')
             #self.get_logger().info(ser.readline())

@@ -16,9 +16,9 @@ For ESP32 UWB or ESP32 UWB Pro
 #define PIN_RST 27
 #define PIN_IRQ 34
 
-const char *ssid = "SpeakFriendAndEnter";
-const char *password = "MannClanAmigo";
-const char *host = "10.0.0.53";
+const char *ssid = "Hay";
+const char *password = "";
+const char *host = "192.168.232.8";
 WiFiClient client;
 
 struct MyLink *uwb_data;
