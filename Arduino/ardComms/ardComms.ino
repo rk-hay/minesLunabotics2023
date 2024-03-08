@@ -9,6 +9,7 @@ char START_MARKER;
 void setup() {
 
   motors_init();
+  digSetup();
   setupEncoders();
   Serial.begin(19200);
   readEncoders();
