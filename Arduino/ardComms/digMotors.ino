@@ -50,7 +50,7 @@ void activateDig(){
   conveyor(150);
 }
 
-void deployAppendage(float duty){
+void deployAppendage(int duty){
   //if limit switch != true
   bool dir = duty > 0;
   analogWrite(appendageDeployLinears_PWM, abs(duty));
@@ -58,7 +58,7 @@ void deployAppendage(float duty){
   digitalWrite(appendageDeployLinears_IN2, dir);
 }
 
-void digBelt(float duty){
+void digBelt(int duty){
   //if limit switch != true
   bool dir = duty > 0;
   analogWrite(appendageBelt_PWM, abs(duty));
@@ -66,7 +66,7 @@ void digBelt(float duty){
   digitalWrite(appendageBelt_IN2, dir);
 }
 
-void digDepth(float duty){
+void digDepth(int duty){
   //if limit switch != true
   bool dir = duty > 0;
   analogWrite(appendageDigLin_PWM, abs(duty));
@@ -74,7 +74,7 @@ void digDepth(float duty){
   digitalWrite(appendageDigLin_IN2, dir);
 }
 
-void conveyor(float duty){
+void conveyor(int duty){
   //if limit switch != true
   bool dir = duty > 0;
   analogWrite(conveyor_PWM, abs(duty));

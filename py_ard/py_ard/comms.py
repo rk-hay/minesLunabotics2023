@@ -11,8 +11,18 @@ ser.reset_input_buffer()
 prevX = 0
 prevY = 0
 prevZ = 0
-prevButton = 0
-velSub = 'cmd_vel'
+
+ConveyorButton = 0
+DeployButton = 0
+DigLinButton = 0
+DigBeltButton = 0
+
+prevConveyorButton = 0
+prevDeployButton = 0
+prevDigLinButton = 0
+prevDigBeltButton = 0
+msgSend = 0
+prevMsgSend = 0
 
 class VelocityComm(Node):
     def __init__(self):
@@ -27,12 +37,16 @@ class VelocityComm(Node):
     def listener_callback(self, msg):
         #self.get_logger().info('I heard: "%s"' % msg.linear.x)
         global prevX, prevY, prevZ
-        # ser.reset_input_buffer()
+        global ConveyorButton, prevConveyorButton 
+        global DeployButton, prevDeployButton
+        global DigLinButton, prevDigLinButton
+        global DigBeltButton, prevDigBeltButton
+        global msgSend, prevMsgSend
         
-        if abs(msg.linear.x - prevX) > .05 or abs(msg.linear.y - prevY) > .02 or abs(msg.angular.z - prevZ) > .05:
+        if abs(msg.linear.x - prevX) > .02 or abs(msg.linear.y - prevY) > .02 or abs(msg.angular.z - prevZ) > .02 or prevConveyorButton != ConveyorButton or prevDeployButton != DeployButton or prevDigLinButton != DigLinButton or prevDigBeltButton != DigBeltButton or msgSend !=prevMsgSend:
             ser.reset_input_buffer()
             ser.reset_output_buffer()
-            #ser.reset_output_buffer
+
             ser.write(struct.pack('c', b'X'))
             ser.write(struct.pack('<f', float(msg.linear.x)))
             ser.write(struct.pack('c', b'\n'))
@@ -43,23 +57,37 @@ class VelocityComm(Node):
             ser.write(struct.pack('<f', float(msg.angular.z)))
             ser.write(struct.pack('c', b'\n'))
 
-            #
-            #ser.write(struct.pack('<f', float(msg.linear.x)))
-            #ser.write(struct.pack('c', b'X'))
+            ser.write(struct.pack('c', b'A'))
+            ser.write(struct.pack('<i', int(ConveyorButton)))
+            ser.write(struct.pack('c', b'\n'))
 
-            #
-            #ser.write(struct.pack('<f', float(msg.linear.y)))
-            #ser.write(struct.pack('c', b'Y'))
-            #
-            #ser.write(struct.pack('<f', float(msg.angular.z)))
-            #ser.write(struct.pack('c', b'Z'))
+            ser.write(struct.pack('c', b'B'))
+            ser.write(struct.pack('<i', int(DeployButton)))
+            ser.write(struct.pack('c', b'\n'))
             
+            ser.write(struct.pack('c', b'C'))
+            ser.write(struct.pack('<i', int(DigLinButton)))
+            ser.write(struct.pack('c', b'\n'))
+
+            ser.write(struct.pack('c', b'D'))
+            ser.write(struct.pack('<i', int(DigBeltButton)))
+            ser.write(struct.pack('c', b'\n'))
+
+
             #ser.write(struct.pack('c', b'S'))
             self.get_logger().info('test\n')
             #self.get_logger().info(ser.readline())
+
             prevX = msg.linear.x
             prevY = msg.linear.y
             prevZ = msg.angular.z
+            
+            prevMsgSend = msgSend
+            prevConveyorButton = ConveyorButton
+            prevDeployButton = DeployButton
+            prevDigLinButton = DigLinButton
+            prevDigBeltButton = DigBeltButton
+
             sleep(0.1)
             
             
@@ -74,19 +102,18 @@ class ButtonPressComm(Node):
         self.subscription  # prevent unused variable warning
 
     def listener_callback(self, msg):
-        global prevbutton
-        global velSub
-
-       # if msg.buttons[3] != prevButton :
-       #     ser.write(struct.pack('c', b'B'))
-       #     ser.write(struct.pack('c', b'Y'))
-       #     ser.write(struct.pack('?', bool(msg.buttons[3])))
-       #     prevButton = msg.buttons[3] # Y toggle autonomy
-       #     if velSub == 'cmd_vel':
-       #         velSub = '/cmd_vel_nav2' #CHANGE?
-       #     else:
-       #         velSub = 'cmd_vel'
-       #     sleep(0.1)
+        global ConveyorButton
+        global DeployButton
+        global DigLinButton
+        global DigBeltButton
+        global msgSend
+        
+        ConveyorButton = msg.buttons[4]
+        msgSend = msg.buttons[5]
+        DeployButton = msg.axes[7]*200
+        DigLinButton = int(-1*(msg.axes[2])*255) #int(abs(msg.axes[2]-1)*255/2)
+        DigBeltButton = int(abs(msg.axes[5]-1)*255/2)
+        msgSend = 
 
 
 

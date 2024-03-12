@@ -3,6 +3,11 @@
 float linear_x = 0.0;
 float linear_y = 0.0;
 float angular_z = 0.0;
+int ConveyorButton = 0;
+int DeployButton = 0;
+int DigLinButton = 0;
+int DigBeltButton = 0;
+
 char START_MARKER;
 
 
@@ -32,27 +37,8 @@ void loop() {
   //updated_comms();
   comms_timer = millis();
   
-    if (maInc < 3){
-      prevLinX[maInc] = linear_x;
-      prevLinY[maInc] = linear_y;
-      prevAngZ[maInc] = angular_z;
-      maInc += 1;
-      }
-    else{
-      prevLinX[maInc] = linear_x;
-      prevLinY[maInc] = linear_y;
-      prevAngZ[maInc] = angular_z;
-      maInc = 0;
-      }
-    maX = movingAverage(prevLinX, maX);
-    maY = movingAverage(prevLinY, maY);
-    maZ = movingAverage(prevAngZ, maX);
-    
-  } 
+  }
 
-  //linear_x = adjust(linear_x, .09);
-  //linear_y = adjust(linear_y, .09);
-  //angular_z = adjust(angular_z, 2.0);
   readEncoders();
  
   //motors_PWM(50);
@@ -63,7 +49,10 @@ void loop() {
     //control_vel(-0.5, 0.0); OLD
     //global_angle_select(40,-10,-10,40); OLD
     
-    four_ws_control(maX, maY, maZ, 4); 
+    if (linear_x < .09) {linear_x = 0;}
+    if (linear_y < .09) {linear_y = 0;}
+    if (angular_z < .09) {angular_z = 0;}
+    four_ws_control(linear_x, linear_y, angular_z, 1); 
     if (stepper_locked == false) {
       step_pos(pos_angs);
       control_vel_updated(lin_vels);
@@ -71,6 +60,11 @@ void loop() {
       step_timer = millis();
     }
     controller_control_loop();
+
+    deployAppendage(DeployButton);
+    digBelt(DigBeltButton);
+    digDepth(DigLinButton);
+    conveyor(ConveyorButton);
   //------------------------------------------------------------------------------//
   //global_angle_select(45, 45,  45, 45); //stepperer tester
   //motors_PWM(50.0);
@@ -180,6 +174,12 @@ void comms() {
           case 'X':{Serial.readBytesUntil('\n', (char*)&linear_x, sizeof(float)+sizeof('\n')); break;}
           case 'Y':{Serial.readBytesUntil('\n', (char*)&linear_y, sizeof(float)+sizeof('\n')); break;}
           case 'Z': {Serial.readBytesUntil('\n', (char*)&angular_z, sizeof(float)+sizeof('\n')); break;}
+          
+          case 'A': {Serial.readBytesUntil('\n', (char*)&ConveyorButton, sizeof(int)+sizeof('\n')); break;}
+          case 'B': {Serial.readBytesUntil('\n', (char*)&DeployButton, sizeof(int)+sizeof('\n')); break;}
+          case 'C': {Serial.readBytesUntil('\n', (char*)&DigLinButton, sizeof(int)+sizeof('\n')); break;}
+          case 'D': {Serial.readBytesUntil('\n', (char*)&DigBeltButton, sizeof(int)+sizeof('\n')); break;}
+          
         }//end cmd2
         //TRY NO SWITCH????
         //Serial.readBytesUntil('X', (char*)&linear_x, sizeof(float)+sizeof('X'));
@@ -187,20 +187,6 @@ void comms() {
         //Serial.readBytesUntil('Z', (char*)&angular_z, sizeof(float)+sizeof('Z'));
   }//end if
 }//end comms
-
-void comms2() {
-  // Check if there is data available to read
-  if (Serial.available() > 0) {
-        char cmd2 = Serial.read();
-        switch (cmd2){
-         // case 'X':{Serial.readStringUntil('\n', (char*)&linear_x, sizeof(float)+sizeof('\n')); linear_x =linear_x/1000;  break;}
-         // case 'Y':{Serial.readStringUntil('\n', (char*)&linear_y, sizeof(float)+sizeof('\n')); linear_y =linear_y/1000; break;}
-         // case 'Z': {Serial.readStringUntil('\n', (char*)&angular_z, sizeof(float)+sizeof('\n')); angular_z =angular_z/1000; break;}
-        }//end cmd2
-  }//end if
-}//end comms
-
-
 
 
 
