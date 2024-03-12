@@ -110,10 +110,10 @@ class ButtonPressComm(Node):
         
         ConveyorButton = msg.buttons[4]
         msgSend = msg.buttons[5]
-        DeployButton = msg.axes[7]*200
+        DeployButton = int(msg.buttons[6]-msg.buttons[7])*200
         DigLinButton = int(-1*(msg.axes[2])*255) #int(abs(msg.axes[2]-1)*255/2)
         DigBeltButton = int(abs(msg.axes[5]-1)*255/2)
-        msgSend = 
+        msgSend = msg.buttons[8]
 
 
 
