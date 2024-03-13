@@ -1,9 +1,10 @@
 /oak:
   ros__parameters:
     camera:
-      i_enable_imu: true
+      i_enable_imu: false #try tue
       i_enable_ir: true
       i_nn_type: spatial
-      i_pipeline_type: RGBD
+      i_pipeline_type: RGBD #try D and try 
     nn:
       i_nn_config_path: depthai_ros_driver/mobilenet
+    use_sim_time: false
