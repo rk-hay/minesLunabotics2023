@@ -14,16 +14,6 @@ def launch_setup(context, *args, **kwargs):
     depthai_prefix = get_package_share_directory("depthai_ros_driver")
 
     params_file= LaunchConfiguration("params_file")
-    parameters = [
-        {
-            "frame_id": name,
-            "subscribe_rgb": True,
-            "subscribe_depth": True,
-            "subscribe_odom_info": True,
-            "approx_sync": True,
-            "Rtabmap/DetectionRate": "3.5",
-        }
-    ]
 
     remappings = [
         ("rgb/image", name+"/rgb/image_rect"),

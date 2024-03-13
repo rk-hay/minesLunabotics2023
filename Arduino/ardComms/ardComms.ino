@@ -52,7 +52,7 @@ void loop() {
     if (linear_x < .09) {linear_x = 0;}
     if (linear_y < .09) {linear_y = 0;}
     if (angular_z < .09) {angular_z = 0;}
-    four_ws_control(linear_x, linear_y, angular_z, 1); 
+    //four_ws_control(linear_x, linear_y, angular_z, 1); 
     if (stepper_locked == false) {
       step_pos(pos_angs);
       control_vel_updated(lin_vels);
@@ -68,10 +68,10 @@ void loop() {
   //------------------------------------------------------------------------------//
   //global_angle_select(45, 45,  45, 45); //stepperer tester
   //motors_PWM(50.0);
-  //fl_motor_PWM(50); //does not turn with neg value
-  //fr_motor_PWM(-50);
-  //bl_motor_PWM(-50);
-  //br_motor_PWM(255);
+  fl_motor_PWM(50); 
+  fr_motor_PWM(50);
+  bl_motor_PWM(50);
+  br_motor_PWM(50);
   //control_vel(0.5, 0.0);
   //four_ws_co
   //TESTS
@@ -106,13 +106,13 @@ void loop() {
          Serial.print("  ");
          Serial.print(pos_angs[3]
 **/  
-//          Serial.print(fl_enc_pos);
-//          Serial.print("  ");
-//          Serial.print(fr_enc_pos);
-//          Serial.print("  ");
-//          Serial.print(bl_enc_pos);
-//          Serial.print("  ");
-//          Serial.print(br_enc_pos);
+          Serial.print(fl_enc_pos);
+          Serial.print("  ");
+          Serial.print(fr_enc_pos);
+          Serial.print("  ");
+          Serial.print(bl_enc_pos);
+          Serial.print("  ");
+          Serial.print(br_enc_pos);
 
         //  Serial.print(fl_pos());
         //  Serial.print("  ");
@@ -131,13 +131,14 @@ void loop() {
           //  Serial.print("  ");
           //  Serial.print(br_s_pos);
             Serial.print("  ");
-//
+/**
             Serial.print(linear_x);
             Serial.print("  ");
             Serial.print(linear_y);
             Serial.print("  ");
             Serial.print(angular_z);
             Serial.print("  ");
+            **/
 //
 //            Serial.print(maX);
 //            Serial.print("  ");

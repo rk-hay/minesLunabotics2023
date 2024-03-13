@@ -60,7 +60,7 @@
 #define fr_b 10
 #define bl_a 18
 #define bl_b A3
-#define br_a 19
+#define br_a 20
 #define br_b A1
 
 #define MAX_PWM 255
