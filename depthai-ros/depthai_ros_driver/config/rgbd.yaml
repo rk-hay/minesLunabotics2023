@@ -4,3 +4,12 @@
       i_nn_type: none
     stereo:
       i_subpixel: true
+    rgb:
+      i_low_bandwidth: true
+      i_fps: 30.0
+    left:
+      i_low_bandwidth: true
+    right:
+      i_low_bandwidth: true
+    stereo:
+      i_low_bandwidth: true
