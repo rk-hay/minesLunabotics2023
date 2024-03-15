@@ -1,0 +1,13 @@
+image_rect.format: jpeg
+image_rect.jpeg_quality: 15
+image_rect.png_level: 3
+image_rect.tiff.res_unit: inch
+image_rect.tiff.xdpi: -1
+image_rect.tiff.ydpi: -1
+interpolation: 1
+qos_overrides./parameter_events.publisher.depth: 1000
+qos_overrides./parameter_events.publisher.durability: volatile
+qos_overrides./parameter_events.publisher.history: keep_last
+qos_overrides./parameter_events.publisher.reliability: reliable
+queue_size: 5
+use_sim_time: false

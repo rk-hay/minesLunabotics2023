@@ -16,8 +16,7 @@ def launch_camera(context):
     parameters = [
         {
             "frame_id": name,
-            "subscribe_rgb": True,
-            "subscribe_depth": True,
+            "subscribe_stereo": True,  # Subscribing to stereo topics
             "subscribe_odom_info": True,
             "approx_sync": True,
             "Rtabmap/DetectionRate": "3.5",
@@ -37,22 +36,7 @@ def launch_camera(context):
             launch_arguments={"name": name,
                               "params_file": params_file}.items()),
 
-        LoadComposableNodes(
-            condition=IfCondition(LaunchConfiguration("rectify_rgb")),
-            target_container=name+"_container",
-            composable_node_descriptions=[
-                ComposableNode(
-                    package="image_proc",
-                    plugin="image_proc::RectifyNode",
-                    name="rectify_color_node",
-                    remappings=[('image', name+'/rgb/image_raw'),
-                                ('camera_info', name+'/rgb/camera_info'),
-                                ('image_rect', name+'/rgb/image_rect'),
-                                ('image_rect/compressed', name+'/rgb/image_rect/compressed'),
-                                ('image_rect/compressedDepth', name+'/rgb/image_rect/compressedDepth'),
-                                ('image_rect/theora', name+'/rgb/image_rect/theora')]
-                )
-            ]),
+
     ]
 
 def generate_launch_description():

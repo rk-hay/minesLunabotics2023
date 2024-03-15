@@ -26,7 +26,7 @@ def launch_setup(context, *args, **kwargs):
     ]
 
     remappings = [
-        ("rgb/image", name+"/rgb/image_rect"),
+        ("rgb/image", name+"/rgb/image_rect/compressed"),
         ("rgb/camera_info", name+"/rgb/camera_info"),
         ("depth/image", name+"/stereo/image_raw"),
     ]
@@ -100,5 +100,6 @@ def generate_launch_description():
     ]
 
     return LaunchDescription(
+        launch_ros.actions.SetParameter(name='image_rect.jpeg_quality', value=10),
         declared_arguments + [OpaqueFunction(function=launch_setup)]
     )

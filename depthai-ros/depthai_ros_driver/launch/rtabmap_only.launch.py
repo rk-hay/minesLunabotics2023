@@ -5,6 +5,7 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import LoadComposableNodes
 from launch_ros.descriptions import ComposableNode
+from ament_index_python.packages import get_package_share_directory
 import os
 
 def launch_setup(context):
@@ -15,8 +16,7 @@ def launch_setup(context):
     parameters = [
         {
             "frame_id": name,
-            "subscribe_rgb": True,
-            "subscribe_depth": True,
+            "subscribe_stereo": True,  # Subscribing to stereo topics
             "subscribe_odom_info": True,
             "approx_sync": True,
             "Rtabmap/DetectionRate": "3.5",
@@ -24,8 +24,10 @@ def launch_setup(context):
     ]
 
     remappings = [
-        ("rgb/image", name+"/rgb/image_rect/compressed"),  # Subscribing to compressed RGB image
-        ("rgb/camera_info", name+"/rgb/camera_info"),
+        ("stereo/left/image_rect_color", name+"/left/image_rect_color"),  # Subscribing to left camera image
+        ("stereo/left/camera_info", name+"/left/camera_info"),
+        ("stereo/right/image_rect_color", name+"/right/image_rect_color"),  # Subscribing to right camera image
+        ("stereo/right/camera_info", name+"/right/camera_info"),
         ("depth/image", name+"/stereo/image_raw/compressedDepth"),  # Subscribing to compressed depth image
     ]
 
@@ -55,6 +57,23 @@ def launch_setup(context):
                 ),
             ],
         ),
+
+        LoadComposableNodes(
+            condition=IfCondition(LaunchConfiguration("rectify_rgb")),
+            target_container=name+"_container",
+            composable_node_descriptions=[
+                ComposableNode(
+                    package="image_proc",
+                    plugin="image_proc::RectifyNode",
+                    name="rectify_color_node",
+                    remappings=[('image', name+'/rgb/image_raw'),
+                                ('camera_info', name+'/rgb/camera_info'),
+                                ('image_rect', name+'/rgb/image_rect'),
+                                ('image_rect/compressed', name+'/rgb/image_rect/compressed'),
+                                ('image_rect/compressedDepth', name+'/rgb/image_rect/compressedDepth'),
+                                ('image_rect/theora', name+'/rgb/image_rect/theora')]
+                )
+            ]),
     ]
 
 def generate_launch_description():
