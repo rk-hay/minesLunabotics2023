@@ -13,12 +13,12 @@ const int aKd_ang = 0;
 
 
 //tunable variables
-const int cKp_vel = 2;
-const int cKi_vel = 0;
-const int cKd_vel = 0;
+const float cKp_vel = 1; // kP shouldn’t be greater than 1/(max error) max errors is 2m/s so 500 PWM? (target is 1/-1 m/s robot is going -1/1 m/s difference is 500 (255 to -255))
+const float cKi_vel = 0.0; ////change to feed forward????
+const float cKd_vel = 0.000;
 
-const int cKp_pos = 2;
-const int cKi_pos = 0;
+const int cKp_pos = 1/10; // Max error is 10 becauce arena size is 10... ig soooo 1/10?
+const int cKi_pos = 1;
 const int cKd_pos = 0;
 
 const int cKp_ang = 2;
@@ -133,12 +133,12 @@ void auto_control_loop(){
   //----------------------//
   //begin angular velocity//
   //----------------------// 
-  static float angular_velocity_last_error = 0;
-  v_error = target_angular_velocity - ang_vel();
-  angular_velocity_I = max(-MAX_ANGULAR_VEL, min(MAX_ANGULAR_VEL, angular_velocity_I+(v_error*time_change)));
-  angular_velocity_D = (v_error-angular_velocity_last_error)/time_change;
-  float updated_angular_vel = (v_error*aKp_ang)+(aKi_ang*angular_velocity_I)+(aKd_ang*angular_velocity_D);
-  global_angle_select(updated_angular_vel, updated_angular_vel, -updated_angular_vel/3, -updated_angular_vel/3);
+  // static float angular_velocity_last_error = 0;
+  // v_error = target_angular_velocity - ang_vel();
+  // angular_velocity_I = max(-MAX_ANGULAR_VEL, min(MAX_ANGULAR_VEL, angular_velocity_I+(v_error*time_change)));
+  // angular_velocity_D = (v_error-angular_velocity_last_error)/time_change;
+  // float updated_angular_vel = (v_error*aKp_ang)+(aKi_ang*angular_velocity_I)+(aKd_ang*angular_velocity_D);
+  // global_angle_select(updated_angular_vel, updated_angular_vel, -updated_angular_vel/3, -updated_angular_vel/3);
 
 
   }//end control loop
@@ -163,7 +163,7 @@ void controller_control_loop(){
   static float bl_v_D = 0; 
   static float br_v_D = 0; 
 
-  static float fl_p_D = 0; //
+  static float fl_p_D = 0;
   static float fr_p_D = 0; 
   static float bl_p_D = 0; 
   static float br_p_D = 0; 

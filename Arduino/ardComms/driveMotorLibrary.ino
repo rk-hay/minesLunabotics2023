@@ -19,11 +19,16 @@ float fl_d_vel(){
     unsigned long myTime = micros();
     static float prevTime = 0;
     static int prev_pos_fl = 0;
+    static float prevVelocity = 0;
+    static float velocity = 0; 
     readEncoders();
-    float velocity = (1.0/enc_per_rev)*(PI*wheel_diameter)*((fl_enc_pos-prev_pos_fl)/((myTime-prevTime) * .000001));
+    velocity = (1.0/enc_per_rev)*(PI*wheel_diameter)*((fl_enc_pos-prev_pos_fl)/((myTime-prevTime) * .000001));
+    if ((abs(fl_enc_pos) < abs(prev_pos_fl))){
+       velocity = prevVelocity;
+    }
     prev_pos_fl = fl_enc_pos;
     prevTime = myTime;
-
+    prevVelocity = velocity;
   return velocity;
   }
 
@@ -34,12 +39,16 @@ float fr_d_vel(){
     unsigned long myTime = micros();
     static float prevTime = 0;
     static int prev_pos_fr = 0;
+    static float prevVelocity = 0;
+    static float velocity = 0; 
     readEncoders();
-    float velocity = (1.0/enc_per_rev)*(PI*wheel_diameter)*((fr_enc_pos-prev_pos_fr)/((myTime-prevTime) * .000001));
+    velocity = (1.0/enc_per_rev)*(PI*wheel_diameter)*((fr_enc_pos-prev_pos_fr)/((myTime-prevTime) * .000001));
+    if ((abs(fr_enc_pos) < abs(prev_pos_fr))){
+       velocity = prevVelocity;
+    }
     prev_pos_fr = fr_enc_pos;
     prevTime = myTime;
-  
-  
+    prevVelocity = velocity;
   return velocity;
   }
 
@@ -49,12 +58,17 @@ float bl_d_vel(){
     unsigned long myTime = micros();
     static float prevTime = 0;
     static int prev_pos_bl = 0;
+    static float prevVelocity = 0;
+    static float velocity = 0; 
+
     readEncoders();
-    float velocity = (1.0/enc_per_rev)*(PI*wheel_diameter)*((bl_enc_pos-prev_pos_bl)/((myTime-prevTime) * .000001));
+    velocity = (1.0/enc_per_rev)*(PI*wheel_diameter)*((bl_enc_pos-prev_pos_bl)/((myTime-prevTime) * .000001));
+    if ((abs(bl_enc_pos) < abs(prev_pos_bl))){
+       velocity = prevVelocity;
+    }
     prev_pos_bl = bl_enc_pos;
     prevTime = myTime;
-    
-  
+    prevVelocity = velocity;
   return velocity;
   }
 
@@ -64,11 +78,17 @@ float br_d_vel(){
     unsigned long myTime = micros();
     static float prevTime = 0;
     static int prev_pos_br = 0;
+    static float prevVelocity = 0;
+    static float velocity = 0; 
+
     readEncoders();
-    float velocity = (1.0/enc_per_rev)*(PI*wheel_diameter)*((br_enc_pos-prev_pos_br)/((myTime-prevTime) * .000001));
+    velocity = (1.0/enc_per_rev)*(PI*wheel_diameter)*((br_enc_pos-prev_pos_br)/((myTime-prevTime) * .000001));
+    if ((abs(br_enc_pos) < abs(prev_pos_br))){
+       velocity = prevVelocity;
+    }
     prev_pos_br = br_enc_pos;
     prevTime = myTime;
-  
+    prevVelocity = velocity;
   
   return velocity;
   }

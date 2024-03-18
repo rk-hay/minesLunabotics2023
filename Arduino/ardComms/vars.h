@@ -1,6 +1,10 @@
 #ifndef VARS_H
 #define VARS_H
 
+
+
+
+
 //--------------------------------------//
 //           motor Defines              //
 //--------------------------------------//
@@ -22,36 +26,43 @@
 #define bl_d_rev 37 // was 36
 #define br_d_rev A0
 
-//stepper pos enable -PULL HIGH
-#define fl_s_nenable 22  //was 52
-#define fr_s_nenable 23  //was 34
-#define bl_s_nenable 52 //was 43
-#define br_s_nenable 43 //was 23
+//stepper pos enable -PULL HIGH //fl is turning fr  //fr is turning br //bl is turning fl //br is turning bl
+#define fl_s_nenable 52  //was 52
+#define fl_s_penable 50  // was 50
+#define fl_s_ndir    48  //was 48
+#define fl_s_pdir    46 //was 46
+#define fl_s_npwm    44 //was 44
+#define fl_s_ppwm    42 //was 42
+
+#define fr_s_nenable 22  //was 24
+#define fr_s_penable 24  //was26
+#define fr_s_ndir    26  //was 28
+#define fr_s_pdir    28  //was 30
+#define fr_s_npwm    30 //was 32
+#define fr_s_ppwm    32 //was 34
+
+#define bl_s_nenable 43 //was 43
+#define bl_s_penable 45 //was 45
+#define bl_s_ndir    47 //was 47
+#define bl_s_pdir    49 //was 49
+#define bl_s_npwm    51 //was 51
+#define bl_s_ppwm    53 //was 53
+
+#define br_s_nenable 23 //was 23
+#define br_s_penable 25 //was 25
+#define br_s_ndir    27 //was 27
+#define br_s_pdir    29 //was 29
+#define br_s_npwm    31 //was 31
+#define br_s_ppwm    33 //was 33
+
 //stepper pos enable - PULL HIGH
-#define fl_s_penable 24  // was 50
-#define fr_s_penable 25  //was26
-#define bl_s_penable 50 //was 45
-#define br_s_penable 45 //was 25
 //steppers neg dir - DIR pick
-#define fl_s_ndir 26  //was 48
-#define fr_s_ndir 27  //was 28
-#define bl_s_ndir 48 //was 47
-#define br_s_ndir 47 //was 27
 //steppers pos dir - PULL HIGH
-#define fl_s_pdir 28  //was 46
-#define fr_s_pdir 29  //was 30
-#define bl_s_pdir 46 //was 49
-#define br_s_pdir 49 //was 29
 //steppers neg pwm - PULSE TO MOVE
-#define fl_s_npwm 30 //was 44
-#define fr_s_npwm 31 //was 32
-#define bl_s_npwm 44 //was 51
-#define br_s_npwm 51 //was 31
 //steppers pos pwm - PULL HIGH
-#define fl_s_ppwm 32 //was 42
-#define fr_s_ppwm 33 //was 34
-#define bl_s_ppwm 42 //was 53
-#define br_s_ppwm 53 //was 33
+
+
+
 
 //motor encoders 
 #define fl_a 2
@@ -63,7 +74,7 @@
 #define br_a 20
 #define br_b A1
 
-#define MAX_PWM 255
+#define MAX_PWM 1
 #define MAX_LINEAR_PWM 255
 #define MAX_ANGULAR_PWM 255
 #define MAX_INTEGRAL 1

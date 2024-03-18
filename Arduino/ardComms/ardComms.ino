@@ -33,45 +33,46 @@ void loop() {
   //first update vars from the system
   if (millis()-comms_timer > 6){
   //Serial.println("comm");
-  comms();
-  //updated_comms();
+ // comms();
+
   comms_timer = millis();
   
   }
 
   readEncoders();
  
-  //motors_PWM(50);
-  //br_motor_PWM(50);  
-  //run the control loop on a 16 ms timer
+
+  //run the control loop on a timer
   if (millis() - control_loop_timer > 24) {
-    //  Serial.println("cl"); TESTING
-    //control_vel(-0.5, 0.0); OLD
-    //global_angle_select(40,-10,-10,40); OLD
+                                //  Serial.println("cl"); TESTING
+                                //control_vel(-0.5, 0.0); OLD
+                                //global_angle_select(40,-10,-10,40); OLD
     
-    if (linear_x < .09) {linear_x = 0;}
-    if (linear_y < .09) {linear_y = 0;}
-    if (angular_z < .09) {angular_z = 0;}
-    //four_ws_control(linear_x, linear_y, angular_z, 1); 
+    if (abs(linear_x) < .09) {linear_x = 0;}
+    if (abs(linear_y) < .09) {linear_y = 0;}
+    if (abs(angular_z) < .09) {angular_z = 0;}
+    //four_ws_control(linear_x, linear_y, angular_z, 1);
+    four_ws_control(0.0, 0.0, 0.0, 1);
+    //control_vel_fl(.7); 
     if (stepper_locked == false) {
       step_pos(pos_angs);
-      control_vel_updated(lin_vels);
+      //control_vel_updated(lin_vels);
       //global_angle_select(0, 0, 45, 0);
       step_timer = millis();
     }
-    controller_control_loop();
+    //controller_control_loop();
 
     deployAppendage(DeployButton);
     digBelt(DigBeltButton);
     digDepth(DigLinButton);
     conveyor(ConveyorButton);
   //------------------------------------------------------------------------------//
-  //global_angle_select(45, 45,  45, 45); //stepperer tester
-  //motors_PWM(50.0);
-  fl_motor_PWM(50); 
-  fr_motor_PWM(50);
-  bl_motor_PWM(50);
-  br_motor_PWM(50);
+  //global_angle_select(-45, 0,  0, 0); //stepperer tester   //fl is cur fr  //fr is br //bl is fl //br is bl
+  //motors_PWM(0.0);
+  //  fl_motor_PWM(50); 
+  //  fr_motor_PWM(0);
+  //  bl_motor_PWM(-50);
+  //  br_motor_PWM(0);
   //control_vel(0.5, 0.0);
   //four_ws_co
   //TESTS
@@ -82,16 +83,16 @@ void loop() {
 
   //DEBUGGING STATEMENTS (print every 50 millis)
   if (millis() - print_timer > 24) {
-        //  Serial.print(fl_d_vel());
-        //  Serial.print("  ");
-        //  Serial.print(fr_d_vel());
-        //  Serial.print("  ");
-        //  Serial.print(bl_d_vel());
+         Serial.print(fl_d_vel());
+         Serial.print("  ");
+//         Serial.print();
+         Serial.print("  ");
+  //       Serial.print(fl_v_D);
         //  Serial.print("  ");
         //  Serial.print(br_d_vel());
-        //  Serial.print("  ");
-//            Serial.print(lin_vels[0]);
-//            Serial.print("  ");
+//          Serial.print("  ");
+          Serial.print(.7);
+            Serial.print("  ");
 /**         Serial.print(lin_vels[1]);
          Serial.print("  ");
          Serial.print(lin_vels[2]);
@@ -106,13 +107,13 @@ void loop() {
          Serial.print("  ");
          Serial.print(pos_angs[3]
 **/  
-          Serial.print(fl_enc_pos);
-          Serial.print("  ");
-          Serial.print(fr_enc_pos);
-          Serial.print("  ");
-          Serial.print(bl_enc_pos);
-          Serial.print("  ");
-          Serial.print(br_enc_pos);
+           Serial.print(fl_enc_pos);
+          // Serial.print("  ");
+          // Serial.print(fr_enc_pos);
+          // Serial.print("  ");
+          // Serial.print(bl_enc_pos);
+          // Serial.print("  ");
+          // Serial.print(br_enc_pos);
 
         //  Serial.print(fl_pos());
         //  Serial.print("  ");
@@ -130,7 +131,7 @@ void loop() {
           //  Serial.print(bl_s_pos);
           //  Serial.print("  ");
           //  Serial.print(br_s_pos);
-            Serial.print("  ");
+//            Serial.print("  ");
 /**
             Serial.print(linear_x);
             Serial.print("  ");
