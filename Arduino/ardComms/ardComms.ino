@@ -56,13 +56,13 @@ void loop() {
     //control_vel_fl(.7); 
     if (stepper_locked == false) {
       step_pos(pos_angs);
-      //control_vel_updated(lin_vels);
+      control_vel_updated(lin_vels);
       //global_angle_select(0, 0, 45, 0);
       step_timer = millis();
     }
-    //controller_control_loop();
+    controller_control_loop();
 
-    deployAppendage(DeployButton);
+    deployAppendageLinActuators(DeployButton);
     digBelt(DigBeltButton);
     digDepth(DigLinButton);
     conveyor(ConveyorButton);

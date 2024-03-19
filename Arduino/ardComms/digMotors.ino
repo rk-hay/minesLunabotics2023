@@ -2,13 +2,13 @@
 #define appendageDeployLinears_PWM A8
 #define appendageDeployLinears_IN1 A9
 #define appendageDeployLinears_IN2 A10
-#define appendageBelt_PWM 13
+#define appendageBelt_PWM 7
 #define appendageBelt_IN1 A11
 #define appendageBelt_IN2 A12
 
 #define appendageDigLin_PWM 8
 #define appendageDigLin_IN1 A13
-#define appendageDigLin_IN2 A14
+#define appendageDigLin_IN2 A5
 
 #define conveyor_PWM 13
 #define conveyor_IN1 A6
@@ -39,7 +39,7 @@ void digSetup() {
 
 void activateDig(){
   //deploy
-  deployAppendage(150);
+  deployAppendageLinActuators(150);
   delay(5000);
   digBelt(50);
   digDepth(50);
@@ -50,12 +50,12 @@ void activateDig(){
   conveyor(150);
 }
 
-void deployAppendage(int duty){
+void deployAppendageLinActuators(int duty){
   //if limit switch != true
   bool dir = duty > 0;
   analogWrite(appendageDeployLinears_PWM, abs(duty));
-  digitalWrite(appendageDeployLinears_IN1, !dir);
-  digitalWrite(appendageDeployLinears_IN2, dir);
+  digitalWrite(appendageDeployLinears_IN1, !dir);  //high when -
+  digitalWrite(appendageDeployLinears_IN2, dir); // high when +
 }
 
 void digBelt(int duty){
