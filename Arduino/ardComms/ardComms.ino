@@ -3,10 +3,10 @@
 float linear_x = 0.0;
 float linear_y = 0.0;
 float angular_z = 0.0;
-int ConveyorButton = 0;
-int DeployButton = 0;
-int DigLinButton = 0;
-int DigBeltButton = 0;
+float ConveyorButton = 0;
+float DeployButton = 0;
+float DigLinButton = 0;
+float DigBeltButton = 0;
 
 char START_MARKER;
 
@@ -33,7 +33,7 @@ void loop() {
   //first update vars from the system
   if (millis()-comms_timer > 6){
   //Serial.println("comm");
- // comms();
+  comms();
 
   comms_timer = millis();
   
@@ -51,8 +51,8 @@ void loop() {
     if (abs(linear_x) < .09) {linear_x = 0;}
     if (abs(linear_y) < .09) {linear_y = 0;}
     if (abs(angular_z) < .09) {angular_z = 0;}
-    //four_ws_control(linear_x, linear_y, angular_z, 1);
-    four_ws_control(0.0, 0.0, 0.0, 1);
+    four_ws_control(linear_x, linear_y, angular_z, 1);
+    //four_ws_control(0.0, 0.0, 0.0, 1);
     //control_vel_fl(.7); 
     if (stepper_locked == false) {
       step_pos(pos_angs);
@@ -83,16 +83,16 @@ void loop() {
 
   //DEBUGGING STATEMENTS (print every 50 millis)
   if (millis() - print_timer > 24) {
-         Serial.print(fl_d_vel());
-         Serial.print("  ");
+//         Serial.print(fl_d_vel());
+//         Serial.print("  ");
 //         Serial.print();
-         Serial.print("  ");
+   //      Serial.print("  ");
   //       Serial.print(fl_v_D);
         //  Serial.print("  ");
         //  Serial.print(br_d_vel());
 //          Serial.print("  ");
-          Serial.print(.7);
-            Serial.print("  ");
+//          Serial.print(.7);
+//            Serial.print("  ");
 /**         Serial.print(lin_vels[1]);
          Serial.print("  ");
          Serial.print(lin_vels[2]);
@@ -107,7 +107,7 @@ void loop() {
          Serial.print("  ");
          Serial.print(pos_angs[3]
 **/  
-           Serial.print(fl_enc_pos);
+        //   Serial.print(fl_enc_pos);
           // Serial.print("  ");
           // Serial.print(fr_enc_pos);
           // Serial.print("  ");
@@ -132,15 +132,24 @@ void loop() {
           //  Serial.print("  ");
           //  Serial.print(br_s_pos);
 //            Serial.print("  ");
-/**
+//
             Serial.print(linear_x);
             Serial.print("  ");
             Serial.print(linear_y);
             Serial.print("  ");
             Serial.print(angular_z);
             Serial.print("  ");
-            **/
-//
+//            /
+
+            Serial.print(DeployButton);
+            Serial.print("  ");
+            Serial.print(DigBeltButton);
+            Serial.print("  ");
+            Serial.print(DigLinButton);
+            Serial.print("  ");
+            Serial.print(ConveyorButton);
+            Serial.print("  ");
+            
 //            Serial.print(maX);
 //            Serial.print("  ");
 //            Serial.print(maY);
@@ -177,16 +186,12 @@ void comms() {
           case 'Y':{Serial.readBytesUntil('\n', (char*)&linear_y, sizeof(float)+sizeof('\n')); break;}
           case 'Z': {Serial.readBytesUntil('\n', (char*)&angular_z, sizeof(float)+sizeof('\n')); break;}
           
-          case 'A': {Serial.readBytesUntil('\n', (char*)&ConveyorButton, sizeof(int)+sizeof('\n')); break;}
-          case 'B': {Serial.readBytesUntil('\n', (char*)&DeployButton, sizeof(int)+sizeof('\n')); break;}
-          case 'C': {Serial.readBytesUntil('\n', (char*)&DigLinButton, sizeof(int)+sizeof('\n')); break;}
-          case 'D': {Serial.readBytesUntil('\n', (char*)&DigBeltButton, sizeof(int)+sizeof('\n')); break;}
+          case 'A': {Serial.readBytesUntil('\n', (char*)&ConveyorButton, sizeof(float)+sizeof('\n')); break;}
+          case 'B': {Serial.readBytesUntil('\n', (char*)&DeployButton, sizeof(float)+sizeof('\n')); break;}
+          case 'C': {Serial.readBytesUntil('\n', (char*)&DigLinButton, sizeof(float)+sizeof('\n')); break;}
+          case 'D': {Serial.readBytesUntil('\n', (char*)&DigBeltButton, sizeof(float)+sizeof('\n')); break;}
           
         }//end cmd2
-        //TRY NO SWITCH????
-        //Serial.readBytesUntil('X', (char*)&linear_x, sizeof(float)+sizeof('X'));
-        //Serial.readBytesUntil('Y', (char*)&linear_y, sizeof(float)+sizeof('Y'));
-        //Serial.readBytesUntil('Z', (char*)&angular_z, sizeof(float)+sizeof('Z'));
   }//end if
 }//end comms
 
