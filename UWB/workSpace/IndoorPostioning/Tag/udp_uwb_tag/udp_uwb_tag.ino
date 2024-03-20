@@ -18,7 +18,7 @@ For ESP32 UWB or ESP32 UWB Pro
 
 const char *ssid = "Hay";
 const char *password = "";
-const char *host = "192.168.232.8";
+const char *host = "192.168.107.8";
 WiFiClient client;
 
 struct MyLink *uwb_data;

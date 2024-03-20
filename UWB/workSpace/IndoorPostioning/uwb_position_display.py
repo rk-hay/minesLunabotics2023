@@ -5,12 +5,12 @@ import socket
 import json
 
 hostname = socket.gethostname()
-UDP_IP = socket.gethostbyname(hostname)
+UDP_IP =  socket.gethostbyname(hostname)
 print("***Local ip:" + str(UDP_IP) + "***")
 UDP_PORT = 80
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock.bind((UDP_IP, UDP_PORT))
-sock.listen(1)  # 接收的连接数
+sock.listen(1) 
 data, addr = sock.accept()
 
 distance_a1_a2 = 2.74
@@ -125,7 +125,7 @@ def draw_uwb_tag(x, y, txt, t):
 
 def read_data():
     try:
-        data.settimeout(3)  # Set a timeout of 1 second
+        data.settimeout(5)  # Set a timeout of 1 second
         line = data.recv(1024).decode('UTF-8')
         data.settimeout(None)  # Reset the timeout
 
@@ -160,7 +160,7 @@ def tag_pos(a, b, c):
     x = b * cos_a
     y = b * cmath.sqrt(1 - cos_a * cos_a)
 
-    return round(x.real, 1), round(y.real, 1)
+    return round(x.real, 3), round(y.real, 3)
 
 
 def uwb_range_offset(uwb_range):
@@ -193,7 +193,7 @@ def main():
             if one["A"] == "1784":
                 clean(t_a1)
                 a1_range = uwb_range_offset(float(one["R"]))
-                draw_uwb_anchor(-250, 150, "A1782(0,0)", a1_range, t_a1)
+                draw_uwb_anchor(-250, 150, "A1784(0,0)", a1_range, t_a1)
                 node_count += 1
 
             if one["A"] == "1783":
