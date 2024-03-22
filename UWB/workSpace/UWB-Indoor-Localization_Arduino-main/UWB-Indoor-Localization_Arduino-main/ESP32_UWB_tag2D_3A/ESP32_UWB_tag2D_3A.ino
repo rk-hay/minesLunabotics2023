@@ -9,7 +9,8 @@
 #include <SPI.h>
 #include "DW1000Ranging.h"
 #include "DW1000.h"
-
+#include <WiFi.h>
+#include 
 //#define DEBUG_TRILAT   //prints in trilateration code
 //#define DEBUG_DIST     //print anchor distances
 
@@ -26,6 +27,10 @@ const uint8_t PIN_SS = 4;   // spi select pin
 // TAG antenna delay defaults to 16384
 // leftmost two bytes below will become the "short address"
 char tag_addr[] = "7D:00:22:EA:82:60:3B:9C";
+
+const char *ssid = "Hay";
+const char *password = "";
+const char *host = "192.168.107.8";
 
 // variables for position determination
 #define N_ANCHORS 3
@@ -44,11 +49,35 @@ float last_anchor_distance[N_ANCHORS] = {0.0}; //most recent distance reports
 
 float current_tag_position[2] = {0.0, 0.0}; //global current position (meters with respect to anchor origin)
 float current_distance_rmse = 0.0;  //rms error in distance calc => crude measure of position error (meters).  Needs to be better characterized
+long runtime = 0;
 
 void setup()
 {
   Serial.begin(115200);
+
+  WiFi.mode(WIFI_STA);
+  WiFi.setSleep(false);
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED)
+  {
+      delay(500);
+      Serial.print(".");
+  }
+  Serial.println("Connected");
+  Serial.print("IP Address:");
+  Serial.println(WiFi.localIP());
+
+  if (client.connect(host, 80))
+  {
+      Serial.println("Success");
+      client.print(String("GET /") + " HTTP/1.1\r\n" +
+                    "Host: " + host + "\r\n" +
+                    "Connection: close\r\n" +
+                    "\r\n");
+  }
   delay(1000);
+
+
 
   //initialize configuration
   SPI.begin(SPI_SCK, SPI_MISO, SPI_MOSI);
@@ -66,6 +95,11 @@ void setup()
 void loop()
 {
   DW1000Ranging.loop();
+    if ((millis() - runtime) > 100)
+    {
+        send_udp(current_tag_position[0], current_tag_position[1], current_distance_rmse);
+        runtime = millis();
+    }
 }
 
 // collect distance data from anchors, presently configured for 4 anchors
@@ -216,3 +250,19 @@ int trilat2D_3A(void) {
 
   return 1;
 }  //end trilat2D_3A
+
+
+void send_udp(float X, float Y, float E)
+{
+    if (client.connected())
+    {
+        client.print(String(X));
+        client.print(",");
+        client.print(String(Y));
+        client.print(",");
+        client.print(String(E));
+        client.print(",");
+
+        Serial.println("UDP send");
+    }
+}
