@@ -1,5 +1,4 @@
 import rclpy
-import serial
 from rclpy.node import Node
 from geometry_msgs.msg import PoseStamped 
 import socket

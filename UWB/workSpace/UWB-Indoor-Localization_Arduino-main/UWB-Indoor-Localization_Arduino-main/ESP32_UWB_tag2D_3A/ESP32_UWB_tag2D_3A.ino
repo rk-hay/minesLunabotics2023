@@ -10,7 +10,6 @@
 #include "DW1000Ranging.h"
 #include "DW1000.h"
 #include <WiFi.h>
-#include 
 //#define DEBUG_TRILAT   //prints in trilateration code
 //#define DEBUG_DIST     //print anchor distances
 
@@ -31,7 +30,7 @@ char tag_addr[] = "7D:00:22:EA:82:60:3B:9C";
 const char *ssid = "Hay";
 const char *password = "";
 const char *host = "192.168.107.8";
-
+WiFiClient client;
 // variables for position determination
 #define N_ANCHORS 3
 #define ANCHOR_DISTANCE_EXPIRED 5000   //measurements older than this are ignore (milliseconds)
@@ -256,13 +255,7 @@ void send_udp(float X, float Y, float E)
 {
     if (client.connected())
     {
-        client.print(String(X));
-        client.print(",");
-        client.print(String(Y));
-        client.print(",");
-        client.print(String(E));
-        client.print(",");
-
+        client.print(String(X) + "," + String(Y) + ", " + String(E));
         Serial.println("UDP send");
     }
 }
