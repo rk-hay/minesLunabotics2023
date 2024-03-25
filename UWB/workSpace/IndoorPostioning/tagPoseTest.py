@@ -41,5 +41,5 @@ def read_data():
         print("Socket timeout. No data received.")
         data.settimeout(None)
         return 0
-
-read_data()
+while True:
+    read_data()

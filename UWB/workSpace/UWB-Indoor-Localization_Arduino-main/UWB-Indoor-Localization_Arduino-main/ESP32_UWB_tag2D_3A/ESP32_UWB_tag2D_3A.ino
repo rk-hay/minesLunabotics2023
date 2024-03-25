@@ -39,8 +39,8 @@ WiFiClient client;
 
 float anchor_matrix[N_ANCHORS][3] = { //list of anchor coordinates, relative to chosen origin.
   {0.0, 0.0, 0.0},  //Anchor labeled #1
-  {3.99, 5.44, 1.14},//Anchor labeled #2
-  {3.71, -0.3, 0.6}, //Anchor labeled #3
+  {0.0, 1.4986, 0.1},//Anchor labeled #2
+  {2.4384, 1.4986, 0.1}, //Anchor labeled #3
 };  //Z values are ignored in this code
 
 uint32_t last_anchor_update[N_ANCHORS] = {0}; //millis() value last time anchor was seen
@@ -69,10 +69,10 @@ void setup()
   if (client.connect(host, 80))
   {
       Serial.println("Success");
-      client.print(String("GET /") + " HTTP/1.1\r\n" +
-                    "Host: " + host + "\r\n" +
-                    "Connection: close\r\n" +
-                    "\r\n");
+      // client.print(String("GET /") + " HTTP/1.1\r\n" +
+      //               "Host: " + host + "\r\n" +
+      //               "Connection: close\r\n" +
+      //               "\r\n");
   }
   delay(1000);
 
@@ -93,12 +93,13 @@ void setup()
 
 void loop()
 {
+  if ((millis() - runtime) > 100)
+  {
+      send_udp(current_tag_position[0], current_tag_position[1], current_distance_rmse);
+      runtime = millis();
+  }
   DW1000Ranging.loop();
-    if ((millis() - runtime) > 100)
-    {
-        send_udp(current_tag_position[0], current_tag_position[1], current_distance_rmse);
-        runtime = millis();
-    }
+
 }
 
 // collect distance data from anchors, presently configured for 4 anchors

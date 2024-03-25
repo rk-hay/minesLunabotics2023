@@ -30,12 +30,14 @@ const uint8_t PIN_SS = 4;   // spi select pin
 
 
 char this_anchor_addr[] = "84:00:22:EA:82:60:3B:9C";
-float this_anchor_target_distance = 296*0.0254; //measured distance to anchor in m
+float this_anchor_target_distance = 2.5654; //measured distance to anchor in m
 
 uint16_t this_anchor_Adelay = 16600; //starting value
 uint16_t Adelay_delta = 100; //initial binary search step size
 
-
+//1 21023 18525 18530 16382
+//2 13358
+//3 17173
 void setup()
 {
   Serial.begin(115200);
@@ -78,13 +80,14 @@ void newRange()
   if (Adelay_delta < 3) {
     Serial.print(", final Adelay ");
     Serial.println(this_anchor_Adelay);
-//    Serial.print("Check: stored Adelay = ");
-//    Serial.println(DW1000.getAntennaDelay());
+    Serial.print("  Check: stored Adelay = ");
+    Serial.println(DW1000.getAntennaDelay());
     while(1);  //done calibrating
   }
 
   float this_delta = dist - this_anchor_target_distance;  //error in measured distance
-
+  Serial.print(", error ");
+  Serial.print(this_delta);
   if ( this_delta * last_delta < 0.0) Adelay_delta = Adelay_delta / 2; //sign changed, reduce step size
     last_delta = this_delta;
   

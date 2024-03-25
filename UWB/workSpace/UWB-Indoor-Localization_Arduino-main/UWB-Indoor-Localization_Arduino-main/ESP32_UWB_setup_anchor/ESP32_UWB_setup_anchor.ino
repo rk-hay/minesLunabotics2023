@@ -12,16 +12,16 @@
 char anchor_addr[] = "83:00:5B:D5:A9:9A:E2:9C"; //#4
 
 //calibrated Antenna Delay setting for this anchor
-uint16_t Adelay = 16607; //UPDATE
+uint16_t Adelay = 16600; //UPDATE
 
 // previously determined calibration results for antenna delay
-// #1 16630
-// #2 16610
-// #3 16607
+// #1 16630 
+// #2 16610 
+// #3 16607 
 // #4 16580
 
 // calibration distance
-float dist_m = (285 - 1.75) * 0.0254; //meters
+float dist_m = 8; //meters
 
 #define SPI_SCK 18
 #define SPI_MISO 19
