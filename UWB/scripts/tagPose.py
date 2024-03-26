@@ -1,15 +1,17 @@
+#!/usr/bin/python3
 import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import PoseStamped 
+from nav_msgs.msg import Odometry
 import socket
 import time
 
 hostname = socket.gethostname()
 UDP_IP =  socket.gethostbyname(hostname)
-print("***Local ip:" + str(UDP_IP) + "***")
-UDP_PORT = 80
+print("***Local ip:" + '192.168.107.8' + "***")
+UDP_PORT = 5000
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-sock.bind((UDP_IP, UDP_PORT))
+sock.bind(('192.168.107.8', UDP_PORT))
 sock.listen(1) 
 data, addr = sock.accept()
 
@@ -19,21 +21,26 @@ class tagPublisher(Node):
     e = 0
     def __init__(self):
         super().__init__('tagPublisher')
-        self.publisher_ = self.create_publisher(PoseStamped , 'PoseStamped', 10)
+        self.publisher_ = self.create_publisher(Odometry , 'Odometry', 10)
         self.timer = self.create_timer(.1, self.publish_PoseStamped)
 
     def publish_PoseStamped(self):
         self.read_data()
-        msg = PoseStamped()
-        msg.header.stamp = self.get_clock().now().to_msg()
-        msg.pose.position.x = self.x
-        msg.pose.position.y = self.y
-        msg.pose.position.z = 0
-        msg.pose.orientation.x = 0#quat_x
-        msg.pose.orientation.y = 0#quat_y
-        msg.pose.orientation.z = 0#quat_z FIGURE OUT HOW TO ADD
-        msg.pose.orientation.w = 0#quat_w
-        self.publisher_.publish(msg)
+        odom = Odometry()
+        odom.header.frame_id = "odom"
+        odom.header.stamp = self.get_clock().now().to_msg()
+        odom.pose.pose.position.x = self.x
+        odom.pose.pose.position.y = self.y
+        odom.pose.pose.position.z = 0.0
+        odom.pose.pose.orientation.x = 0.0#quat_x
+        odom.pose.pose.orientation.y = 0.0#quat_y
+        odom.pose.pose.orientation.z = 0.0#quat_z FIGURE OUT HOW TO ADD
+        odom.pose.pose.orientation.w = 0.0#quat_w
+        odom.child_frame_id = "base_link"
+        odom.twist.twist.linear.x
+        odom.twist.twist.linear.y = 0.0
+        odom.twist.twist.linear.z = 0.0
+        self.publisher_.publish(odom)
 
     def read_data(self):
         try:

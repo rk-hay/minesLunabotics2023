@@ -66,7 +66,7 @@ void setup()
   Serial.print("IP Address:");
   Serial.println(WiFi.localIP());
 
-  if (client.connect(host, 80))
+  if (client.connect(host, 5000))
   {
       Serial.println("Success");
       // client.print(String("GET /") + " HTTP/1.1\r\n" +

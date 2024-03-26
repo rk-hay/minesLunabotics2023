@@ -23,6 +23,7 @@ void setup() {
 
 //notes for controls system. the motors need a min PWM speed of 30.
 void loop() {
+  static int driveMode = 1;
    //Serial.println("loop");
   //loop only vars
   static float control_loop_timer = 0;
@@ -51,12 +52,17 @@ void loop() {
     if (abs(linear_x) < .09) {linear_x = 0;}
     if (abs(linear_y) < .09) {linear_y = 0;}
     if (abs(angular_z) < .09) {angular_z = 0;}
-    four_ws_control(linear_x, linear_y, angular_z, 1);
+    if (linear_x == 0 && linear_y == 0 && angular_z != 0){
+      driveMode = 3;
+      }
+    else
+    {driveMode = 1;}
+    four_ws_control(linear_x, linear_y, angular_z, driveMode);
     //four_ws_control(0.0, 0.0, 0.0, 1);
     //control_vel_fl(.7); 
     if (stepper_locked == false) {
-      step_pos(pos_angs);
       control_vel_updated(lin_vels);
+      step_pos(pos_angs);
       //global_angle_select(0, 0, 45, 0);
       step_timer = millis();
     }

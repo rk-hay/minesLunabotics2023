@@ -3,10 +3,10 @@ import time
 
 hostname = socket.gethostname()
 UDP_IP =  socket.gethostbyname(hostname)
-print("***Local ip:" + str(UDP_IP) + "***")
-UDP_PORT = 80
+print("***Local ip:" + '192.168.107.8' + "***")
+UDP_PORT = 5000
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-sock.bind((UDP_IP, UDP_PORT))
+sock.bind(('192.168.107.8', UDP_PORT))
 sock.listen(1) 
 data, addr = sock.accept()
 
