@@ -41,8 +41,6 @@ void loop() {
   }
 
   readEncoders();
- 
-
   //run the control loop on a timer
   if (millis() - control_loop_timer > 24) {
                                 //  Serial.println("cl"); TESTING

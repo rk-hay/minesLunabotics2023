@@ -70,7 +70,7 @@ class VelocityComm(Node):
         global DigBeltButton, prevDigBeltButton
         global msgSend, prevMsgSend
         global x, y, z
-        ConveyorButton = msg.buttons[2]-msg.buttons[3]*255
+        ConveyorButton = (msg.buttons[2]-msg.buttons[3])*255
         msgSend = msg.buttons[5]
         DeployButton = float(msg.buttons[6]-msg.buttons[7])*200
         DigLinButton = float(-1*(msg.axes[2])*255) #int(abs(msg.axes[2]-1)*255/2)
