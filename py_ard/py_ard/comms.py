@@ -70,11 +70,11 @@ class VelocityComm(Node):
         global DigBeltButton, prevDigBeltButton
         global msgSend, prevMsgSend
         global x, y, z
-        ConveyorButton = (msg.buttons[2]-msg.buttons[3])*100
+        ConveyorButton = (msg.buttons[2]-msg.buttons[3])*255
         msgSend = msg.buttons[5]
         DeployButton = float(msg.buttons[6]-msg.buttons[7])*200
         DigLinButton = float(-1*(msg.axes[2])*255) #int(abs(msg.axes[2]-1)*255/2)
-        DigBeltButton = float(abs(msg.axes[5]-1)*255)
+        DigBeltButton = float(abs(msg.axes[5]-1)*120)
         msgSend = msg.buttons[8]
         if abs(x - prevX) > .02 or abs(y - prevY) > .02 or abs(z - prevZ) > .02 or prevConveyorButton != ConveyorButton or prevDeployButton != DeployButton or prevDigLinButton != DigLinButton or prevDigBeltButton != DigBeltButton or msgSend !=prevMsgSend:
             ser.reset_input_buffer()
