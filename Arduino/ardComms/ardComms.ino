@@ -207,6 +207,85 @@ void comms() {
 }//end comms
 
 
+void newComms(){
+    static boolean recvInProgress = false;
+    static byte ndx = 0;
+    char startMarker = '<';
+    char endMarker = '>';
+    char rc;
+
+    while (Serial.available() > 0 && newData == false) {
+        rc = Serial.read();
+
+        if (recvInProgress == true) {
+            if (rc != endMarker) {
+                receivedChars[ndx] = rc;
+                ndx++;
+                if (ndx >= numChars) {
+                    ndx = numChars - 1;
+                }
+            }
+            else {
+                receivedChars[ndx] = '\0'; // terminate the string
+                recvInProgress = false;
+                ndx = 0;
+                newData = true;
+            }
+        }
+
+        else if (rc == startMarker) {
+            recvInProgress = true;
+        }
+    }
+}
+void parseData() {      // split the data into its parts
+
+    char * strtokIndx; // this is used by strtok() as an index
+
+    strtokIndx = strtok(NULL, ",");
+    linear_x = atof(strtokIndx); 
+    
+    strtokIndx = strtok(NULL, ",");
+    linear_y = atof(strtokIndx);     
+
+    strtokIndx = strtok(NULL, ",");
+    angular_z = atof(strtokIndx); 
+    
+    strtokIndx = strtok(NULL, ",");
+    ConveyorButton = atof(strtokIndx);   
+
+    strtokIndx = strtok(NULL, ",");
+    DeployButton = atof(strtokIndx); 
+    
+    strtokIndx = strtok(NULL, ",");
+    DigLinButton = atof(strtokIndx);     
+
+    strtokIndx = strtok(NULL, ",");
+    DigBeltButton = atof(strtokIndx); 
+    
+    strtokIndx = strtok(NULL, ",");
+    BucketConveyor = atof(strtokIndx);   
+}
+
+void showParsedData() {
+            Serial.print(linear_x);
+            Serial.print("  ");
+            Serial.print(linear_y);
+            Serial.print("  ");
+            Serial.print(angular_z);
+            Serial.print("  ");
+            Serial.print(DeployButton);
+            Serial.print("  ");
+            Serial.print(DigBeltButton);
+            Serial.print("  ");
+            Serial.print(DigLinButton);
+            Serial.print("  ");
+            Serial.print(ConveyorButton);
+            Serial.print("  ");
+            Serial.print(BucketConveyor);
+            Serial.print("  ");
+            Serial.println();
+}
 
 
 float movingAverage(float in[4], float prevAvg){
