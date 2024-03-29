@@ -49,9 +49,9 @@ void setup()
   //when 1 cycle done, set pin 5 high, wait till pin 6 high, when pin 6 high set pin 5 low and redo
   pinMode(pinWrite, OUTPUT);
   pinMode(pinRead, INPUT);
-  digitalWrite(pinWrite, HIGH);
-  Serial.begin(115200);
+  digitalWrite(pinWrite, LOW);
 
+  Serial.begin(115200);
   WiFi.mode(WIFI_STA);
   WiFi.setSleep(false);
   WiFi.begin(ssid, password);
@@ -64,7 +64,7 @@ void setup()
   Serial.print("IP Address:");
   Serial.println(WiFi.localIP());
 
-  if (client.connect(host, 5000)) //5001
+  if (client.connect(host, 6000)) //5001
   {
       Serial.println("Success");
   }
@@ -87,15 +87,19 @@ void setup()
 
 void loop()
 {
-  while(digitalRead(pinRead)){};
-  digitalWrite(pinWrite, HIGH);
-  if ((millis() - runtime) > 100)
+  if(digitalRead(pinRead) == 1){
+  digitalWrite(pinWrite, LOW);
+  if ((millis() - runtime) > 500)
   {
       send_udp(current_tag_position[0], current_tag_position[1], current_distance_rmse);
       runtime = millis();
   }
+  //Serial.println("HELLLOO THEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
   DW1000Ranging.loop();
-  digitalWrite(pinWrite, LOW);
+  digitalWrite(pinWrite, HIGH);
+  delay(50);
+  }
+  
 }
 
 // collect distance data from anchors, presently configured for 4 anchors
@@ -166,7 +170,7 @@ int trilat2D_2A(void) {
   Serial.print("D= ");
   Serial.print(d[0]);
   Serial.print(" ");
-  Serial.print(d[1]);
+  Serial.print(current_tag_position[0]);
   Serial.println(" ");
   return 1;
 } //end trilat2D_2A
@@ -176,7 +180,7 @@ void send_udp(float X, float Y, float E)
 {
     if (client.connected())
     {
-        client.print(String(X) + "," + String(Y) + ", " + String(E));
+        client.print(String(X) + "," + String(Y) + "," + String(E));
         Serial.println("UDP send");
     }
 }

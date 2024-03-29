@@ -16,6 +16,8 @@ ConveyorButton = 0
 DeployButton = 0
 DigLinButton = 0
 DigBeltButton = 0
+BucketConveyor = 0
+
 
 prevConveyorButton = 0
 prevDeployButton = 0
@@ -23,6 +25,7 @@ prevDigLinButton = 0
 prevDigBeltButton = 0
 msgSend = 0
 prevMsgSend = 0
+prevBucketConveyor = 0
 
 x = 0
 y = 0
@@ -69,14 +72,14 @@ class VelocityComm(Node):
         global DigLinButton, prevDigLinButton
         global DigBeltButton, prevDigBeltButton
         global msgSend, prevMsgSend
+        global BucketConveyor, prevBucketConveyor
         global x, y, z
         ConveyorButton = (msg.buttons[2]-msg.buttons[3])*255
-        msgSend = msg.buttons[5]
         DeployButton = float(msg.buttons[6]-msg.buttons[7])*200
         DigLinButton = float(-1*(msg.axes[2])*255) #int(abs(msg.axes[2]-1)*255/2)
-        DigBeltButton = float(abs(msg.axes[5]-1)*120)
-        msgSend = msg.buttons[8]
-        if abs(x - prevX) > .02 or abs(y - prevY) > .02 or abs(z - prevZ) > .02 or prevConveyorButton != ConveyorButton or prevDeployButton != DeployButton or prevDigLinButton != DigLinButton or prevDigBeltButton != DigBeltButton or msgSend !=prevMsgSend:
+        DigBeltButton = float(abs(msg.axes[5]-1)*255)
+        BucketConveyor = float(msg.buttons[8])
+        if abs(x - prevX) > .03 or abs(y - prevY) > .03 or abs(z - prevZ) > .02 or prevConveyorButton != ConveyorButton or prevDeployButton != DeployButton or prevDigLinButton != DigLinButton or prevDigBeltButton != DigBeltButton or msgSend !=prevMsgSend or BucketConveyor != prevBucketConveyor:
             ser.reset_input_buffer()
             ser.reset_output_buffer()
 
@@ -106,6 +109,10 @@ class VelocityComm(Node):
             ser.write(struct.pack('<f', float(DigBeltButton)))
             ser.write(struct.pack('c', b'\n'))
 
+            ser.write(struct.pack('c', b'E'))
+            ser.write(struct.pack('<f', float(BucketConveyor)))
+            ser.write(struct.pack('c', b'\n'))
+
             prevX = x
             prevY = y
             prevZ = z
@@ -115,7 +122,8 @@ class VelocityComm(Node):
             prevConveyorButton = ConveyorButton
             prevDeployButton = DeployButton
             prevDigLinButton = DigLinButton
-            prevDigBeltButton = DigBeltButton       
+            prevDigBeltButton = DigBeltButton   
+            prevBucketConveyor = BucketConveyor    
             self.get_logger().info('test\n')
             sleep(0.1)
 

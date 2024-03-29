@@ -14,6 +14,10 @@
 #define conveyor_IN1 A6
 #define conveyor_IN2 A7
 
+#define Bconveyor_PWM 13
+#define Bconveyor_IN1 A2
+#define Bconveyor_IN2 19
+
 //TODO 
 // FUNCTION FOR EACH OF THE IMPORTANT MOTORS
 
@@ -35,6 +39,8 @@ void digSetup() {
   pinMode(conveyor_IN1, OUTPUT);
   pinMode(conveyor_IN2, OUTPUT);
 
+  pinMode(Bconveyor_IN1, OUTPUT);
+  pinMode(Bconveyor_IN2, OUTPUT);
 }
 
 void activateDig(){
@@ -58,6 +64,20 @@ void deployAppendageLinActuators(int duty){
   digitalWrite(appendageDeployLinears_IN2, dir); // high when +
 }
 
+void liveTrailer(int duty){
+  //if limit switch != true
+  bool dir = duty > 0;
+  if (dir){
+  digitalWrite(Bconveyor_IN1, !dir);
+  digitalWrite(Bconveyor_IN2, dir);
+  }
+  else{
+  digitalWrite(Bconveyor_IN1, HIGH);
+  digitalWrite(Bconveyor_IN2, HIGH);
+  }
+}
+
+
 void digBelt(int duty){
   //if limit switch != true
   bool dir = duty > 0;
@@ -74,7 +94,7 @@ void digDepth(int duty){
   digitalWrite(appendageDigLin_IN2, dir);
 }
 
-void conveyor(int duty){
+void conveyor(int duty){  
   //if limit switch != true
   bool dir = duty > 0;
   analogWrite(conveyor_PWM, abs(duty));

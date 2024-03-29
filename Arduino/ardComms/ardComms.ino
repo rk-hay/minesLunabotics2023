@@ -7,7 +7,7 @@ float ConveyorButton = 0;
 float DeployButton = 0;
 float DigLinButton = 0;
 float DigBeltButton = 0;
-
+float BucketConveyor = 0;
 char START_MARKER;
 
 
@@ -66,10 +66,11 @@ void loop() {
     }
     controller_control_loop();
 
-    deployAppendageLinActuators(DeployButton);
-    digBelt(DigBeltButton);
-    digDepth(DigLinButton);
-    conveyor(ConveyorButton);
+    // deployAppendageLinActuators(DeployButton);
+    // digBelt(DigBeltButton);
+    // digDepth(DigLinButton);
+    // conveyor(ConveyorButton);
+    // bucketConveyorRun(BucketConveyor);
   //------------------------------------------------------------------------------//
   //global_angle_select(-45, 0,  0, 0); //stepperer tester   //fl is cur fr  //fr is br //bl is fl //br is bl
   //motors_PWM(0.0);
@@ -79,6 +80,10 @@ void loop() {
   //  br_motor_PWM(0);
   //control_vel(0.5, 0.0);
   //four_ws_co
+  //conveyor(200);
+  digBelt(255); 
+  conveyor(0);
+  liveTrailer(1);
   //TESTS
   //------------------------------------------------------------------------------//
     control_loop_timer = millis();
@@ -153,6 +158,8 @@ void loop() {
             Serial.print("  ");
             Serial.print(ConveyorButton);
             Serial.print("  ");
+            Serial.print(BucketConveyor);
+            Serial.print("  ");
             
 //            Serial.print(maX);
 //            Serial.print("  ");
@@ -194,7 +201,7 @@ void comms() {
           case 'B': {Serial.readBytesUntil('\n', (char*)&DeployButton, sizeof(float)+sizeof('\n')); break;}
           case 'C': {Serial.readBytesUntil('\n', (char*)&DigLinButton, sizeof(float)+sizeof('\n')); break;}
           case 'D': {Serial.readBytesUntil('\n', (char*)&DigBeltButton, sizeof(float)+sizeof('\n')); break;}
-          
+          case 'E': {Serial.readBytesUntil('\n', (char*)&BucketConveyor, sizeof(float)+sizeof('\n')); break;}
         }//end cmd2
   }//end if
 }//end comms

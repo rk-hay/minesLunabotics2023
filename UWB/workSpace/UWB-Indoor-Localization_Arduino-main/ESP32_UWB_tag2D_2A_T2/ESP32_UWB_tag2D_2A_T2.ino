@@ -48,7 +48,7 @@ void setup()
 {
   pinMode(pinWrite, OUTPUT);
   pinMode(pinRead, INPUT);
-  digitalWrite(pinWrite, LOW);
+  digitalWrite(pinWrite, HIGH);
   
   Serial.begin(115200);
 
@@ -64,7 +64,7 @@ void setup()
   Serial.print("IP Address:");
   Serial.println(WiFi.localIP());
 
-  if (client.connect(host, 5001)) //5001
+  if (client.connect(host, 5000)) //5001
   {
       Serial.println("Success");
   }
@@ -87,15 +87,18 @@ void setup()
 
 void loop()
 {
-  while(digitalRead(pinRead)) {};
-  digitalWrite(pinWrite, HIGH);
-  if ((millis() - runtime) > 100)
+  //while(digitalRead(!pinRead)) {};
+  if(digitalRead(pinRead) == 1){
+  digitalWrite(pinWrite, LOW);
+  if ((millis() - runtime) > 500)
   {
       send_udp(current_tag_position[0], current_tag_position[1], current_distance_rmse);
       runtime = millis();
   }
   DW1000Ranging.loop();
-  digitalWrite(pinWrite, LOW);
+  digitalWrite(pinWrite, HIGH);
+  delay(50);
+  }
 }
 
 // collect distance data from anchors, presently configured for 4 anchors
@@ -176,7 +179,7 @@ void send_udp(float X, float Y, float E)
 {
     if (client.connected())
     {
-        client.print(String(X) + "," + String(Y) + ", " + String(E));
+        client.print(String(X) + "," + String(Y) + "," + String(E));
         Serial.println("UDP send");
     }
 }
