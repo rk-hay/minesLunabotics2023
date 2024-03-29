@@ -65,7 +65,7 @@ void four_ws_control(float x, float y, float z, int mode){
         vel[2] = vel[0];
         vel[3] = vel[1];
       break;
-    case 4: // sideways
+    case 4: // dig mfer
 
         pos[0] = 1.5708; //fl
         pos[1] = -1.5708; //fr

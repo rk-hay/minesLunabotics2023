@@ -8,7 +8,11 @@ float DeployButton = 0;
 float DigLinButton = 0;
 float DigBeltButton = 0;
 float BucketConveyor = 0;
-char START_MARKER;
+float digModeButton = 0;
+bool newData = false;
+const byte numChars = 32;
+char receivedChars[numChars];
+
 
 
 void setup() {
@@ -32,29 +36,38 @@ void loop() {
   static float comms_timer = 0;
   static float step_timer = 0;
   //first update vars from the system
-  if (millis()-comms_timer > 6){
-  //Serial.println("comm");
-  comms();
 
-  comms_timer = millis();
-  
-  }
-
+  newComms();
+  if (newData == true) {
+    strcpy(tempChars, receivedChars);
+    parseData();
+    showParsedData();
+    newData = false;
+    }
   readEncoders();
   //run the control loop on a timer
   if (millis() - control_loop_timer > 24) {
-                                //  Serial.println("cl"); TESTING
-                                //control_vel(-0.5, 0.0); OLD
-                                //global_angle_select(40,-10,-10,40); OLD
+    if (abs(linear_x) < .02) {linear_x = 0;}
+    if (abs(linear_y) < .02) {linear_y = 0;}
+    if (abs(angular_z) < .02) {angular_z = 0;}
+
+    if(digModeButton == 0){
+      if (linear_x == 0 && linear_y == 0 && angular_z != 0){
+        driveMode = 3; //pivot mode
+        }
+      if else(linear_x != 0 && linear_y != 0 && angular_z == 0){
+        driveMode = 3; //in-phase mode
+        }
+      if else(linear_x != 0 && linear_y == 0 && angular_z != 0){
+        driveMode = 1; //opposite phase mode
+        }
+      else(){
+        driveMode = 1;
+        }
+    }
+    else{driveMode = 4; // digging time bby}
+
     
-    if (abs(linear_x) < .09) {linear_x = 0;}
-    if (abs(linear_y) < .09) {linear_y = 0;}
-    if (abs(angular_z) < .09) {angular_z = 0;}
-    if (linear_x == 0 && linear_y == 0 && angular_z != 0){
-      driveMode = 3;
-      }
-    else
-    {driveMode = 1;}
     four_ws_control(linear_x, linear_y, angular_z, driveMode);
     //four_ws_control(0.0, 0.0, 0.0, 1);
     //control_vel_fl(.7); 
@@ -216,9 +229,10 @@ void newComms(){
 
     while (Serial.available() > 0 && newData == false) {
         rc = Serial.read();
-
+        //Serial.println("recieving");
         if (recvInProgress == true) {
             if (rc != endMarker) {
+
                 receivedChars[ndx] = rc;
                 ndx++;
                 if (ndx >= numChars) {
@@ -234,58 +248,33 @@ void newComms(){
         }
 
         else if (rc == startMarker) {
+            
             recvInProgress = true;
         }
     }
 }
-void parseData() {      // split the data into its parts
-
-    char * strtokIndx; // this is used by strtok() as an index
-
-    strtokIndx = strtok(NULL, ",");
+void parseData() {
+    char * strtokIndx;
+    strtokIndx = strtok(tempChars,",");
     linear_x = atof(strtokIndx); 
-    
     strtokIndx = strtok(NULL, ",");
     linear_y = atof(strtokIndx);     
-
     strtokIndx = strtok(NULL, ",");
     angular_z = atof(strtokIndx); 
-    
     strtokIndx = strtok(NULL, ",");
     ConveyorButton = atof(strtokIndx);   
-
     strtokIndx = strtok(NULL, ",");
     DeployButton = atof(strtokIndx); 
-    
     strtokIndx = strtok(NULL, ",");
     DigLinButton = atof(strtokIndx);     
-
     strtokIndx = strtok(NULL, ",");
     DigBeltButton = atof(strtokIndx); 
-    
     strtokIndx = strtok(NULL, ",");
-    BucketConveyor = atof(strtokIndx);   
+    BucketConveyor = atof(strtokIndx); 
+
 }
 
-void showParsedData() {
-            Serial.print(linear_x);
-            Serial.print("  ");
-            Serial.print(linear_y);
-            Serial.print("  ");
-            Serial.print(angular_z);
-            Serial.print("  ");
-            Serial.print(DeployButton);
-            Serial.print("  ");
-            Serial.print(DigBeltButton);
-            Serial.print("  ");
-            Serial.print(DigLinButton);
-            Serial.print("  ");
-            Serial.print(ConveyorButton);
-            Serial.print("  ");
-            Serial.print(BucketConveyor);
-            Serial.print("  ");
-            Serial.println();
-}
+
 
 
 float movingAverage(float in[4], float prevAvg){

@@ -2,17 +2,16 @@ import rclpy
 from rclpy.node import Node
 import serial
 from time import sleep
-import struct
-from std_msgs.msg import String
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Joy
-ser = serial.Serial('/dev/ttyACM0', baudrate=19200)
+ser = serial.Serial('/dev/ttyACM1', baudrate=19200)
 ser.reset_input_buffer()
 
 ConveyorButton = 0
 DeployButton = 0
 DigLinButton = 0
 DigBeltButton = 0
+BucketConveyor = 0
 
 
 x = 0
@@ -57,32 +56,36 @@ class VelocityComm(Node):
         global DigLinButton
         global DigBeltButton
         global msgSend
+        global BucketConveyor
         global x, y, z
-        ConveyorButton = msg.buttons[2]-msg.buttons[3]*255
-        msgSend = msg.buttons[5]
+        ConveyorButton = (msg.buttons[2]-msg.buttons[3])*255
         DeployButton = float(msg.buttons[6]-msg.buttons[7])*200
-        DigLinButton = float(-1*(msg.axes[2])*255) #int(abs(msg.axes[2]-1)*255/2)
+        DigLinButton = float(-1*(msg.axes[2])*255/2) #int(abs(msg.axes[2]-1)*255/2)
         DigBeltButton = float(abs(msg.axes[5]-1)*255)
+        BucketConveyor = float(msg.buttons[5])
         msgSend = msg.buttons[8]
         ser.reset_input_buffer()
         ser.reset_output_buffer()
-
-        ser.write(String('<'))
-        ser.write(String(float(x)))
-        ser.write(String(','))
-        ser.write(String(float(y)))
-        ser.write(String(','))
-        ser.write(String(float(z)))
-        ser.write(String(','))
-        ser.write(String(float(ConveyorButton)))
-        ser.write(String(','))
-        ser.write(String(float(DeployButton)))
-        ser.write(String(','))
-        ser.write(String(float(DigLinButton)))
-        ser.write(String(','))
-        ser.write(String(float(DigBeltButton)))
-        ser.write(String('>'))
-
+        start = "<"
+        finish = str(">")
+        ser.write(start.encode())
+        ser.write(str(float(x)).encode())
+        ser.write(str(',').encode())
+        ser.write(str(float(y)).encode())
+        ser.write(str(',').encode())
+        ser.write(str(float(z)).encode())
+        ser.write(str(',').encode())
+        ser.write(str(float(ConveyorButton)).encode())
+        ser.write(str(',').encode())
+        ser.write(str(float(DeployButton)).encode())
+        ser.write(str(',').encode())
+        ser.write(str(float(DigLinButton)).encode())
+        ser.write(str(',').encode())
+        ser.write(str(float(DigBeltButton)).encode())
+        ser.write(str(',').encode())
+        ser.write(str(float(BucketConveyor)).encode())
+        ser.write(finish.encode())
+        sleep(0.1)
 
 
 def main(args=None):
