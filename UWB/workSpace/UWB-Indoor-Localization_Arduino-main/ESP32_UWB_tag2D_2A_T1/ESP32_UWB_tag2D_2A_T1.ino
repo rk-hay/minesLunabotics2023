@@ -1,4 +1,4 @@
-
+#include <esp_now.h>
 #include <SPI.h>
 #include "DW1000Ranging.h"
 #include "DW1000.h"
@@ -8,10 +8,20 @@
 #define SPI_MISO 19
 #define SPI_MOSI 23
 #define DW_CS 4
+uint8_t T2_using = false;
+uint8_t T2_x = 0.0;
+uint8_t T2_y = 0.0;
 
 
-#define pinWrite 25
-#define pinRead 26
+typedef struct struct_message {
+    uint8_t isUsing;
+    uint8_t x;
+    uint8_t y;
+} struct_message;
+
+struct_message Signal;
+struct_message incomingSignal;
+
 // connection pins
 const uint8_t PIN_RST = 27; // reset pin
 const uint8_t PIN_IRQ = 34; // irq pin
@@ -20,6 +30,9 @@ const uint8_t PIN_SS = 4;   // spi select pin
 // TAG antenna delay defaults to 16384
 // leftmost two bytes below will become the "short address"
 char tag_addr[] = "7D:00:22:EA:82:60:3B:9C"; // "8D:00:22:EA:82:60:3B:9C"
+const uint8_t send_to[] = {0x8D, 0x00, 0x22, 0xEA, 0x82, 0x60};
+String success;
+esp_now_peer_info_t peerInfo;
 
 const char *ssid = "Hay";
 const char *password = "";
@@ -46,10 +59,7 @@ long runtime = 0;
 
 void setup()
 {
-  //when 1 cycle done, set pin 5 high, wait till pin 6 high, when pin 6 high set pin 5 low and redo
-  pinMode(pinWrite, OUTPUT);
-  pinMode(pinRead, INPUT);
-  digitalWrite(pinWrite, LOW);
+
 
   Serial.begin(115200);
   WiFi.mode(WIFI_STA);
@@ -64,7 +74,20 @@ void setup()
   Serial.print("IP Address:");
   Serial.println(WiFi.localIP());
 
-  if (client.connect(host, 6000)) //5001
+  if (esp_now_init() != ESP_OK) {
+  Serial.println("Error initializing ESP-NOW");
+  return;
+}
+  esp_now_register_send_cb(OnDataSent);
+  memcpy(peerInfo.peer_addr, send_to, 6);
+  peerInfo.channel = 0;  
+  peerInfo.encrypt = false;
+  if (esp_now_add_peer(&peerInfo) != ESP_OK){
+    Serial.println("Failed to add peer");
+    return;
+  }
+  esp_now_register_recv_cb(OnDataRecv);
+  if (client.connect(host, 5000)) 
   {
       Serial.println("Success");
   }
@@ -87,19 +110,37 @@ void setup()
 
 void loop()
 {
-  if(digitalRead(pinRead) == 1){
-  digitalWrite(pinWrite, LOW);
+
   if ((millis() - runtime) > 500)
   {
-      send_udp(current_tag_position[0], current_tag_position[1], current_distance_rmse);
+      send_udp(current_tag_position[0], current_tag_position[1], 0.0, 0.0);
       runtime = millis();
   }
   //Serial.println("HELLLOO THEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
-  DW1000Ranging.loop();
-  digitalWrite(pinWrite, HIGH);
-  delay(50);
+
+if (T2_using == false){
+  Signal.isUsing = true;
+  esp_err_t result = esp_now_send(send_to, (uint8_t *)&Signal, sizeof(Signal));
+  if (result == ESP_OK) {
+    Serial.println("Pinged T2: Wait");
   }
-  
+  else {
+    Serial.println("No Ping");
+  }
+  Serial.println("ranging");
+  DW1000Ranging.loop();
+  Signal.x = current_tag_position[0];
+  Signal.y =  current_tag_position[1];
+  Signal.isUsing = false;
+  result = esp_now_send(send_to, (uint8_t *)&Signal, sizeof(Signal));
+  if (result == ESP_OK) {
+    Serial.println("Pinged T2: Clear");
+  }
+  else {
+    Serial.println("No Ping");
+ }
+}
+
 }
 
 // collect distance data from anchors, presently configured for 4 anchors
@@ -176,11 +217,32 @@ int trilat2D_2A(void) {
 } //end trilat2D_2A
 
 
-void send_udp(float X, float Y, float E)
+void send_udp(float X, float Y, float  X_2, float Y_2)
 {
     if (client.connected())
     {
-        client.print(String(X) + "," + String(Y) + "," + String(E));
+        client.print(String(X) + "," + String(Y) + "," + String(X_2) + "," + String(Y_2));
         Serial.println("UDP send");
     }
+}
+
+void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
+  Serial.print("\r\nLast Packet Send Status:\t");
+  Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
+  if (status ==0){
+    success = "Delivery Success :)";
+  }
+  else{
+    success = "Delivery Fail :(";
+  }
+}
+
+void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
+  memcpy(&incomingSignal, incomingData, sizeof(incomingSignal));
+  Serial.print("Bytes received: ");
+  Serial.println(len);
+  Serial.println(incomingSignal.isUsing);
+  T2_using = incomingSignal.isUsing;
+  T2_x = incomingSignal.x;
+  T2_y = incomingSignal.y;
 }
