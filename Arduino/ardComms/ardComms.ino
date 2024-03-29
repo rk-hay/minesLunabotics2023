@@ -208,6 +208,7 @@ void comms() {
 
 
 
+
 float movingAverage(float in[4], float prevAvg){
   float avg = 0.0;
 //  if (in[0] >= FLT_MAX || in[1] >= FLT_MAX || in[2] >= FLT_MAX|| in[3] >= FLT_MAX || in[0] <= FLT_MIN || in[1] <= FLT_MIN || in[2] <= FLT_MIN || in[3] <= FLT_MIN){
