@@ -60,8 +60,8 @@ class VelocityComm(Node):
         global x, y, z
         ConveyorButton = (msg.buttons[2]-msg.buttons[3])*255
         DeployButton = float(msg.buttons[6]-msg.buttons[7])*255
-        DigLinButton = float(-1*(msg.axes[2])*255/2) #int(abs(msg.axes[2]-1)*255/2)
-        DigBeltButton = float(abs(msg.axes[5]-1)*255)
+        DigLinButton = float(-1*(msg.axes[2])*255) #int(abs(msg.axes[2]-1)*255/2)
+        DigBeltButton = float(abs(msg.axes[5]-1)*255/2)
         BucketConveyor = float(msg.buttons[5])*255
         msgSend = msg.buttons[8]
         ser.reset_input_buffer()

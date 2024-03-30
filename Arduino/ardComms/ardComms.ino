@@ -70,7 +70,7 @@ void loop() {
 
     
     four_ws_control(linear_x, linear_y, angular_z, driveMode);
-    //four_ws_control(0.0, 0.0, 0.0, 1);
+    //four_ws_control(.5, 0.0, 0.0, 1);
     //control_vel_fl(.7); 
     if (stepper_locked == false) {
       control_vel_updated(lin_vels);
@@ -80,12 +80,7 @@ void loop() {
     }
     controller_control_loop();
 
-     deployAppendageLinActuators(DeployButton); //
-     digBelt(DigBeltButton);  //THIS MOVES THE DIG BELT
-     digDepth(DigLinButton); //
-     slideOutAcutators(ConveyorButton); // 
-    // liveTrailer(BucketConveyor); //ADD PWM
-    trailer(BucketConveyor);
+
   //------------------------------------------------------------------------------//
   //global_angle_select(-45, 0,  0, 0); //stepperer tester   //fl is cur fr  //fr is br //bl is fl //br is bl
   //motors_PWM(0.0);
@@ -104,7 +99,14 @@ void loop() {
     control_loop_timer = millis();
   }
 
-
+   deployAppendageLinActuators(DeployButton); //
+   //deployAppendageLinActuators(-255);
+   //digBelt(DigBeltButton);  //THIS MOVES THE DIG BELT
+   digDepth(DigLinButton); //
+   //digDepth(255);
+   slideOutAcutators(ConveyorButton); // 
+   trailer(DigBeltButton);
+   //digBelt(DigBeltButton);
   //DEBUGGING STATEMENTS (print every 50 millis)
   if (millis() - print_timer > 24) {
 //         Serial.print(fl_d_vel());
@@ -139,14 +141,14 @@ void loop() {
           // Serial.print("  ");
           // Serial.print(br_enc_pos);
 
-        //  Serial.print(fl_pos());
-        //  Serial.print("  ");
-        //  Serial.print(fr_pos());
-        //  Serial.print("  ");
-        //  Serial.print(bl_pos());
-        //  Serial.print("  ");
-        //  Serial.print(br_pos());
-        //  Serial.print("  ");
+          Serial.print(fl_pos());
+          Serial.print("  ");
+          Serial.print(fr_pos());
+          Serial.print("  ");
+          Serial.print(bl_pos());
+          Serial.print("  ");
+          Serial.print(br_pos());
+          Serial.print("  ");
 
           //  Serial.print(fl_s_pos);
           //  Serial.print("  ");
@@ -165,16 +167,16 @@ void loop() {
             Serial.print("  ");
 //            /
 
-            Serial.print(DeployButton);
-            Serial.print("  ");
-            Serial.print(DigBeltButton);
-            Serial.print("  ");
-            Serial.print(DigLinButton);
-            Serial.print("  ");
-            Serial.print(ConveyorButton);
-            Serial.print("  ");
-            Serial.print(BucketConveyor);
-            Serial.print("  ");
+//            Serial.print(DeployButton);
+//            Serial.print("  ");
+//            Serial.print(DigBeltButton);
+//            Serial.print("  ");
+           Serial.print(DigLinButton);
+//            Serial.print("  ");
+//            Serial.print(ConveyorButton);
+//            Serial.print("  ");
+//            Serial.print(BucketConveyor);
+//            Serial.print("  ");
             
 //            Serial.print(maX);
 //            Serial.print("  ");

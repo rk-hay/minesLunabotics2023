@@ -75,9 +75,6 @@ void digSetup() {
   pinMode(slideOut_IN1, OUTPUT);
   pinMode(slideOut_IN2, OUTPUT);
 
-  pinMode(slideOut_IN1, OUTPUT);
-  pinMode(slideOut_IN2, OUTPUT);
-
   pinMode(m1_PWM, OUTPUT);
   pinMode(m1_SLP, OUTPUT);
   pinMode(m1_DIR, OUTPUT);
@@ -89,15 +86,24 @@ void digSetup() {
   pinMode(IBT_PWM, OUTPUT);
   pinMode(IBT_IN1, OUTPUT);
   pinMode(IBT_IN2, OUTPUT);
+
+  analogWrite(appendageDeployLinears_PWM, 255);
+  //digitalWrite(A8, HIGH);
 }
 
 
 void deployAppendageLinActuators(int duty){
   //if limit switch != true
   bool dir = duty > 0;
-  analogWrite(appendageDeployLinears_PWM, abs(duty));
+  if (duty != 0){
   digitalWrite(appendageDeployLinears_IN1, !dir);  //high when -
   digitalWrite(appendageDeployLinears_IN2, dir); // high when +
+  }
+  else{
+    digitalWrite(appendageDeployLinears_IN1, 0);  //high when -
+    digitalWrite(appendageDeployLinears_IN2, 0); // high when +
+    }
+  
 }
 
 void liveTrailer(int duty){
@@ -133,7 +139,12 @@ void digDepth(int duty){
 void slideOutAcutators(int duty){  
   //if limit switch != true
   bool dir = duty > 0;
-  analogWrite(slideOut_PWM, abs(duty));
+  if (duty != 0){
   digitalWrite(slideOut_IN1, !dir);
   digitalWrite(slideOut_IN2, dir);
+  }
+  else{
+  digitalWrite(slideOut_IN1, 0);
+  digitalWrite(slideOut_IN2, 0);
+    }
 }
