@@ -106,7 +106,7 @@ void loop() {
    //digDepth(255);
    slideOutAcutators(ConveyorButton); // 
    trailer(DigBeltButton);
-   //digBelt(DigBeltButton);
+   digBelt(DigBeltButton);
   //DEBUGGING STATEMENTS (print every 50 millis)
   if (millis() - print_timer > 24) {
 //         Serial.print(fl_d_vel());
