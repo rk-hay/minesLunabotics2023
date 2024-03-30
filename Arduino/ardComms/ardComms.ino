@@ -12,6 +12,7 @@ float digModeButton = 0;
 bool newData = false;
 const byte numChars = 32;
 char receivedChars[numChars];
+char tempChars[numChars]; 
 
 
 
@@ -39,9 +40,9 @@ void loop() {
 
   newComms();
   if (newData == true) {
+
     strcpy(tempChars, receivedChars);
     parseData();
-    showParsedData();
     newData = false;
     }
   readEncoders();
@@ -55,17 +56,17 @@ void loop() {
       if (linear_x == 0 && linear_y == 0 && angular_z != 0){
         driveMode = 3; //pivot mode
         }
-      if else(linear_x != 0 && linear_y != 0 && angular_z == 0){
+      else if(linear_x != 0 && linear_y != 0 && angular_z == 0){
         driveMode = 3; //in-phase mode
         }
-      if else(linear_x != 0 && linear_y == 0 && angular_z != 0){
+      else if(linear_x != 0 && linear_y == 0 && angular_z != 0){
         driveMode = 1; //opposite phase mode
         }
-      else(){
+      else{
         driveMode = 1;
         }
     }
-    else{driveMode = 4; // digging time bby}
+    else{driveMode = 4; }// digging time bby}
 
     
     four_ws_control(linear_x, linear_y, angular_z, driveMode);
@@ -79,11 +80,12 @@ void loop() {
     }
     controller_control_loop();
 
-    // deployAppendageLinActuators(DeployButton);
-    // digBelt(DigBeltButton);
-    // digDepth(DigLinButton);
-    // conveyor(ConveyorButton);
-    // bucketConveyorRun(BucketConveyor);
+     deployAppendageLinActuators(DeployButton); //
+     digBelt(DigBeltButton);  //THIS MOVES THE DIG BELT
+     digDepth(DigLinButton); //
+     slideOutAcutators(ConveyorButton); // 
+    // liveTrailer(BucketConveyor); //ADD PWM
+    trailer(BucketConveyor);
   //------------------------------------------------------------------------------//
   //global_angle_select(-45, 0,  0, 0); //stepperer tester   //fl is cur fr  //fr is br //bl is fl //br is bl
   //motors_PWM(0.0);
@@ -94,9 +96,9 @@ void loop() {
   //control_vel(0.5, 0.0);
   //four_ws_co
   //conveyor(200);
-  digBelt(255); 
-  conveyor(0);
-  liveTrailer(1);
+  //digBelt(0); 
+  //foldOutAcutators(0);
+  //liveTrailer(1);
   //TESTS
   //------------------------------------------------------------------------------//
     control_loop_timer = millis();
