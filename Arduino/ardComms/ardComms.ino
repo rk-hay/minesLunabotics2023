@@ -50,7 +50,7 @@ void loop() {
         driveMode = 3; //pivot mode
         }
       else if(linear_x != 0 && linear_y != 0 && angular_z == 0){
-        driveMode = 3; //in-phase mode
+        driveMode = 2; //in-phase mode
         }
       else if(linear_x != 0 && linear_y == 0 && angular_z != 0){
         driveMode = 1; //opposite phase mode
