@@ -66,10 +66,10 @@ void four_ws_control(float x, float y, float z, int mode){
     }
     else if (mode == 4){// dig mfer
 
-        pos[0] = 1.5708; //fl
-        pos[1] = -1.5708; //fr
-        pos[2] = -1.5708; //bl
-        pos[3] = 1.5708; //br
+        pos[0] = -1.5708; //fl
+        pos[1] = 1.5708; //fr
+        pos[2] = 1.5708; //bl
+        pos[3] = -1.5708; //br
         
         vel[0] = x;
         vel[1] = -x;
