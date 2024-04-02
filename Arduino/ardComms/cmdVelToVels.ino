@@ -14,8 +14,8 @@ void four_ws_control(float x, float y, float z, int mode){
         float vel_steerring_offset = z * wheel_steering_y_offset;
         int sign = sgn(x);
 
-  switch(mode){
-    case 1: // opposite phase
+
+    if(mode == 1){ // opposite phase
         vel[0] = sign*sqrt(sq(x - z*steering_track/2) + sq(z*wheel_base/2)) - vel_steerring_offset;
         vel[1] = sign*sqrt(sq(x + z*steering_track/2) + sq(z*wheel_base/2)) + vel_steerring_offset; 
         vel[2] = sign*sqrt(sq(x - z*steering_track/2) + sq(z*wheel_base/2)) - vel_steerring_offset; 
@@ -33,9 +33,8 @@ void four_ws_control(float x, float y, float z, int mode){
             pos[2] = -pos[0];
             pos[3] = -pos[1];
         }//End else
-      break;
-
-    case 2: // in phase
+    }
+    else if (mode == 2){ // in phase
         ang = 0;
         V = sqrt(sq(x)+sq(y));
 
@@ -52,8 +51,8 @@ void four_ws_control(float x, float y, float z, int mode){
         vel[1] = sign*V;
         vel[2] = sign*V;
         vel[3] = sign*V;
-      break;
-    case 3: // pivot
+    }
+    else if (mode ==3){ // pivot
 
         pos[0] = -atan(wheel_base/steering_track);
         pos[1] = atan(wheel_base/steering_track);
@@ -64,8 +63,8 @@ void four_ws_control(float x, float y, float z, int mode){
         vel[1] = z;
         vel[2] = vel[0];
         vel[3] = vel[1];
-      break;
-    case 4: // dig mfer
+    }
+    else if (mode == 4){// dig mfer
 
         pos[0] = 1.5708; //fl
         pos[1] = -1.5708; //fr
@@ -76,13 +75,13 @@ void four_ws_control(float x, float y, float z, int mode){
         vel[1] = -x;
         vel[2] = -x;
         vel[3] = x;
-      break;
-    default:
+    }
+    else{
         vel[0] = 0.0;
         vel[1] = 0.0;
         vel[2] = 0.0;
         vel[3] = 0.0;
-  }//end switch
+    }
     for (int i = 0; i < 4; i++) {
       lin_vels[i] = vel[i];
       pos_angs[i] = pos[i];

@@ -1,7 +1,19 @@
 #ifndef VARS_H
 #define VARS_H
 
-
+float linear_x = 0.0;
+float linear_y = 0.0;
+float angular_z = 0.0;
+float ConveyorButton = 0;
+float DeployButton = 0;
+float DigLinButton = 0;
+float DigBeltButton = 0;
+float BucketConveyor = 0;
+float digModeButton = 0;
+bool newData = false;
+const byte numChars = 32;
+char receivedChars[numChars];
+char tempChars[numChars]; 
 
 
 

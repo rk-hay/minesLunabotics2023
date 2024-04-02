@@ -1,20 +1,9 @@
 #include "vars.h"
 #include "float.h"
-float linear_x = 0.0;
-float linear_y = 0.0;
-float angular_z = 0.0;
-float ConveyorButton = 0;
-float DeployButton = 0;
-float DigLinButton = 0;
-float DigBeltButton = 0;
-float BucketConveyor = 0;
-float digModeButton = 0;
-bool newData = false;
-const byte numChars = 32;
-char receivedChars[numChars];
-char tempChars[numChars]; 
 
 
+
+  
 
 void setup() {
 
@@ -22,9 +11,13 @@ void setup() {
   digSetup();
   setupEncoders();
   Serial.begin(19200);
+  Serial.print(". ");
   readEncoders();
   //Serial.println("setup");
 }
+
+
+
 
 //notes for controls system. the motors need a min PWM speed of 30.
 void loop() {
@@ -48,9 +41,9 @@ void loop() {
   readEncoders();
   //run the control loop on a timer
   if (millis() - control_loop_timer > 24) {
-    if (abs(linear_x) < .02) {linear_x = 0;}
-    if (abs(linear_y) < .02) {linear_y = 0;}
-    if (abs(angular_z) < .02) {angular_z = 0;}
+//    if (abs(linear_x) < .02) {linear_x = 0;}
+//    if (abs(linear_y) < .02) {linear_y = 0;}
+//    if (abs(angular_z) < .02) {angular_z = 0;}
 
     if(digModeButton == 0){
       if (linear_x == 0 && linear_y == 0 && angular_z != 0){
@@ -100,15 +93,12 @@ void loop() {
   }
 
    deployAppendageLinActuators(DeployButton); //
-   //deployAppendageLinActuators(-255);
-   //digBelt(DigBeltButton);  //THIS MOVES THE DIG BELT
    digDepth(DigLinButton); //
-   //digDepth(255);
    slideOutAcutators(ConveyorButton); // 
    trailer(DigBeltButton);
    digBelt(DigBeltButton);
   //DEBUGGING STATEMENTS (print every 50 millis)
-  if (millis() - print_timer > 24) {
+  if (millis() - print_timer > 50) {
 //         Serial.print(fl_d_vel());
 //         Serial.print("  ");
 //         Serial.print();
@@ -141,17 +131,10 @@ void loop() {
           // Serial.print("  ");
           // Serial.print(br_enc_pos);
 
-          Serial.print(fl_pos());
-          Serial.print("  ");
-          Serial.print(fr_pos());
-          Serial.print("  ");
-          Serial.print(bl_pos());
-          Serial.print("  ");
-          Serial.print(br_pos());
-          Serial.print("  ");
 
-          //  Serial.print(fl_s_pos);
-          //  Serial.print("  ");
+
+            Serial.print(fl_s_pos);
+            Serial.print("  ");
           //  Serial.print(fr_s_pos);
           //  Serial.print("  ");
           //  Serial.print(bl_s_pos);
@@ -159,10 +142,10 @@ void loop() {
           //  Serial.print(br_s_pos);
 //            Serial.print("  ");
 //
-            Serial.print(linear_x);
-            Serial.print("  ");
-            Serial.print(linear_y);
-            Serial.print("  ");
+//            Serial.print(linear_x);
+//            Serial.print("  ");
+//            Serial.print(linear_y);
+//            Serial.print("  ");
             Serial.print(angular_z);
             Serial.print("  ");
 //            /
@@ -171,7 +154,7 @@ void loop() {
 //            Serial.print("  ");
 //            Serial.print(DigBeltButton);
 //            Serial.print("  ");
-           Serial.print(DigLinButton);
+//           Serial.print(DigLinButton);
 //            Serial.print("  ");
 //            Serial.print(ConveyorButton);
 //            Serial.print("  ");
@@ -204,90 +187,23 @@ void loop() {
     print_timer = millis();
   }
 }
-
-void comms() {
-  // Check if there is data available to read
-  if (Serial.available() > 0) {
-        char cmd2 = Serial.read();
-        switch (cmd2){
-          case 'X':{Serial.readBytesUntil('\n', (char*)&linear_x, sizeof(float)+sizeof('\n')); break;}
-          case 'Y':{Serial.readBytesUntil('\n', (char*)&linear_y, sizeof(float)+sizeof('\n')); break;}
-          case 'Z': {Serial.readBytesUntil('\n', (char*)&angular_z, sizeof(float)+sizeof('\n')); break;}
-          
-          case 'A': {Serial.readBytesUntil('\n', (char*)&ConveyorButton, sizeof(float)+sizeof('\n')); break;}
-          case 'B': {Serial.readBytesUntil('\n', (char*)&DeployButton, sizeof(float)+sizeof('\n')); break;}
-          case 'C': {Serial.readBytesUntil('\n', (char*)&DigLinButton, sizeof(float)+sizeof('\n')); break;}
-          case 'D': {Serial.readBytesUntil('\n', (char*)&DigBeltButton, sizeof(float)+sizeof('\n')); break;}
-          case 'E': {Serial.readBytesUntil('\n', (char*)&BucketConveyor, sizeof(float)+sizeof('\n')); break;}
-        }//end cmd2
-  }//end if
-}//end comms
-
-
-void newComms(){
-    static boolean recvInProgress = false;
-    static byte ndx = 0;
-    char startMarker = '<';
-    char endMarker = '>';
-    char rc;
-
-    while (Serial.available() > 0 && newData == false) {
-        rc = Serial.read();
-        //Serial.println("recieving");
-        if (recvInProgress == true) {
-            if (rc != endMarker) {
-
-                receivedChars[ndx] = rc;
-                ndx++;
-                if (ndx >= numChars) {
-                    ndx = numChars - 1;
-                }
-            }
-            else {
-                receivedChars[ndx] = '\0'; // terminate the string
-                recvInProgress = false;
-                ndx = 0;
-                newData = true;
-            }
-        }
-
-        else if (rc == startMarker) {
-            
-            recvInProgress = true;
-        }
-    }
-}
-void parseData() {
-    char * strtokIndx;
-    strtokIndx = strtok(tempChars,",");
-    linear_x = atof(strtokIndx); 
-    strtokIndx = strtok(NULL, ",");
-    linear_y = atof(strtokIndx);     
-    strtokIndx = strtok(NULL, ",");
-    angular_z = atof(strtokIndx); 
-    strtokIndx = strtok(NULL, ",");
-    ConveyorButton = atof(strtokIndx);   
-    strtokIndx = strtok(NULL, ",");
-    DeployButton = atof(strtokIndx); 
-    strtokIndx = strtok(NULL, ",");
-    DigLinButton = atof(strtokIndx);     
-    strtokIndx = strtok(NULL, ",");
-    DigBeltButton = atof(strtokIndx); 
-    strtokIndx = strtok(NULL, ",");
-    BucketConveyor = atof(strtokIndx); 
-
-}
-
-
-
-
-float movingAverage(float in[4], float prevAvg){
-  float avg = 0.0;
-//  if (in[0] >= FLT_MAX || in[1] >= FLT_MAX || in[2] >= FLT_MAX|| in[3] >= FLT_MAX || in[0] <= FLT_MIN || in[1] <= FLT_MIN || in[2] <= FLT_MIN || in[3] <= FLT_MIN){
-//    avg = prevAvg;
-//    }
-//  else {
-    avg = (in[0]+in[1]+in[2]+in[3])/4;
- // }
-  return avg;
-  }
+//
+//void comms() {
+//  // Check if there is data available to read
+//  if (Serial.available() > 0) {
+//        char cmd2 = Serial.read();
+//        switch (cmd2){
+//          case 'X':{Serial.readBytesUntil('\n', (char*)&linear_x, sizeof(float)+sizeof('\n')); break;}
+//          case 'Y':{Serial.readBytesUntil('\n', (char*)&linear_y, sizeof(float)+sizeof('\n')); break;}
+//          case 'Z': {Serial.readBytesUntil('\n', (char*)&angular_z, sizeof(float)+sizeof('\n')); break;}
+//          
+//          case 'A': {Serial.readBytesUntil('\n', (char*)&ConveyorButton, sizeof(float)+sizeof('\n')); break;}
+//          case 'B': {Serial.readBytesUntil('\n', (char*)&DeployButton, sizeof(float)+sizeof('\n')); break;}
+//          case 'C': {Serial.readBytesUntil('\n', (char*)&DigLinButton, sizeof(float)+sizeof('\n')); break;}
+//          case 'D': {Serial.readBytesUntil('\n', (char*)&DigBeltButton, sizeof(float)+sizeof('\n')); break;}
+//          case 'E': {Serial.readBytesUntil('\n', (char*)&BucketConveyor, sizeof(float)+sizeof('\n')); break;}
+//        }//end cmd2
+//  }//end if
+//}//end comms
+//
+//  

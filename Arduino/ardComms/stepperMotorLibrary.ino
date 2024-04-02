@@ -151,6 +151,15 @@ if (br_s_pos > 90 || br_s_pos < -90){
         if (fr_cnt < abs(fr_steps)){digitalWrite(fr_s_ppwm, HIGH); }
         if (bl_cnt < abs(bl_steps)){digitalWrite(bl_s_ppwm, HIGH); }
         if (br_cnt < abs(br_steps)){digitalWrite(br_s_ppwm, HIGH); }
+        if (Serial.available() > 0){
+          newComms();
+            if (newData == true) {
+        
+            strcpy(tempChars, receivedChars);
+            parseData();
+            newData = false;
+            }
+          }
     
         delayMicroseconds(50000);
         digitalWrite(fl_s_ppwm, LOW);
@@ -247,8 +256,9 @@ if (br_s_pos > 90 || br_s_pos < -90){
             // Serial.print(" ");
             // Serial.print(br_cnt);
             // Serial.println(" ");
-
-
+        if (Serial.available()> 0){
+        newComms();
+        }
         if (fl_cnt < abs(fl_steps)){digitalWrite(fl_s_ppwm, HIGH); }
         if (fr_cnt < abs(fr_steps)){digitalWrite(fr_s_ppwm, HIGH); }
         if (bl_cnt < abs(bl_steps)){digitalWrite(bl_s_ppwm, HIGH); }

@@ -91,7 +91,7 @@ class VelocityComm(Node):
         ser.write(str(',').encode())
         ser.write(str(float(BucketConveyor)).encode())
         ser.write(finish.encode())
-        self.get_logger().info('I heard: "%s"' % x)
+        self.get_logger().info('I heard: "%s"' % z)
         sleep(0.1)
 
 
