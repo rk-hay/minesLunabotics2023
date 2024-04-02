@@ -43,9 +43,9 @@ void four_ws_control(float x, float y, float z, int mode){
         else { ang = 0; }
 
         pos[0] = atan(ang);
-        pos[1] = atan(ang);
+        pos[1] = atan(-ang);
         pos[2] = pos[0];
-        pos[3] = pos[1];
+        pos[3] = -pos[1];
         
         vel[0] = sign*V;
         vel[1] = sign*V;
