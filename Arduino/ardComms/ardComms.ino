@@ -44,8 +44,9 @@ void loop() {
 //    if (abs(linear_x) < .02) {linear_x = 0;}
 //    if (abs(linear_y) < .02) {linear_y = 0;}
 //    if (abs(angular_z) < .02) {angular_z = 0;}
-
-    if(digModeButton == false){
+    diggingTime(digToggle);
+    
+    if(digModeButton == 0){
       if (linear_x == 0 && linear_y == 0 && angular_z != 0){
         driveMode = 3; //pivot mode
         }
@@ -59,7 +60,7 @@ void loop() {
         driveMode = 1;
         }
     }
-    else{driveMode = 4; }// digging time bby}
+    else{ driveMode = 4; }// digging time bby}
 
     
     four_ws_control(linear_x, linear_y, angular_z, driveMode);
@@ -97,7 +98,9 @@ void loop() {
    slideOutAcutators(ConveyorButton); // 
    trailer(DigBeltButton);
    digBelt(DigBeltButton);
-   diggingTime(digToggle);
+   
+
+   
   //DEBUGGING STATEMENTS (print every 50 millis)
   if (millis() - print_timer > 50) {
 //         Serial.print(fl_d_vel());
@@ -191,8 +194,10 @@ void loop() {
 
 
 void diggingTime(bool Toggle){
-  if (Toggle){
+  static float prevState = True;
+  if (Toggle && Toggle !=prevState){
   digModeButton = !digModeButton;
+  prevState == Toggle;
   }
 }
 

@@ -9,7 +9,7 @@ float DeployButton = 0;
 float DigLinButton = 0;
 float DigBeltButton = 0;
 float BucketConveyor = 0;
-float digModeButton = 0;
+bool digModeButton = 0;
 float digToggle = 0;
 
 bool newData = false;
