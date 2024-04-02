@@ -10,6 +10,8 @@ float DigLinButton = 0;
 float DigBeltButton = 0;
 float BucketConveyor = 0;
 float digModeButton = 0;
+float digToggle = 0;
+
 bool newData = false;
 const byte numChars = 32;
 char receivedChars[numChars];

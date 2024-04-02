@@ -53,7 +53,9 @@ void parseData() {
     strtokIndx = strtok(NULL, ",");
     DigBeltButton = atof(strtokIndx); 
     strtokIndx = strtok(NULL, ",");
-    BucketConveyor = atof(strtokIndx); 
+    BucketConveyor = atof(strtokIndx);
+    strtokIndx = strtok(NULL, ",");
+    digToggle = atof(strtokIndx);  
 
 }
 

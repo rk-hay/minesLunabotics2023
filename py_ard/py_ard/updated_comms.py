@@ -12,6 +12,7 @@ DeployButton = 0
 DigLinButton = 0
 DigBeltButton = 0
 BucketConveyor = 0
+digActivate = 0
 firstTime = True
 
 x = 0
@@ -57,6 +58,7 @@ class VelocityComm(Node):
         global DigBeltButton
         global msgSend
         global BucketConveyor
+        global digActivate
         global x, y, z
         global firstTime
         if firstTime == True:
@@ -69,6 +71,7 @@ class VelocityComm(Node):
         DigLinButton = float(-1*(msg.axes[2])*255) #int(abs(msg.axes[2]-1)*255/2)
         DigBeltButton = float(abs(msg.axes[5]-1)*255/2)
         BucketConveyor = float(msg.buttons[5])*255
+        digActivate = float(msg.buttons[8])
         msgSend = msg.buttons[8]
         ser.reset_input_buffer()
         ser.reset_output_buffer()
@@ -90,6 +93,8 @@ class VelocityComm(Node):
         ser.write(str(float(DigBeltButton)).encode())
         ser.write(str(',').encode())
         ser.write(str(float(BucketConveyor)).encode())
+        ser.write(str(',').encode())
+        ser.write(str(float(digActivate)).encode())
         ser.write(finish.encode())
         self.get_logger().info('I heard: "%s"' % z)
         sleep(0.1)
