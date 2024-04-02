@@ -13,7 +13,7 @@ bool digModeButton = 0;
 float digToggle = 0;
 
 bool newData = false;
-const byte numChars = 32;
+const byte numChars = 40;
 char receivedChars[numChars];
 char tempChars[numChars]; 
 

@@ -45,7 +45,6 @@ void loop() {
 //    if (abs(linear_y) < .02) {linear_y = 0;}
 //    if (abs(angular_z) < .02) {angular_z = 0;}
     diggingTime(digToggle);
-    
     if(digModeButton == 0){
       if (linear_x == 0 && linear_y == 0 && angular_z != 0){
         driveMode = 3; //pivot mode
@@ -137,8 +136,8 @@ void loop() {
 
 
 
-            Serial.print(fl_s_pos);
-            Serial.print("  ");
+//            Serial.print(fl_s_pos);
+//            Serial.print("  ");
           //  Serial.print(fr_s_pos);
           //  Serial.print("  ");
           //  Serial.print(bl_s_pos);
@@ -150,20 +149,22 @@ void loop() {
 //            Serial.print("  ");
 //            Serial.print(linear_y);
 //            Serial.print("  ");
-            Serial.print(angular_z);
-            Serial.print("  ");
+//            Serial.print(angular_z);
+//            Serial.print("  ");
 //            /
 
-//            Serial.print(DeployButton);
-//            Serial.print("  ");
+            Serial.print(digModeButton);
+            Serial.print("  ");
+            Serial.print(digToggle);
+            Serial.print("  ");
 //            Serial.print(DigBeltButton);
 //            Serial.print("  ");
 //           Serial.print(DigLinButton);
 //            Serial.print("  ");
 //            Serial.print(ConveyorButton);
 //            Serial.print("  ");
-//            Serial.print(BucketConveyor);
-//            Serial.print("  ");
+            Serial.print(BucketConveyor);
+            Serial.print("  ");
             
 //            Serial.print(maX);
 //            Serial.print("  ");
@@ -194,11 +195,11 @@ void loop() {
 
 
 void diggingTime(bool Toggle){
-  static float prevState = True;
-  if (Toggle && Toggle !=prevState){
+  static float prevState = 0;
+  if (Toggle == true && Toggle !=prevState){
   digModeButton = !digModeButton;
-  prevState == Toggle;
   }
+  prevState = Toggle;
 }
 
 //
