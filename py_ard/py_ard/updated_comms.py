@@ -12,7 +12,7 @@ DeployButton = 0
 DigLinButton = 0
 DigBeltButton = 0
 BucketConveyor = 0
-
+firstTime = True
 
 x = 0
 y = 0
@@ -58,6 +58,12 @@ class VelocityComm(Node):
         global msgSend
         global BucketConveyor
         global x, y, z
+        global firstTime
+        if firstTime == True:
+            self.get_logger().info('waiting for arduino')
+            sleep(5)
+            firstTime = False  
+            
         ConveyorButton = (msg.buttons[2]-msg.buttons[3])*255
         DeployButton = float(msg.buttons[6]-msg.buttons[7])*255
         DigLinButton = float(-1*(msg.axes[2])*255) #int(abs(msg.axes[2]-1)*255/2)
@@ -85,6 +91,7 @@ class VelocityComm(Node):
         ser.write(str(',').encode())
         ser.write(str(float(BucketConveyor)).encode())
         ser.write(finish.encode())
+        self.get_logger().info('I heard: "%s"' % x)
         sleep(0.1)
 
 

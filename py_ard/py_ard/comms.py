@@ -83,35 +83,26 @@ class VelocityComm(Node):
             ser.reset_input_buffer()
             ser.reset_output_buffer()
 
-            ser.write(struct.pack('c', b'X'))
-            ser.write(struct.pack('<f', float(x)))
-            ser.write(struct.pack('c', b'\n'))
-            ser.write(struct.pack('c', b'Y'))
-            ser.write(struct.pack('<f', float(y)))
-            ser.write(struct.pack('c', b'\n'))
-            ser.write(struct.pack('c', b'Z'))
-            ser.write(struct.pack('<f', float(z)))
-            ser.write(struct.pack('c', b'\n'))
-
-            ser.write(struct.pack('c', b'A'))
-            ser.write(struct.pack('<f', float(ConveyorButton)))
-            ser.write(struct.pack('c', b'\n'))
-
-            ser.write(struct.pack('c', b'B'))
-            ser.write(struct.pack('<f', float(DeployButton)))
-            ser.write(struct.pack('c', b'\n'))
-            
-            ser.write(struct.pack('c', b'C'))
-            ser.write(struct.pack('<f', float(DigLinButton)))
-            ser.write(struct.pack('c', b'\n'))
-
-            ser.write(struct.pack('c', b'D'))
-            ser.write(struct.pack('<f', float(DigBeltButton)))
-            ser.write(struct.pack('c', b'\n'))
-
-            ser.write(struct.pack('c', b'E'))
-            ser.write(struct.pack('<f', float(BucketConveyor)))
-            ser.write(struct.pack('c', b'\n'))
+            start = "<"
+            finish = str(">")
+            ser.write(start.encode())
+            ser.write(str(float(x)).encode())
+            ser.write(str(',').encode())
+            ser.write(str(float(y)).encode())
+            ser.write(str(',').encode())
+            ser.write(str(float(z)).encode())
+            ser.write(str(',').encode())
+            ser.write(str(float(ConveyorButton)).encode())
+            ser.write(str(',').encode())
+            ser.write(str(float(DeployButton)).encode())
+            ser.write(str(',').encode())
+            ser.write(str(float(DigLinButton)).encode())
+            ser.write(str(',').encode())
+            ser.write(str(float(DigBeltButton)).encode())
+            ser.write(str(',').encode())
+            ser.write(str(float(BucketConveyor)).encode())
+            ser.write(finish.encode())
+            sleep(0.1)
 
             prevX = x
             prevY = y
