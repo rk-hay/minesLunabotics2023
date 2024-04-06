@@ -6,7 +6,7 @@ from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Joy
 ser = serial.Serial('/dev/ttyACM0', baudrate=19200)
 ser.reset_input_buffer()
-
+ser.write_timeout(10)
 
 ConveyorButton = 0
 DeployButton = 0

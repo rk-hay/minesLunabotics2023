@@ -9,6 +9,7 @@ void setup() {
   digSetup();
   setupEncoders();
   Serial.begin(19200);
+  Serial.flush();
   Serial.print(". ");
   readEncoders();
   //Serial.println("setup");
