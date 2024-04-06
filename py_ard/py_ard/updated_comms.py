@@ -7,6 +7,7 @@ from sensor_msgs.msg import Joy
 ser = serial.Serial('/dev/ttyACM0', baudrate=19200)
 ser.reset_input_buffer()
 
+
 ConveyorButton = 0
 DeployButton = 0
 DigLinButton = 0
@@ -72,6 +73,7 @@ class VelocityComm(Node):
         DigBeltButton = float(abs(msg.axes[5]-1)*255/2)
         BucketConveyor = float(msg.buttons[5])*255
         digActivate = float(msg.buttons[4])
+        
         msgSend = msg.buttons[8]
         ser.reset_input_buffer()
         ser.reset_output_buffer()
@@ -95,11 +97,13 @@ class VelocityComm(Node):
         ser.write(str(float(DigBeltButton)).encode())
         ser.write(str(',').encode())
         ser.write(str(float(BucketConveyor)).encode())
-
         ser.write(finish.encode())
         self.get_logger().info('I heard: "%s"' % digActivate)
+        
+        ser.reset_input_buffer()
+        ser.reset_output_buffer()
         sleep(0.1)
-
+	
 
 def main(args=None):
     rclpy.init(args=args)

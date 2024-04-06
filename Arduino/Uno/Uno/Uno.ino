@@ -1,4 +1,39 @@
-#include "vars.h"
+bool newData = false;
+const byte numChars = 12;
+char receivedChars[numChars];
+char tempChars[numChars]; 
+
+float BucketConveyor = 0;
+float DigBeltButton = 0;
+
+#define liveTrailer_PWM 5
+#define bucketConveyor_PWM 6
+
+void setup() {
+  Serial.begin(19200);
+  Serial.print(". ");
+  
+  pinMode(liveTrailer_PWM, OUTPUT);
+  pinMode(bucketConveyor_PWM, OUTPUT);
+}
+
+void loop() {
+  newComms();
+  if (newData == true) {
+
+    strcpy(tempChars, receivedChars);
+    parseData();
+    newData = false;
+    }
+
+  bucketConveyor(DigBeltButton);
+  liveTrailer(BucketConveyor);
+  
+  Serial.print(DigBeltButton);
+  Serial.print(" ");
+  Serial.println(BucketConveyor);
+}
+
 
 
 
@@ -37,27 +72,6 @@ void newComms(){
 }
 void parseData() {
     char * strtokIndx;
-    
-    strtokIndx = strtok(tempChars,",");
-    linear_x = atof(strtokIndx); 
-    
-    strtokIndx = strtok(NULL, ",");
-    linear_y = atof(strtokIndx);  
-       
-    strtokIndx = strtok(NULL, ",");
-    angular_z = atof(strtokIndx); 
-    
-    strtokIndx = strtok(NULL, ",");
-    digToggle = atof(strtokIndx);  
-    
-    strtokIndx = strtok(NULL, ",");
-    ConveyorButton = atof(strtokIndx);  
-     
-    strtokIndx = strtok(NULL, ",");
-    DeployButton = atof(strtokIndx);
-     
-    strtokIndx = strtok(NULL, ",");
-    DigLinButton = atof(strtokIndx);  
 
     strtokIndx = strtok(NULL, ",");
     DigBeltButton = atof(strtokIndx); 
@@ -65,4 +79,13 @@ void parseData() {
     strtokIndx = strtok(NULL, ",");
     BucketConveyor = atof(strtokIndx);
 
+
+}
+
+void liveTrailer(int duty){
+  digitalWrite(liveTrailer_PWM, abs(duty));
+}
+
+void bucketConveyor(int duty){
+  analogWrite(bucketConveyor_PWM, abs(duty));
 }

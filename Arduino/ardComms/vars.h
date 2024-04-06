@@ -7,8 +7,9 @@ float angular_z = 0.0;
 float ConveyorButton = 0;
 float DeployButton = 0;
 float DigLinButton = 0;
-float DigBeltButton = 0;
 float BucketConveyor = 0;
+float DigBeltButton = 0;
+
 bool digModeButton = 0;
 float digToggle = 0;
 

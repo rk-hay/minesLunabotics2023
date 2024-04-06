@@ -3,58 +3,25 @@
 #define appendageDeployLinears_IN1 A9
 #define appendageDeployLinears_IN2 A10
 
-#define appendageBelt_PWM 7
-#define appendageBelt_IN1 A11
-#define appendageBelt_IN2 A12
+#define slideOut_PWM A8 //was 13
+#define slideOut_IN1 A6
+#define slideOut_IN2 A7
 
 #define appendageDigLin_PWM 8
 #define appendageDigLin_IN1 A13
 #define appendageDigLin_IN2 A5
 
-#define slideOut_PWM A8 //was 13
-#define slideOut_IN1 A6
-#define slideOut_IN2 A7
+#define liveTrailer_PWM A12 // new is 11
 
-#define liveTrailer_PWM 13
-#define liveTrailer_IN1 A2
-#define liveTrailer_IN2 19
 
-#define m1_PWM 7 //BUCKETS
-#define m1_SLP A11  // enable if pwm != 0
-#define m1_DIR A12  // 0 for forward 1 for backward
+#define bucketConveyor_PWM A11 //set to 13?
 
-#define m2_PWM 13
-#define m2_SLP A2
-#define m2_DIR 19
 
-#define IBT_PWM 7
-#define IBT_IN1 A2
-#define IBT_IN2 19
-
+#define appendageBelt_PWM 7
 //TODO 
 // FUNCTION FOR EACH OF THE IMPORTANT MOTORS
 
-void trailer(int duty){
-    //if limit switch != true
-  bool dir = duty > 0;
-  analogWrite(IBT_PWM, abs(duty));
-  digitalWrite(IBT_IN1, dir);  //high when -
-  digitalWrite(IBT_IN2, !dir); // high when +
-  }
 
-
-void bucketConveyor(int duty){
-    //if limit switch != true
-  bool dir = duty > 0;
-  if (dir){
-  digitalWrite(liveTrailer_IN1, !dir);
-  digitalWrite(liveTrailer_IN2, dir);
-  }
-  else{
-  digitalWrite(liveTrailer_IN1, HIGH);
-  digitalWrite(liveTrailer_IN2, HIGH);
-  }
-  }
 
 
 void digSetup() {
@@ -63,9 +30,7 @@ void digSetup() {
   pinMode(appendageDeployLinears_IN1, OUTPUT);
   pinMode(appendageDeployLinears_IN2, OUTPUT);
 
-  pinMode(appendageBelt_PWM, OUTPUT);
-  pinMode(appendageBelt_IN1, OUTPUT);
-  pinMode(appendageBelt_IN2, OUTPUT);
+  pinMode(bucketConveyor_PWM, OUTPUT);
   
   pinMode(appendageDigLin_PWM, OUTPUT);
   pinMode(appendageDigLin_IN1, OUTPUT);
@@ -75,20 +40,11 @@ void digSetup() {
   pinMode(slideOut_IN1, OUTPUT);
   pinMode(slideOut_IN2, OUTPUT);
 
-  pinMode(m1_PWM, OUTPUT);
-  pinMode(m1_SLP, OUTPUT);
-  pinMode(m1_DIR, OUTPUT);
+  pinMode(liveTrailer_PWM, OUTPUT);
+  digitalWrite(liveTrailer_PWM, LOW);
 
-  pinMode(m2_PWM, OUTPUT);
-  pinMode(m2_SLP, OUTPUT);
-  pinMode(m2_DIR, OUTPUT);
-  
-  pinMode(IBT_PWM, OUTPUT);
-  pinMode(IBT_IN1, OUTPUT);
-  pinMode(IBT_IN2, OUTPUT);
-
-  analogWrite(appendageDeployLinears_PWM, 255);
-  //digitalWrite(A8, HIGH);
+  //analogWrite(appendageDeployLinears_PWM, 255);
+  digitalWrite(A8, HIGH);
 }
 
 
@@ -107,25 +63,22 @@ void deployAppendageLinActuators(int duty){
 }
 
 void liveTrailer(int duty){
-  //if limit switch != true
-  bool dir = duty > 0;
-  if (dir){
-  digitalWrite(liveTrailer_IN1, !dir);
-  digitalWrite(liveTrailer_IN2, dir);
-  }
+  if (duty > 0){
+    digitalWrite(liveTrailer_PWM, HIGH);
+    }
   else{
-  digitalWrite(liveTrailer_IN1, HIGH);
-  digitalWrite(liveTrailer_IN2, HIGH);
-  }
+    digitalWrite(liveTrailer_PWM, LOW);
+    }
+  
 }
 
-
-void digBelt(int duty){
-  //if limit switch != true
-  bool dir = duty > 0;
-  analogWrite(appendageBelt_PWM, abs(duty));
-  digitalWrite(appendageBelt_IN1, !dir);
-  digitalWrite(appendageBelt_IN2, dir);
+void bucketConveyor(int duty){
+  if (duty > 0){
+  digitalWrite(bucketConveyor_PWM, HIGH);
+  }
+  else{
+  digitalWrite(bucketConveyor_PWM, LOW);
+    }
 }
 
 void digDepth(int duty){
