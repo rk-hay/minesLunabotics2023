@@ -4,9 +4,8 @@ import serial
 from time import sleep
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Joy
-ser = serial.Serial('/dev/ttyACM0', baudrate=19200)
+ser = serial.Serial('/dev/ttyACM0', baudrate=19200, timeout=0)
 ser.reset_input_buffer()
-ser.write_timeout(6)
 
 ConveyorButton = 0
 DeployButton = 0
@@ -100,8 +99,6 @@ class VelocityComm(Node):
         ser.write(finish.encode())
         self.get_logger().info('I heard: "%s"' % digActivate)
         
-        ser.reset_input_buffer()
-        ser.reset_output_buffer()
         sleep(0.1)
 	
 
