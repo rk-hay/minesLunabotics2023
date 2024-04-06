@@ -12,7 +12,6 @@ void setup() {
   Serial.flush();
   Serial.print(". ");
   readEncoders();
-  //Serial.println("setup");
 
 }
 
@@ -37,9 +36,6 @@ void loop() {
   readEncoders();
   //run the control loop on a timer
   if (millis() - control_loop_timer > 24) {
-//    if (abs(linear_x) < .02) {linear_x = 0;}
-//    if (abs(linear_y) < .02) {linear_y = 0;}
-//    if (abs(angular_z) < .02) {angular_z = 0;}
     diggingTime(digToggle);
     if(digModeButton == 0){
       if (linear_x == 0 && linear_y == 0 && angular_z != 0){
@@ -78,16 +74,9 @@ void loop() {
    slideOutAcutators(ConveyorButton); // 
    bucketConveyor(DigBeltButton);
    liveTrailer(BucketConveyor);
-
-   //  deployAppendageLinActuators(-255); //
-   //digDepth(255); //
- //    slideOutAcutators(0); // FUNCTIONAL
-     //bucketConveyor(255);
-     //liveTrailer(0);
-    //deployAppendageLinActuators();
    
   //DEBUGGING STATEMENTS (print every 50 millis)
-  if (millis() - print_timer > 50) {
+  if (millis() - print_timer > 500) {
 //         Serial.print(fl_d_vel());
 //         Serial.print("  ");
 //         Serial.print();
@@ -164,14 +153,6 @@ void loop() {
 //            Serial.print(prevLinX[3]);
 //            Serial.print("  ");
             
-            // Serial.print((3.14/180)*((fl_s_pos+fr_s_pos)/2));
-            // Serial.print("  ");
-            // Serial.print(3.14/180*(-(bl_s_pos+br_s_pos)/2));
-            // Serial.print("  ");
-            // Serial.print((fl_d_vel()*cos(fl_s_pos*PI/180)+fr_d_vel()*cos(fr_s_pos*PI/180)+bl_d_vel()*cos(-bl_s_pos*PI/180)+br_d_vel()*cos(-br_s_pos*PI/180))/4);
-            // Serial.print("  ");
-            // Serial.print(ang_vel());
-            // Serial.print("  ");
                Serial.println();
     print_timer = millis();
   }
