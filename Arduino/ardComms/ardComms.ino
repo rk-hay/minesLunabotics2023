@@ -58,13 +58,13 @@ void loop() {
     //four_ws_control(.5, 0.0, .25, 3);
     //control_vel_fl(.7); 
     if (stepper_locked == false) {
-      control_vel_updated(lin_vels);
       step_pos(pos_angs);
+      control_vel_updated(lin_vels);
       //global_angle_select(0, 0, 0, -45);
       step_timer = millis();
     }
     controller_control_loop();
-
+    
 
  
     control_loop_timer = millis();

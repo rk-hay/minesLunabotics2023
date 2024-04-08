@@ -1,71 +1,51 @@
-// This file contains the velocity controllers. The goal is that when we input a velocity it sets 
-// an intial PWM value then tracks the encoder updates and if the encoders seem too slow, it speeds 
-// it up and if they are two fast, it'll slow it down.
-
-//return the angular speed *aprox*
-float ang_vel(){
-  float front_angle = PI/180*((fl_s_pos+fr_s_pos)/2);
-  float rear_angle = PI/180*((bl_s_pos+br_s_pos)/2);
-  float linear_velocity_approx = (fl_d_vel()*cos(fl_s_pos*PI/180)+fr_d_vel()*cos(fr_s_pos*PI/180)+bl_d_vel()*cos(-bl_s_pos*PI/180)+br_d_vel()*cos(-br_s_pos*PI/180))/4;
-  float angular_velocity = ((linear_velocity_approx*cos((front_angle+rear_angle)/2))/(front_angle + rear_angle))*(front_angle - rear_angle);
-  if (isnan(angular_velocity)) {angular_velocity = 0;}
-  return angular_velocity;
-}
 
 
 
-
-float fl_d_vel(){
+float fl_d_vel() {
     unsigned long myTime = micros();
-    static float prevTime = 0;
     static int prev_pos_fl = 0;
     static float prevVelocity = 0;
     static float velocity = 0; 
+    static float prevTime = 0;
     readEncoders();
-    velocity = (1.0/enc_per_rev)*(PI*wheel_diameter)*((fl_enc_pos-prev_pos_fl)/((myTime-prevTime) * .000001));
-    if ((abs(fl_enc_pos) < abs(prev_pos_fl))){
-       velocity = prevVelocity;
-    }
+    int delta_pos = fl_enc_pos - prev_pos_fl;
+    float deltaTime = (myTime - prevTime) * 0.000001; // Convert microseconds to seconds
+    if (abs(delta_pos) > (enc_per_rev / 2)) {delta_pos = fl_enc_pos + (enc_per_rev - prev_pos_fl);}
+    velocity = (1.0 / enc_per_rev) * (PI * wheel_diameter) * (delta_pos / deltaTime);
     prev_pos_fl = fl_enc_pos;
     prevTime = myTime;
     prevVelocity = velocity;
-  return velocity;
-  }
+    return velocity;
+}
 
 
 float fr_d_vel(){
-  
-  
     unsigned long myTime = micros();
-    static float prevTime = 0;
     static int prev_pos_fr = 0;
     static float prevVelocity = 0;
     static float velocity = 0; 
+    static float prevTime = 0;
     readEncoders();
-    velocity = (1.0/enc_per_rev)*(PI*wheel_diameter)*((fr_enc_pos-prev_pos_fr)/((myTime-prevTime) * .000001));
-    if ((abs(fr_enc_pos) < abs(prev_pos_fr))){
-       velocity = prevVelocity;
-    }
+    int delta_pos = fr_enc_pos - prev_pos_fr;
+    float deltaTime = (myTime - prevTime) * 0.000001; // Convert microseconds to seconds
+    if (abs(delta_pos) > (enc_per_rev / 2)) {delta_pos = fr_enc_pos + (enc_per_rev - prev_pos_fr);}
+    velocity = (1.0 / enc_per_rev) * (PI * wheel_diameter) * (delta_pos / deltaTime);
     prev_pos_fr = fr_enc_pos;
     prevTime = myTime;
     prevVelocity = velocity;
-  return velocity;
   }
 
 float bl_d_vel(){
-  
-  
     unsigned long myTime = micros();
-    static float prevTime = 0;
     static int prev_pos_bl = 0;
     static float prevVelocity = 0;
     static float velocity = 0; 
-
+    static float prevTime = 0;
     readEncoders();
-    velocity = (1.0/enc_per_rev)*(PI*wheel_diameter)*((bl_enc_pos-prev_pos_bl)/((myTime-prevTime) * .000001));
-    if ((abs(bl_enc_pos) < abs(prev_pos_bl))){
-       velocity = prevVelocity;
-    }
+    int delta_pos = bl_enc_pos - prev_pos_bl;
+    float deltaTime = (myTime - prevTime) * 0.000001; // Convert microseconds to seconds
+    if (abs(delta_pos) > (enc_per_rev / 2)) {delta_pos = bl_enc_pos + (enc_per_rev - prev_pos_bl);}
+    velocity = (1.0 / enc_per_rev) * (PI * wheel_diameter) * (delta_pos / deltaTime);
     prev_pos_bl = bl_enc_pos;
     prevTime = myTime;
     prevVelocity = velocity;
@@ -74,22 +54,19 @@ float bl_d_vel(){
 
 
 float br_d_vel(){
-    
     unsigned long myTime = micros();
-    static float prevTime = 0;
     static int prev_pos_br = 0;
     static float prevVelocity = 0;
     static float velocity = 0; 
-
+    static float prevTime = 0;
     readEncoders();
-    velocity = (1.0/enc_per_rev)*(PI*wheel_diameter)*((br_enc_pos-prev_pos_br)/((myTime-prevTime) * .000001));
-    if ((abs(br_enc_pos) < abs(prev_pos_br))){
-       velocity = prevVelocity;
-    }
+    int delta_pos = br_enc_pos - prev_pos_br;
+    float deltaTime = (myTime - prevTime) * 0.000001; // Convert microseconds to seconds
+    if (abs(delta_pos) > (enc_per_rev / 2)) { delta_pos = br_enc_pos + (enc_per_rev - prev_pos_br);}
+    velocity = (1.0 / enc_per_rev) * (PI * wheel_diameter) * (delta_pos / deltaTime);
     prev_pos_br = br_enc_pos;
     prevTime = myTime;
     prevVelocity = velocity;
-  
   return velocity;
   }
   // m/s = (1 rev / 5281 counts) * (pi*.345 m)/1 rev*((number of current counts - number of previous counts)/seconds passed)  

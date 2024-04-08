@@ -89,13 +89,14 @@ char tempChars[numChars];
 #define br_a 20
 #define br_b A1
 
-#define MAX_PWM 1
+#define MAX_VEL 1
 #define MAX_LINEAR_PWM 255
 #define MAX_ANGULAR_PWM 255
 #define MAX_INTEGRAL 1
 #define MAX_V_INTEGRAL 5
 #define MAX_ANGLE 90.0 
-#define MAX_ANGULAR_VEL .99
+#define MAX_ANGULAR_VEL 1
+
 float wheel_diameter = .345; //approx .31 without spikes also this is in meters
 float robot_width = .60; // measured from outer edge to outeredge of stepper motor
 float robot_len = .855;
