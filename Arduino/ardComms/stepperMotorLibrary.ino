@@ -55,7 +55,6 @@ void motors_init(){
   pinMode(br_d_pwm, OUTPUT);
   motors_PWM(0);
   motors_float(false);
-  setupEncoders();
   motors_dir(true);
   
 }

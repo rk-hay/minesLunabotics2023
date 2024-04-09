@@ -6,9 +6,10 @@
 void setup() { 
   motors_init();
   digSetup();
+  delay(4000);
   setupEncoders();
   Serial.begin(19200);
-  //Serial.flush();
+  Serial.flush();
   //Serial.print(". ");
   //readEncoders();
 
@@ -52,8 +53,8 @@ void loop() {
     else{ driveMode = 4; }// digging time bby}
 
     
-    //four_ws_control(linear_x, linear_y, angular_z, driveMode);
-    four_ws_control(0.0, 0.0, 0.0, 1);
+    four_ws_control(linear_x, linear_y, angular_z, driveMode);
+    //four_ws_control(0.0, 0.0, 0.0, 1);
     if (stepper_locked == false) {
       step_pos(pos_angs);
       control_vel_updated(lin_vels);
@@ -61,9 +62,6 @@ void loop() {
       step_timer = millis();
     }
     controller_control_loop();
-    
-
- 
     control_loop_timer = millis();
   }
   deployAppendageLinActuators(DeployButton); //DeployButton fold out
