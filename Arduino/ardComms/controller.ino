@@ -84,7 +84,7 @@ void controller_control_loop(){
   float vels[4] = {fl_d_vel(), fr_d_vel(), bl_d_vel(), br_d_vel()};
 
     for (int i = 0; i < NUM_WHEELS; i++) {
-      if (vels[i] < (calculateAverageVelocity(vels) - 0.2) || vels[i] > (calculateAverageVelocity(vels) + 0.2)) {
+      if (vels[i] < (calculateAverageVelocity(vels) - 0.1) || vels[i] > (calculateAverageVelocity(vels) + 0.1)) {
             // Adjust speed to reduce slip (for simplicity, reducing speed by 10%)
             updated_vels[i] *= 0.5;
       }

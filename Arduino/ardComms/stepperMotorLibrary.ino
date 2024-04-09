@@ -53,15 +53,6 @@ void motors_init(){
   pinMode(fr_d_pwm, OUTPUT);
   pinMode(bl_d_pwm, OUTPUT);
   pinMode(br_d_pwm, OUTPUT);
-
-  pinMode(fl_a, INPUT);
-  pinMode(fl_b, INPUT);
-  pinMode(fr_a, INPUT);
-  pinMode(fr_b, INPUT);
-  pinMode(br_a, INPUT);
-  pinMode(br_b, INPUT);
-  pinMode(bl_a, INPUT);
-  pinMode(bl_b, INPUT);
   motors_PWM(0);
   motors_float(false);
   setupEncoders();

@@ -33,6 +33,7 @@ float fr_d_vel(){
     prev_pos_fr = fr_enc_pos;
     prevTime = myTime;
     prevVelocity = velocity;
+    return velocity;
   }
 
 float bl_d_vel(){

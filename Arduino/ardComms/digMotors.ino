@@ -52,11 +52,11 @@ void deployAppendageLinActuators(int duty){
   //if limit switch != true
   bool dir = duty > 0;
   if (duty != 0){
-  digitalWrite(appendageDeployLinears_IN1, !dir);  //high when -
+  digitalWrite(appendageDeployLinears_IN1, !dir); 
   digitalWrite(appendageDeployLinears_IN2, dir); // high when +
   }
   else{
-    digitalWrite(appendageDeployLinears_IN1, 0);  //high when -
+    digitalWrite(appendageDeployLinears_IN1, 0); 
     digitalWrite(appendageDeployLinears_IN2, 0); // high when +
     }
   
@@ -84,9 +84,10 @@ void bucketConveyor(int duty){
 void digDepth(int duty){
   //if limit switch != true
   bool dir = duty > 0;
-  analogWrite(appendageDigLin_PWM, abs(duty));
-  digitalWrite(appendageDigLin_IN1, !dir);
-  digitalWrite(appendageDigLin_IN2, dir);
+  if (abs(duty) > 242){duty = 242;}
+  analogWrite(appendageDigLin_PWM, abs(duty)); //abs(duty)
+  digitalWrite(appendageDigLin_IN1, LOW);
+  digitalWrite(appendageDigLin_IN2, !dir);
 }
 
 void slideOutAcutators(int duty){  
