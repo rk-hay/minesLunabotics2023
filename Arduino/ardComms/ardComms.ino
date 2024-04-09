@@ -86,13 +86,13 @@ void loop() {
         //  Serial.print("  ");
         //  Serial.print(pos_angs[3]
  
-           Serial.print(fl_enc_pos);//11
-           Serial.print("  ");
-           Serial.print(fr_enc_pos);
-           Serial.print("  ");
-           Serial.print(bl_enc_pos);
-           Serial.print("  ");
-           Serial.print(br_enc_pos); //7
+//           Serial.print(fl_enc_pos);//11
+//           Serial.print("  ");
+//           Serial.print(fr_enc_pos);
+//           Serial.print("  ");
+//           Serial.print(bl_enc_pos);
+//           Serial.print("  ");
+//           Serial.print(br_enc_pos); //7
 //           Serial.print("  ");
 
 
@@ -114,15 +114,15 @@ void loop() {
 //            /
 
 
-              // Serial.print(DeployButton);
-              // Serial.print("  ");
-              // Serial.print(DigLinButton);
-              // Serial.print("  ");
-              // Serial.print(ConveyorButton);
-              // Serial.print("  ");
-              // Serial.print(DigBeltButton);
-              // Serial.print(" ");
-              // Serial.println(BucketConveyor);
+               Serial.print(DeployButton);
+               Serial.print("  ");
+               Serial.print(DigLinButton);
+               Serial.print("  ");
+               Serial.print(ConveyorButton);
+               Serial.print("  ");
+               Serial.print(DigBeltButton);
+               Serial.print(" ");
+               Serial.println(BucketConveyor);
 
                Serial.println();
     print_timer = millis();

@@ -86,8 +86,8 @@ void digDepth(int duty){
   bool dir = duty > 0;
   if (abs(duty) > 242){duty = 242;}
   analogWrite(appendageDigLin_PWM, abs(duty)); //abs(duty)
-  digitalWrite(appendageDigLin_IN1, LOW);
-  digitalWrite(appendageDigLin_IN2, !dir);
+  digitalWrite(appendageDigLin_IN1, !dir);
+  digitalWrite(appendageDigLin_IN2, dir);
 }
 
 void slideOutAcutators(int duty){  
