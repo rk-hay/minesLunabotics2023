@@ -1,14 +1,16 @@
 #include "vars.h"
 #include "float.h"
 
-
+#define COMMS_LOOP
+#define CONTROL_LOOP
+#define PRINT
 
 void setup() { 
   motors_init();
   digSetup();
   delay(4000);
   setupEncoders();
-  Serial.begin(19200);
+  Serial.begin(115200);
   Serial.flush();
   //Serial.print(". ");
   //readEncoders();
@@ -26,14 +28,16 @@ void loop() {
   static float prev_fl_enc = 0;
   static float comms_timer = 0;
   static float step_timer = 0;
-  readEncoders();
+  //readEncoders();
+#ifdef COMMS_LOOP
   newComms();
   if (newData == true) {
     strcpy(tempChars, receivedChars);
     parseData();
     newData = false;
     }
-
+#endif
+#ifdef CONTROL_LOOP
   if (millis() - control_loop_timer > 24) {
     diggingTime(digToggle);
     if(digModeButton == 0){
@@ -52,9 +56,9 @@ void loop() {
     }
     else{ driveMode = 4; }// digging time bby}
 
-    
+
     four_ws_control(linear_x, linear_y, angular_z, driveMode);
-    //four_ws_control(0.0, 0.0, 0.0, 1);
+    //four_ws_control(0.2, 0.0, -0.5, 1);
     if (stepper_locked == false) {
       step_pos(pos_angs);
       control_vel_updated(lin_vels);
@@ -67,10 +71,12 @@ void loop() {
   deployAppendageLinActuators(DeployButton); //DeployButton fold out
   digDepth(DigLinButton); // linear actuator
   slideOutAcutators(ConveyorButton); // 
-  bucketConveyor(DigBeltButton);
+  bucketConveyor(DigBeltButton); //
   liveTrailer(BucketConveyor);
-   
-  //DEBUGGING STATEMENTS (print every 50 millis)
+#endif 
+
+
+#ifdef PRINT
   if (millis() - print_timer > 100) {
         // Serial.print(fl_d_vel());
         //  Serial.print("  ");
@@ -86,14 +92,14 @@ void loop() {
         //  Serial.print("  ");
         //  Serial.print(pos_angs[3]
  
-//           Serial.print(fl_enc_pos);//11
-//           Serial.print("  ");
-//           Serial.print(fr_enc_pos);
-//           Serial.print("  ");
-//           Serial.print(bl_enc_pos);
-//           Serial.print("  ");
-//           Serial.print(br_enc_pos); //7
-//           Serial.print("  ");
+          Serial.print(fl_enc_pos);//11
+          Serial.print("  ");
+          Serial.print(fr_enc_pos);
+          Serial.print("  ");
+          Serial.print(bl_enc_pos);
+          Serial.print("  ");
+          Serial.print(br_enc_pos); //7
+          Serial.print("  ");
 
 
 //            Serial.print(fl_s_pos);
@@ -114,19 +120,20 @@ void loop() {
 //            /
 
 
-               Serial.print(DeployButton);
-               Serial.print("  ");
-               Serial.print(DigLinButton);
-               Serial.print("  ");
-               Serial.print(ConveyorButton);
-               Serial.print("  ");
-               Serial.print(DigBeltButton);
-               Serial.print(" ");
-               Serial.println(BucketConveyor);
+              //  Serial.print(DeployButton);
+              //  Serial.print("  ");
+              //  Serial.print(DigLinButton);
+              //  Serial.print("  ");
+              //  Serial.print(ConveyorButton);
+              //  Serial.print("  ");
+              //  Serial.print(DigBeltButton);
+              //  Serial.print(" ");
+              //  Serial.println(BucketConveyor);
 
                Serial.println();
     print_timer = millis();
   }
+#endif
 }
 
 

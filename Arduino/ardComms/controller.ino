@@ -134,34 +134,6 @@ void control_vel_br(float v){
   }
 
 
-void control_pos(float p){
-  control_pos_fl(p);
-  control_pos_fr(p);
-  control_pos_br(p);
-  control_pos_bl(p);
-  }
-
-
-void control_pos_fl(float p){
-  fl_target_p = p;
-  postional_mode = true;
-  }
-
-void control_pos_fr(float p){
-  fr_target_p = p;
-  postional_mode = true;
-  }
-
-void control_pos_bl(float p){
-  bl_target_p = p;
-  postional_mode = true;
-  }
-
-void control_pos_br(float p){
-  br_target_p = p;
-  postional_mode = true;
-  }
-
 //UPDATE FROM .4
 float vel_to_pwm(float vel){
   float pwm = (255/1)*vel;

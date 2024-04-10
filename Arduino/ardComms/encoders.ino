@@ -1,3 +1,5 @@
+#define ENCODER_USE_INTERRUPTS
+#define ENCODER_OPTIMIZE_INTERRUPTS
 #include <Encoder.h>
 Encoder fl_enc(fl_a, fl_b);
 Encoder fr_enc(fr_a, fr_b);
@@ -26,10 +28,20 @@ void setupEncoders(){
   }
 
 void readEncoders(){
-  fl_enc_pos = fl_enc.read();
+  fl_enc_pos = fl_enc.read(); 
   fr_enc_pos = -fr_enc.read();
   br_enc_pos = -br_enc.read();
   bl_enc_pos = bl_enc.read();
+
+
+  Serial.print(fl_enc.read());//11
+  Serial.print("  ");
+  Serial.print(fr_enc.read());
+  Serial.print("  ");
+  Serial.print(bl_enc.read());
+  Serial.print("  ");
+  Serial.print(br_enc.read()); //7
+  Serial.println("  ");
 
   if (fl_enc_pos > 5281 || fl_enc_pos < -5281){
     int sig = (fl_enc_pos > 0) ? 1:-1;

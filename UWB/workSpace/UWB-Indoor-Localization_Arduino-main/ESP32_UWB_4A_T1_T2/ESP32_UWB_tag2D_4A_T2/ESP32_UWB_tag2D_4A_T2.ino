@@ -5,13 +5,14 @@
 // S. James Remington 1/2022
 
 // This code does not average position measurements!
-
+#define INACTIVITY_TIME 15000
 #include <SPI.h>
+#include <esp_now.h>
 #include "DW1000Ranging.h"
 #include "DW1000.h"
-
-#define DEBUG_TRILAT   //prints in trilateration code
-//#define DEBUG_DIST     //print anchor distances
+#include <WiFi.h>
+//#define DEBUG_TRILAT   //prints in trilateration code
+#define DEBUG_DIST     //print anchor distances
 
 #define SPI_SCK 18
 #define SPI_MISO 19
@@ -22,10 +23,30 @@
 const uint8_t PIN_RST = 27; // reset pin
 const uint8_t PIN_IRQ = 34; // irq pin
 const uint8_t PIN_SS = 4;   // spi select pin
+uint8_t T1_using = true;
+uint8_t T1_x = 0.0;
+uint8_t T1_y = 0.0;
 
+typedef struct struct_message {
+    uint8_t isUsing;
+    uint8_t x;
+    uint8_t y;
+} struct_message;
+
+struct_message Signal;
+struct_message incomingSignal;
 // TAG antenna delay defaults to 16384
 // leftmost two bytes below will become the "short address"
-char tag_addr[] = "7D:00:22:EA:82:60:3B:9C";
+char tag_addr[] = "8D:00:22:EA:82:60:3B:9C"; // "8D:00:22:EA:82:60:3B:9C"
+const uint8_t send_to[] = {0x7D, 0x00, 0x22, 0xEA, 0x82, 0x60};
+String success;
+esp_now_peer_info_t peerInfo;
+
+const char *ssid = "Hay";
+const char *password = "";
+const char *host = "192.168.111.8";
+WiFiClient client;
+WiFiClient ping;
 
 // variables for position determination
 #define N_ANCHORS 4
@@ -35,9 +56,9 @@ char tag_addr[] = "7D:00:22:EA:82:60:3B:9C";
 
 float anchor_matrix[N_ANCHORS][3] = { //list of anchor coordinates, relative to chosen origin.
   {0.0, 0.0, 0.0},  //Anchor labeled #1
-  {2, 0, 0.0},//Anchor labeled #2
-  {1.5, 2, 0.0}, //Anchor labeled #3
-  {.5 2, 0.0} //Anchor labeled #4
+  {1.04, 0, 0.0},//Anchor labeled #2
+  {1.13, 1.524, 0.0}, //Anchor labeled #3
+  {0, 1.524, 0.0} //Anchor labeled #4
 };  //Z values are ignored in this code, except to compute RMS distance error
 
 uint32_t last_anchor_update[N_ANCHORS] = {0}; //millis() value last time anchor was seen
@@ -48,8 +69,37 @@ float current_distance_rmse = 0.0;  //rms error in distance calc => crude measur
 
 void setup()
 {
+
   Serial.begin(115200);
+
+  WiFi.mode(WIFI_STA);
+  WiFi.setSleep(false);
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED)
+  {
+      delay(500);
+      Serial.print(".");
+  }
+  Serial.println("Connected");
+  Serial.print("IP Address:");
+  Serial.println(WiFi.localIP());
+
+  if (esp_now_init() != ESP_OK) {
+  Serial.println("Error initializing ESP-NOW");
+  return;
+}
+  esp_now_register_send_cb(OnDataSent);
+  memcpy(peerInfo.peer_addr, send_to, 6);
+  peerInfo.channel = 0;  
+  peerInfo.encrypt = false;
+  if (esp_now_add_peer(&peerInfo) != ESP_OK){
+    Serial.println("Failed to add peer");
+    return;
+  }
+  esp_now_register_recv_cb(OnDataRecv);
   delay(1000);
+
+
 
   //initialize configuration
   SPI.begin(SPI_SCK, SPI_MISO, SPI_MOSI);
@@ -67,6 +117,7 @@ void setup()
 void loop()
 {
   DW1000Ranging.loop();
+  Serial.println(Signal.x);
 }
 
 // collect distance data from anchors, presently configured for 4 anchors
@@ -74,16 +125,21 @@ void loop()
 
 void newRange()
 {
+  
+  while(T1_using == true){
+    Serial.println("T1 is using atm");
+  }
+  static bool found_four = false;
   int i;  //index of this anchor, expecting values 1 to 7
   int index = DW1000Ranging.getDistantDevice()->getShortAddress() & 0x07;
-
+  Serial.println("BREAK");
   if (index > 0) {
     last_anchor_update[index - 1] = millis();  //decrement index for array index
     float range = DW1000Ranging.getDistantDevice()->getRange();
     last_anchor_distance[index - 1] = range;
     if (range < 0.0 || range > 30.0)     last_anchor_update[index - 1] = 0;  //error or out of bounds, ignore this measurement
   }
-
+  Serial.println("BREAK_1");
   int detected = 0;
 
   //reject old measurements
@@ -115,6 +171,22 @@ void newRange()
     Serial.print(current_tag_position[1]);
     Serial.write(',');
     Serial.println(current_distance_rmse);
+    found_four = true;
+  }
+    if (found_four == true){
+      Signal.isUsing = false;
+      Signal.x = current_tag_position[0];
+      Signal.y =  current_tag_position[1];
+      found_four = false;
+      esp_err_t result = esp_now_send(send_to, (uint8_t *)&Signal, sizeof(Signal));
+      T1_using = true;
+    if (result == ESP_OK) {
+      Serial.println("Pinged T1: Clear");
+    }
+    else {
+      Serial.println("No Ping");
+      delay(50);
+    }
   }
 }  //end newRange
 
@@ -238,3 +310,24 @@ int trilat2D_4A(void) {
 
   return 1;
 }  //end trilat2D_3A
+
+
+void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
+  //Serial.print("\r\nLast Packet Send Status:\t");
+  //Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
+  if (status ==0){
+    success = "Delivery Success :)";
+  }
+  else{
+    success = "Delivery Fail :(";
+  }
+}
+void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
+  memcpy(&incomingSignal, incomingData, sizeof(incomingSignal));
+  Serial.print("Bytes received: ");
+  Serial.println(len);
+  Serial.println(incomingSignal.isUsing);
+  T1_using = incomingSignal.isUsing;
+  T1_x = incomingSignal.x;
+  T1_y = incomingSignal.y;
+}

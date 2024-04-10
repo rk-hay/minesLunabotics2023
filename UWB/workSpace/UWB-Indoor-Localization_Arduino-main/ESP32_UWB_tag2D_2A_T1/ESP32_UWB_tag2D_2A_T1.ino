@@ -36,9 +36,11 @@ esp_now_peer_info_t peerInfo;
 
 const char *ssid = "Hay";
 const char *password = "";
-const char *host = "192.168.107.8";
+const char *host = "192.168.111.8";
 WiFiClient client;
 WiFiClient ping;
+
+
 // variables for position determination
 #define N_ANCHORS 2
 #define ANCHOR_DISTANCE_EXPIRED 5000   //measurements older than this are ignore (milliseconds)
@@ -87,6 +89,8 @@ void setup()
     return;
   }
   esp_now_register_recv_cb(OnDataRecv);
+
+
   if (client.connect(host, 5000)) 
   {
       Serial.println("Success");
