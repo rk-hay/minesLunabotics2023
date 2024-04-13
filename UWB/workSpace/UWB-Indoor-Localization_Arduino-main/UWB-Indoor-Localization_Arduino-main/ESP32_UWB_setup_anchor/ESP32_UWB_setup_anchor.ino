@@ -9,7 +9,7 @@
 #include "DW1000.h"
 
 // leftmost two bytes below will become the "short address"
-char anchor_addr[] = "84:00:5B:D5:A9:9A:E2:9C"; //#4
+char anchor_addr[] = "83:00:5B:D5:A9:9A:E2:9C"; //#4
 
 //calibrated Antenna Delay setting for this anchor
 uint16_t Adelay = 16600; //UPDATE
@@ -36,7 +36,7 @@ const uint8_t PIN_SS = 4;   // spi select pin
 void setup()
 {
   Serial.begin(115200);
-  delay(1000); //wait for serial monitor to connect
+  delay(1000); //wait for serial monit3or to connect
   Serial.println("Anchor config and start");
   Serial.print("Antenna delay ");
   Serial.println(Adelay);
@@ -70,7 +70,6 @@ void loop()
 
 void newRange()
 {
-  //    Serial.print("from: ");
   Serial.print(DW1000Ranging.getDistantDevice()->getShortAddress(), HEX);
   Serial.print(", ");
 

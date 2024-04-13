@@ -14,6 +14,8 @@ data_1, addr_1 = sock_1.accept()
 
 
 
+import socket
+
 def read_data_1():
     try:
         data_1.settimeout(5)  # Set a timeout of 5 seconds
@@ -22,31 +24,38 @@ def read_data_1():
 
         try:
             print(received_data_1)
-            # Split the received data using comma as delimiter
-            parts_1 = received_data_1.split(',')
-            print(parts_1)
-            # Ensure all parts_1 are present before assigning values
-            if len(parts_1) == 4:
-                x_1 = float(parts_1[0])
-                y_1 = float(parts_1[1])
-                x_2 = float(parts_1[2])
-                y_2 = float(parts_1[3])
-                print("data 1: ")
-                print(x_1)
-                print(y_1)
-                print(x_2)
-                print(y_2)
+            # Check for beginning and ending delimiters
+            if received_data_1.startswith("<") and received_data_1.endswith(">"):
+                # Remove the delimiters
+                received_data_1 = received_data_1[1:-1]
+                # Split the received data using comma as delimiter
+                parts_1 = received_data_1.split(',')
+                print(parts_1)
+                # Ensure all parts_1 are present before assigning values
+                if len(parts_1) == 4:
+                    x_1 = float(parts_1[0])
+                    y_1 = float(parts_1[1])
+                    x_2 = float(parts_1[2])
+                    y_2 = float(parts_1[3])
+                    print("data 1: ")
+                    print(x_1)
+                    print(y_1)
+                    print(x_2)
+                    print(y_2)
+                else:
+                    print("Incomplete data received:", received_data_1)
             else:
-                print("Incomplete data received:", received_data_1)
-        except:
-            print("Error:")
+                print("Invalid data format:", received_data_1)
+        except Exception as e:
+            print("Error:", e)
             print("Failed to parse received data:", received_data_1)
         print("")
         return received_data_1
     except socket.timeout:
-        print("Socket timeout. No data received.")
+        #print("Socket timeout. No data received.")
         data_1.settimeout(None)
         return 0
+
     
 while True:
     read_data_1()
