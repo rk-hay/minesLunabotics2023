@@ -5,12 +5,85 @@
 // S. James Remington 1/2022
 
 // This code does not average position measurements!
+
+/*
+    [Start]
+      |
+      v
+[Check for Reset]
+      |
+      v
+[Check Timer Delay]
+      |
+      v
+    [Timer Tick]
+      |
+      v
+[Check Sent Ack]
+      |
+      v
+[Detect Message Type]
+ /      |      \
+/       |       \
+/       |       \
+|  [Anchor]   [Tag]
+|       |        |
+| [Process Anchor Message]
+|       |        |
+| [Process Tag Message]
+|       |        |
+| [Check Received Ack]
+|       |        |
+| [Parse Received Data]
+|       |        |
+| [Process Blink/Ranging Init]
+|       |        |
+| [Process Short MAC Frame]
+|       |        |
+| [Proceed to Ranging Protocol]
+|               |
+|           [Anchor] <------------------------.
+|               |                            |
+|       [Process Poll]                      |
+|               |                            |
+|       [Process Range]                     |
+|               |                            |
+|    [Compute Range Asymmetric]             |
+|               |                            |
+|   [Filter Range Value]                    |
+|               |                            |
+|    [Set Device Parameters]                |
+|               |                            |
+|     [Transmit Range Report]               |
+|               |                            |
+|       [Handle New Range]                   |
+|               |                            |
+|           [Tag] ---------------------------'
+|               |
+|       [Process Poll Ack]
+|               |
+|       [Process Range Report]
+|               |
+|     [Filter Range Value]
+|               |
+|    [Set Device Parameters]
+|               |
+|       [Handle New Range]
+|               |
+|     [Process Range Failed]
+|               |
+|       [Restart Timer]
+|               |
+|            [End]
+*/
+
+
+
 #define INACTIVITY_TIME 15000
 #include <SPI.h>
-#include <esp_now.h>
 #include "DW1000Ranging.h"
 #include "DW1000.h"
-#include <WiFi.h>
+
 //#define DEBUG_TRILAT   //prints in trilateration code
 #define DEBUG_DIST     //print anchor distances
 
@@ -19,23 +92,6 @@
 #define SPI_MOSI 23
 #define DW_CS 4
 
-//-------------------------------------------------------------------
-String SYNC_MSG = "SYNC";
-#define DEVICE_ID 1
-#define FRAME_DURATION_MS 150 // 10 milliseconds
-#define NUM_TIME_SLOTS 2
-#define SLOT_DURATION_MS (FRAME_DURATION_MS / NUM_TIME_SLOTS)
-#define MY_SLOT_INDEX DEVICE_ID - 1
-#define SYNC_INTERVAL 5000 // 5 seconds
-
-unsigned long lastSyncTime = 0;
-long globalTime =0;
-boolean sent = false;
-volatile boolean sentAck = false;
-volatile boolean received = false;
-volatile boolean error = false;
-String message;
-//-------------------------------------------------------------------
 
 // connection pins
 const uint8_t PIN_RST = 27; // reset pin
@@ -45,27 +101,6 @@ const uint8_t PIN_SS = 4;   // spi select pin
 // TAG antenna delay defaults to 16384
 // leftmost two bytes below will become the "short address"
 char tag_addr[] = "7D:00:22:EA:82:60:3B:9C";
-const uint8_t send_to[] = {0x8D, 0x00, 0x22, 0xEA, 0x82, 0x60};
-String success;
-esp_now_peer_info_t peerInfo;
-
-//problem with recieving value from over yonder is they are coming as uints but reading as floats.
-typedef struct struct_message {
-    long turn;
-    float x;
-    float y;
-} struct_message;
-
-struct_message Signal;
-struct_message incomingSignal;
-uint8_t T2_using = false;
-uint8_t T2_x = 0.0;
-uint8_t T2_y = 0.0;
-const char *ssid = "Hay";
-const char *password = "";
-const char *host = "192.168.111.8";
-WiFiClient client;
-WiFiClient ping;
 
 // variables for position determination
 #define N_ANCHORS 4
@@ -75,9 +110,9 @@ WiFiClient ping;
 
 float anchor_matrix[N_ANCHORS][3] = { //list of anchor coordinates, relative to chosen origin.
   {0.0, 0.0, 0.0},  //Anchor labeled #1
-  {1.524, 0, 0.0},//Anchor labeled #2
-  {1.524, 2.15, 0.0}, //Anchor labeled #3
-  {0, 2.15, 0.0} //Anchor labeled #4
+  {1.65, 0, 0.0},//Anchor labeled #2
+  {2.0, 2.5, 0.0}, //Anchor labeled #3
+  {0, 2.5, 0.0} //Anchor labeled #4
 };  //Z values are ignored in this code, except to compute RMS distance error
 
 uint32_t last_anchor_update[N_ANCHORS] = {0}; //millis() value last time anchor was seen
@@ -86,42 +121,21 @@ float last_anchor_distance[N_ANCHORS] = {0.0}; //most recent distance reports
 float current_tag_position[2] = {0.0, 0.0}; //global current position (meters with respect to anchor origin)
 float current_distance_rmse = 0.0;  //rms error in distance calc => crude measure of position error (meters).  Needs to be better characterized
 
+
+byte anchor1Address[] = {0x81, 0x00, 0x58, 0xD5, 0xA9, 0x9A, 0xE2, 0x9C};
+byte anchor2Address[] = {0x82, 0x00, 0x58, 0xD5, 0xA9, 0x9A, 0xE2, 0x9C};
+byte anchor3Address[] = {0x83, 0x00, 0x58, 0xD5, 0xA9, 0x9A, 0xE2, 0x9C};
+byte anchor4Address[] = {0x84, 0x00, 0x58, 0xD5, 0xA9, 0x9A, 0xE2, 0x9C};
+DW1000Device anchor1(anchor1Address, true);
+DW1000Device anchor2(anchor2Address, true);
+DW1000Device anchor3(anchor3Address, true);
+DW1000Device anchor4(anchor4Address, true);
+
 void setup()
 {
-
   Serial.begin(115200);
-  WiFi.mode(WIFI_STA);
-  WiFi.setSleep(false);
-  WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED)
-  {
-      delay(500);
-      Serial.print(".");
-  }
-  Serial.println("Connected");
-  Serial.print("IP Address:");
-  Serial.println(WiFi.localIP());
 
-  if (esp_now_init() != ESP_OK) {
-  Serial.println("Error initializing ESP-NOW");
-  return;
-}
-  esp_now_register_send_cb(OnDataSent);
-  memcpy(peerInfo.peer_addr, send_to, 6);
-  peerInfo.channel = 0;  
-  peerInfo.encrypt = false;
-  if (esp_now_add_peer(&peerInfo) != ESP_OK){
-    Serial.println("Failed to add peer");
-    return;
-  }
-  esp_now_register_recv_cb(OnDataRecv);
-
-  
-  if (client.connect(host, 5000)) 
-  {
-      Serial.println("Success");
-  }
-  delay(1000);
+ delay(1000);
 
 
 
@@ -131,39 +145,68 @@ void setup()
   DW1000Ranging.attachNewRange(newRange);
   DW1000Ranging.attachNewDevice(newDevice);
   DW1000Ranging.attachInactiveDevice(inactiveDevice);
+  DW1000Ranging.useRangeFilter(true);
 
-  DW1000Ranging.startAsTag(tag_addr, DW1000.MODE_LONGDATA_RANGE_LOWPOWER, false);
+
+  DW1000Ranging.startAsTag(tag_addr, DW1000.MODE_LONGDATA_FAST_ACCURACY, false);
+  DW1000.setChannel(1); 
+   //DW1000Ranging.startAsAnchor(tag_addr, DW1000.MODE_LONGDATA_RANGE_ACCURACY, false);
+  Serial.println(DW1000Ranging.getNetworkDevicesNumber());
 }
 
+char arr[120];
+bool tag = false; 
+bool anchor = false;
+int targetAnchor = 1;
 void loop()
-{
-  static long sendTimer = 0;
-  long globalTime = millis();
-
-
-  if (globalTime - sendTimer > 50){
-  unsigned long timeSlotStart = MY_SLOT_INDEX * SLOT_DURATION_MS;
-  unsigned long timeSlotEnd = (MY_SLOT_INDEX + 1) * SLOT_DURATION_MS;
-  unsigned long currentSlot = (globalTime / FRAME_DURATION_MS) % NUM_TIME_SLOTS;
-  Signal.turn = currentSlot;
-  esp_now_send(send_to, (uint8_t *)&Signal, sizeof(Signal));
-  delay(15);
-  sendTimer = globalTime;
+{ 
+  if (targetAnchor == 1){DW1000Ranging.addNetworkDevices(&anchor1, true);}
+  else if(targetAnchor == 2){DW1000Ranging.addNetworkDevices(&anchor2, true);}
+  else if(targetAnchor == 3){DW1000Ranging.addNetworkDevices(&anchor3, true);}
+  else if(targetAnchor == 4){DW1000Ranging.addNetworkDevices(&anchor4, true);}
+  else{
+    Serial.println("Ranged all");
+    targetAnchor = 1;
   }
 
-  if (Signal.turn == MY_SLOT_INDEX){
+  static bool firstTimeTag = false;
+  static bool firstTimeAnchor = false;
+  handleSerial();
+  if (tag && firstTimeTag == false) {
+  firstTimeTag = true;
+  firstTimeAnchor = false;
+  //Serial.println("LOOP");
+  DW1000Ranging.startAsTag(tag_addr, DW1000.MODE_LONGDATA_FAST_ACCURACY, false);
+  DW1000.setChannel(1); 
+  tag = false;
+  }
+  else if (anchor && firstTimeAnchor == false){
+  Serial.println("Now An Anchor");
+  firstTimeAnchor = true;
+  firstTimeTag = false;
+    while(anchor){
+      handleSerial();
+    }
+  DW1000Ranging.startAsAnchor(tag_addr, DW1000.MODE_LONGDATA_RANGE_ACCURACY, false); 
+  anchor = false;
+  };  
+
   DW1000Ranging.loop();
-  }
+  
+  //DW1000.getPrintableDeviceMode(arr);
+  //Serial.println(arr);
 }
 
 // collect distance data from anchors, presently configured for 4 anchors
 // solve for position if all four current
 
 void newRange()
-{ 
+{   
+
     int i;  //index of this anchor, expecting values 1 to 7
     int index = DW1000Ranging.getDistantDevice()->getShortAddress() & 0x07; //the 2nd number in the array of the addr i.e 3 in  "83:00:5B:D5:A9:9A:E2:9C"
-    if (index > 0) {
+    if (index > 0 && index < 10) {
+      if (index == targetAnchor){targetAnchor++;;}
       last_anchor_update[index - 1] = millis();  //if we just recieved 3, then we note down when we got it
       float range = DW1000Ranging.getDistantDevice()->getRange(); //get distance to 3
       last_anchor_distance[index - 1] = range; //put it in an array
@@ -180,31 +223,27 @@ void newRange()
       // print distance and age of measurement
       uint32_t current_time = millis();
       for (i = 0; i < N_ANCHORS; i++) {
-        Serial.print(i+1); //ID
-        Serial.print("> ");
-        Serial.print(last_anchor_distance[i]);
-        Serial.print("\t");
-        Serial.println(current_time - last_anchor_update[i]); //age in millis
+       Serial.print(i+1); //ID
+       Serial.print("> ");
+       Serial.print(last_anchor_distance[i]);
+       Serial.print("\t");
+       Serial.println(current_time - last_anchor_update[i]); //age in millis
       }
   #endif
 
     if ( detected == 4) { //four measurements minimum
       trilat2D_4A();
-      //output the values (X, Y and error estimate)
+  //    output the values (X, Y and error estimate)
       Serial.print("P= ");
       Serial.print(current_tag_position[0]);
       Serial.write(',');
       Serial.println(current_tag_position[1]);
-      // Serial.write(',');
-      // Serial.println(current_distance_rmse);
-      Signal.x = current_tag_position[0];
-      Signal.y = current_tag_position[1];
-      static long hold = 0;
-      if (millis()-hold > 100){
-      send_udp(current_tag_position[0], current_tag_position[1], incomingSignal.x, incomingSignal.y);
-      hold = millis();
-      }
+      //Serial.write(',');
+      //Serial.println(current_distance_rmse);
+      Serial.println("c");
+      //DW1000Ranging.startAsAnchor(tag_addr, DW1000.MODE_LONGDATA_RANGE_ACCURACY, false);
     }
+    
 }  //end newRange
 
 
@@ -219,8 +258,8 @@ void newDevice(DW1000Device *device)
 
 void inactiveDevice(DW1000Device *device)
 {
-  Serial.print("delete inactive device: ");
-  Serial.println(device->getShortAddress(), HEX);
+   Serial.print("delete inactive device: ");
+   Serial.println(device->getShortAddress(), HEX);
 }
 
 int trilat2D_4A(void) {
@@ -244,7 +283,7 @@ int trilat2D_4A(void) {
 #ifdef DEBUG_TRILAT
   char line[60];
   snprintf(line, sizeof line, "d: %6.2f %6.2f %6.2f", d[0], d[1], d[2]);
-  Serial.println(line);
+ //Serial.println(line);
 #endif
 
   if (first) {  //intermediate fixed vectors
@@ -265,7 +304,7 @@ int trilat2D_4A(void) {
       A[i - 1][1] = y[i] - y[0];
 #ifdef DEBUG_TRILAT
       snprintf(line, sizeof line, "A  %5.2f %5.2f", A[i - 1][0], A[i - 1][1]);
-      Serial.println(line);
+     //Serial.println(line);
 #endif
     }
     float ATA[2][2];  //calculate A transpose A
@@ -278,13 +317,13 @@ int trilat2D_4A(void) {
     }
 #ifdef DEBUG_TRILAT
     snprintf(line, sizeof line, "ATA %5.2f %5.2f\n    %5.2f %5.2f", ATA[0][0], ATA[0][1], ATA[1][0], ATA[1][1]);
-    Serial.println(line);
+   //Serial.println(line);
 #endif
 
     //invert ATA
     float det = ATA[0][0] * ATA[1][1] - ATA[1][0] * ATA[0][1];
     if (fabs(det) < 1.0E-4) {
-      Serial.println("***Singular matrix, check anchor coordinates***");
+     //Serial.println("***Singular matrix, check anchor coordinates***");
       while (1) delay(1); //hang
     }
     det = 1.0 / det;
@@ -295,9 +334,9 @@ int trilat2D_4A(void) {
     Ainv[1][1] =  det * ATA[0][0];
 #ifdef DEBUG_TRILAT
     snprintf(line, sizeof line, "Ainv %7.4f %7.4f\n     %7.4f %7.4f", Ainv[0][0], Ainv[0][1], Ainv[1][0], Ainv[1][1]);
-    Serial.println(line);
+   //Serial.println(line);
     snprintf(line, sizeof line, "det Ainv %8.3e", det);
-    Serial.println(line);
+   //Serial.println(line);
 #endif
 
   } //end if (first);
@@ -331,30 +370,19 @@ int trilat2D_4A(void) {
 }  //end trilat2D_3A
 
 
-void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
-  //Serial.print("\r\nLast Packet Send Status:\t");
-  //Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
-  if (status ==0){
-    success = "Delivery Success :)";
-  }
-  else{
-    success = "Delivery Fail :(";
-  }
-}
 
-void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
-  memcpy(&incomingSignal, incomingData, sizeof(incomingSignal));
-  Serial.println("Bytes received: ");
-  T2_x = incomingSignal.x;
-  T2_y = incomingSignal.y;
-  send_udp(current_tag_position[0], current_tag_position[1], incomingSignal.x, incomingSignal.y);
-}
-
-void send_udp(float X, float Y, float  X_2, float Y_2)
-{
-    if (client.connected())
-    {
-        client.print("<" + String(X) + "," + String(Y) + "," + String(X_2) + "," + String(Y_2) + ">");
-        Serial.println("UDP send");
+void handleSerial() {
+  if (Serial.available() > 0) {
+    // switch to anchor
+    char in = Serial.read();
+    if (in == 'A') {
+      anchor = true;
+      tag = false;
     }
+    else if (in == 'T') {
+      anchor = false;
+      tag = true;
+    }
+  }
 }
+

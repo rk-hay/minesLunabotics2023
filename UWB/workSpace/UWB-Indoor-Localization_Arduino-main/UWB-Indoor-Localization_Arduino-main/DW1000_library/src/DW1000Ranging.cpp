@@ -383,7 +383,7 @@ void DW1000RangingClass::loop() {
 		_sentAck = false;
 		
 		// TODO cc
-		int messageType = detectMessageType(data);
+		int messageType = detectMessageType(data); //check if blink
 		
 		if(messageType != POLL_ACK && messageType != POLL && messageType != RANGE)
 			return;
@@ -489,8 +489,6 @@ void DW1000RangingClass::loop() {
 			//we have a short mac layer frame !
 			byte address[2];
 			_globalMac.decodeShortMACFrame(data, address);
-			
-			
 			
 			//we get the device which correspond to the message which was sent (need to be filtered by MAC address)
 			DW1000Device* myDistantDevice = searchDistantDevice(address);

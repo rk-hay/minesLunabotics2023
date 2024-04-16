@@ -48,22 +48,18 @@ uint8_t numTimeouts = 0;
 // reply times (same on both sides for symm. ranging)
 uint16_t replyDelayTimeUS = 3000;
 // ranging counter (per second)
+
 uint16_t successRangingCount = 0;
 uint32_t rangingCountPeriod = 0;
 float samplingRate = 0;
-
-// Special Protocol Stuff
-uint8_t my_number = 1; // 1 indicates it'll start as master (or a tag)
-char syncCode = 's';
-char instructionCode = 'i';
 
 uint8_t msg_sent = 0;
 uint8_t my_freq = 5;
 uint8_t switchedFreq = 0;
 
-byte MY_NUM = 0;
+byte MY_NUM = 1;
 byte OTHER_NUM = 0; // will need to update
-byte FREQUENCY = 1;
+byte FREQUENCY = 5;
 
 typedef enum State_t {
   TAG = 0,
@@ -114,10 +110,10 @@ int8_t setDW(byte freq) {
   //  Serial.print("\rSetting freq = "); Serial.println(freq);
   DW1000.newConfiguration();
   DW1000.setDefaults(); // we'll change this to dyanimically take a 
-  DW1000.setDeviceAddress(my_number);
+  DW1000.setDeviceAddress(MY_NUM);
   DW1000.setNetworkId(10);
   DW1000.enableMode(DW1000.MODE_SHORTDATA_FAST_ACCURACY);
-  DW1000.setAntennaDelay(Adelay)
+  //DW1000.setAntennaDelay(Adelay);
   DW1000.commitConfiguration();
   return 0;
 }
@@ -125,8 +121,8 @@ int8_t setDW(byte freq) {
 void freezeError(uint8_t num) { // let's just head back to default
   Serial.print('e');
   Serial.print(num);
-  //OTHER_NUM = 0;
-  FREQUENCY = 1;
+  OTHER_NUM = 0;
+  FREQUENCY = 5;
   becomeAnchor();
 }
 
