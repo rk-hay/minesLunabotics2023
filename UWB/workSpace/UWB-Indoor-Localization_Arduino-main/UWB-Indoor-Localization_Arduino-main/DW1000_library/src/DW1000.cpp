@@ -1093,7 +1093,7 @@ void DW1000Class::commitConfiguration() {
 	byte antennaDelayBytes[DW1000Time::LENGTH_TIMESTAMP];
 	if( _antennaDelay.getTimestamp() == 0 && _antennaCalibrated == false) {
 		_antennaDelay.setTimestamp(16384);
-		_antennaCalibrated = true;
+		_antennaCalibrated = true;	
 	} // Compatibility with old versions.
 	_antennaDelay.getTimestamp(antennaDelayBytes);
 

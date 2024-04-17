@@ -151,17 +151,6 @@ def read_data():
         return []
 
 
-def tag_pos(a, b, c):
-    # p = (a + b + c) / 2.0
-    # s = cmath.sqrt(p * (p - a) * (p - b) * (p - c))
-    # y = 2.0 * s / c
-    # x = cmath.sqrt(b * b - y * y)
-    cos_a = (b * b + c*c - a * a) / (2 * b * c)
-    x = b * cos_a
-    y = b * cmath.sqrt(1 - cos_a * cos_a)
-
-    return round(x.real, 3), round(y.real, 3)
-
 
 def uwb_range_offset(uwb_range):
 
@@ -204,7 +193,8 @@ def main():
                 node_count += 1
 
         if node_count == 2:
-            x, y = tag_pos(a2_range, a1_range, distance_a1_a2)
+            x = x_1
+            y = y_1
             print(x, y)
             clean(t_a3)
             draw_uwb_tag(x, y, "TAG", t_a3)

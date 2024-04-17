@@ -37,7 +37,7 @@ DW1000Time timeComputedRange;
 #define LEN_DATA 18 // last two bytes are [to who, from who]
 #define N_ANCHORS 4
 byte data[LEN_DATA];
-#define Adelay 16600
+#define Adelay 16428 //best so far 16284 expecting 1.18
 // watchdog and reset period
 uint32_t lastActivity;
 uint32_t resetPeriod = 250;
@@ -46,7 +46,7 @@ uint8_t maxNumTimeouts = 10; // wait this number of timeouts if switching freque
 uint8_t numTimeouts = 0;
 
 // reply times (same on both sides for symm. ranging)
-uint16_t replyDelayTimeUS = 3000;
+uint16_t replyDelayTimeUS = 7000; //7000
 // ranging counter (per second)
 
 uint16_t successRangingCount = 0;
@@ -113,7 +113,7 @@ int8_t setDW(byte freq) {
   DW1000.setDeviceAddress(MY_NUM);
   DW1000.setNetworkId(10);
   DW1000.enableMode(DW1000.MODE_SHORTDATA_FAST_ACCURACY);
-  //DW1000.setAntennaDelay(Adelay);
+  DW1000.setAntennaDelay(Adelay);
   DW1000.commitConfiguration();
   return 0;
 }
