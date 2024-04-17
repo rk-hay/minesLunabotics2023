@@ -1,28 +1,27 @@
 #!/usr/bin/python3
 import rclpy
 from rclpy.node import Node
-from geometry_msgs.msg import PoseStamped 
+from geometry_msgs.msg import Quaternion
 from nav_msgs.msg import Odometry
-from tf.transformations import quaternion_from_euler
+from tf_transformations import quaternion_from_euler
 import math
 import serial
 
-
 class tagPublisher(Node):
-    x_1 = 0
-    y_1 = 0
-    x_2 = 0
-    y_2 = 0
-    dx = 0
-    dy = 0
-    prevX = 0
-    prevY = 0
-    prevTime = 0
-    yaw = 0
-    mag = 0
-    e = 0
-    port1 = 'COM5'
-    port2 = 'COM14' 
+    x_1 = 0.0
+    y_1 = 0.0
+    x_2 = 0.0
+    y_2 = 0.0
+    dx = 0.0
+    dy = 0.0
+    prevX = 0.0
+    prevY = 0.0
+    prevTime = 0.0
+    yaw = 0.0
+    mag = 0.0
+    e = 0.0
+    port1 = '/dev/ttyUSB0'
+    port2 = '/dev/ttyUSB1' 
     currPort = port1
     targets = [b'2', b'3', b'4', b'5']
     target_index = 0
@@ -33,10 +32,10 @@ class tagPublisher(Node):
     def __init__(self):
         super().__init__('tagPublisher')
         self.publisher_ = self.create_publisher(Odometry , '/globalOdom', 10)
-        self.timer = self.create_timer(.1, self.publish_PoseStamped)
+        self.timer = self.create_timer(.01, self.publish_PoseStamped)
 
     def publish_PoseStamped(self):
-        self.read_data()
+        self.comms()
         odom = Odometry()
         odom.header.frame_id = "globalOdom"
         odom.header.stamp = self.get_clock().now().to_msg()
@@ -46,16 +45,17 @@ class tagPublisher(Node):
         dx = self.x_2 - self.x_1
         dy = self.y_2 - self.y_1
         self.mag = math.sqrt(self.dx*self.dx+self.dy*self.dy)
-        self.yaw = math.atan2(dx/dy) 
-        odom.pose.pose.orientation = quaternion_from_euler(0, 0, self.yaw).normalize()
+        self.yaw = math.atan2(dy, dx) 
+        quat = quaternion_from_euler(0, 0, self.yaw)
+        odom.pose.pose.orientation = Quaternion(x=quat[0], y=quat[1], z=quat[2], w=quat[3])
         odom.child_frame_id = "base_link"
-        odom.twist.twist.linear.x = (self.x_1-self.prevX)/(self.get_clock().now()-self.prevTime)
-        odom.twist.twist.linear.y = (self.y_1-self.prevY)/(self.get_clock().now()-self.prevTime)
+        odom.twist.twist.linear.x = 0.0#(self.x_1-self.prevX)/(self.get_clock().now()-self.prevTime)
+        odom.twist.twist.linear.y = 0.0#(self.y_1-self.prevY)/(self.get_clock().now()-self.prevTime)
         odom.twist.twist.linear.z = 0.0
         self.prevX = self.x_1
         self.prevY = self.y_1
         self.prevTime = self.get_clock().now()
-
+        #print("Publishing point: ", self.x_1, self.y_1)
         self.publisher_.publish(odom)
 
     def comms(self):
@@ -77,10 +77,10 @@ class tagPublisher(Node):
                         y = self.prevY_comms
                         self.prevX_comms = x
                         self.prevY_comms = y
-                    if self.currPort == 'COM5':
+                    if self.currPort == self.port1:
                         self.x_1 = x
                         self.y_1 = y
-                    elif self.currPort == 'COM14':
+                    elif self.currPort == self.port2:
                         self.x_2 = x
                         self.y_2 = y
                     print("Received position", x, y)
