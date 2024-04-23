@@ -6,6 +6,7 @@ import struct
 from std_msgs.msg import String
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Joy
+from nav2_simple_commander.robot_navigator import BasicNavigator
 
 liveTrailer = 0
 foldOut = 0
@@ -24,6 +25,9 @@ from rclpy.node import Node
 from geometry_msgs.msg import PoseStamped
 from nav_msgs.msg import Odometry
 from std_msgs.msg import Bool
+from tf_transformations import quaternion_from_euler
+
+#nav.waitUntilNav2Active() 
 
 class AutoNode(Node):
     #PWM Values To Send/enables
@@ -39,7 +43,8 @@ class AutoNode(Node):
     z = 0
     #MISC
     firstTime = True
-
+    nav = BasicNavigator()
+    state = 0 #if state is 0 -> rotate in place to find tag
     #Serial start
     ser = serial.Serial('/dev/ttyACM0', baudrate=115200, timeout=0) #TODO rules to change port name to MEGA
     ser.reset_input_buffer()
@@ -52,7 +57,7 @@ class AutoNode(Node):
         self.waypoint_tolerance = 0.1  # Tolerance for considering waypoint as reached
 
         #Publishers
-        self.reached_waypoint_pub = self.create_publisher(Bool, 'reached_waypoint', 10)
+        #self.goal_publisher = self.create_publisher(PoseStamped, '/goal_pose', 10)
 
         #Subscribers
         self.odom_sub = self.create_subscription(Odometry, 'odom', self.odom_callback, 10)#TODO change odom call back to globalOdom
@@ -60,22 +65,37 @@ class AutoNode(Node):
         self.subscription = self.create_subscription( Twist, 'cmd_vel', self.listener_callback, 10)
         #TODO ADD CAMERA SUBSCRIBER
         
-    def set_waypoints(self, waypoints):
-        """Set waypoints for the robot."""
-        self.waypoints = waypoints
+    def publish_goal_pose(self, x, y, z, yaw, pitch, roll):
+        #IF CAMERA NOT FACING FORWARD STOP MAKE FACE FORWARD, THEN GO
+        msg = PoseStamped()
+        msg.header.stamp.sec = 0
+        msg.header.stamp.nanosec = 0
+        msg.header.frame_id = "map"
+        msg.pose.position.x = x
+        msg.pose.position.y = y
+        msg.pose.position.z = z
+        quaternion = quaternion_from_euler(roll, pitch, yaw)
+        msg.pose.orientation.x = quaternion[0]
+        msg.pose.orientation.y = quaternion[1]
+        msg.pose.orientation.z = quaternion[2]
+        msg.pose.orientation.w = quaternion[3]
+        self.nav.goToPose(msg)
+        #self.goal_publisher.publish(msg)
 
     def check_waypoint_reached(self):
         """Check if the current waypoint is reached."""
-        current_pose = self.current_pose  # Get current pose from odometry
-        target_pose = self.waypoints[self.current_waypoint_index]
-
-        # Check if the distance between current pose and target pose is within tolerance
-        distance = ((current_pose.position.x - target_pose.pose.position.x) ** 2 +
-                    (current_pose.position.y - target_pose.pose.position.y) ** 2) ** 0.5
-        if distance <= self.waypoint_tolerance:
-            return True
+        if not self.nav.isTaskComplete():
+            feedback = self.nav.getFeedback()
+            if feedback.navigation_duration > 6000: #TODO CHANGE TO REASONABLE AMOUNT OF TIME
+                self.nav.cancelTask()
         else:
-            return False
+            result = self.nav.getResult()
+            if result == self.nav.TaskResult.SUCCEEDED: #TODO IS THIS THE RIGHT SYNTAX FOR TASK GOOD?
+                print('Goal succeeded!')
+            elif result == self.nav.TaskResult.CANCELED:
+                print('Goal was canceled!')
+            elif result == self.nav.TaskResult.FAILED:
+                print('Goal failed!')
 
     def start_digging_cycle(self):
         """Start the digging cycle."""
@@ -113,6 +133,7 @@ class AutoNode(Node):
 
     def dig_cycle():
         print("Write Dig Cycle")
+        #turn off cmd_vel sending stuff
         #slide_out_until_stopped()
         #fold_out()
         #turn_on_bucket_conveyor()
@@ -121,7 +142,7 @@ class AutoNode(Node):
         #turn_on_live_conveyor()
         #start_timer_2()
 
-        #while not at_p3():
+        #while not at_p3.y():
         #    if timer_1_hits(val):
         #        stop_for_x_seconds()
         #        reset_timer_1()
@@ -130,14 +151,24 @@ class AutoNode(Node):
         #        reset_timer_1()
 
         #exit_dig_mode()
-        #set_x_speed_high()
+        #set_x_speed_high() go forward a smidge 
 
-        #while not close_to_p4():
+        #while not close_to_p4.y():
         #    if at_p4():
         #        set_x_speed_high_for_seconds()
         #    if at_p5():
         #        // Perform specific actions for p5
 
+
+    def stateMachine(self):
+        print(self.state)
+        #states
+        #0 -> map until marker found #TODO FIX MARKERS
+        #1 -> publish goal
+        #2 -> loop goal reached?? ->branch after x seconds to dif options
+        #3 -> publish line up
+        #4 -> loop goal reached?? ->branch close enough (fix using uwb??)
+        #5 -> dig cycle
 
     def SerialWrite(self, msg):
         #TODO MAKE SURE BUTTONS ARE CORRECTLY NAMED 
