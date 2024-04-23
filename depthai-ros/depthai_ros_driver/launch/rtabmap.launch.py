@@ -16,20 +16,36 @@ def launch_setup(context, *args, **kwargs):
     params_file= LaunchConfiguration("params_file")
     parameters = [
         {
-            "frame_id": name,
+            "frame_id": 'base_link',
             "subscribe_rgb": True,
             "subscribe_depth": True,
             "subscribe_odom_info": True,
             "approx_sync": True,
             "Rtabmap/DetectionRate": "3.5",
-            
+            "rtabmap_args:=": "--delete_db_on_start",
+            "Grid/MaxGroundAngle": "60",
+            "Grid/CellSize": "0.1",
+            "Grid/ClusterRadius": "0.2",
+            "Grid/MaxGroundHeight": ".1",
+            "Grid/MaxObstacleHeight": "1.0",
+            "Grid/NoiseFilteringRadius": "1.0",
+            "RGBD/MarkerDetection": "True",
+            "Marker/Dictionary": "20", 
+            "Marker/Priors": "9 4 0 .77 1.57 0 0",
+            "Marker/VarianceAngular": "9999",
+            #"Optimizer/PriorsIgnored": "False",
+            #"cloud_subtract_filtering": True,
+            #"cloud_subtract_filtering_min_neighbors": "6",
+            #"reateOccupancyGrid" : True,
+            #"odom_frame_id": 'globalOdom',
         }
     ]
 
     remappings = [
-        ("rgb/image", name+"/rgb/image_rect/compressed"),
+        ("rgb/image", name+"/rgb/image_rect"),
         ("rgb/camera_info", name+"/rgb/camera_info"),
         ("depth/image", name+"/stereo/image_raw"),
+        ("/map", "/arena"),
     ]
 
     return [
@@ -89,6 +105,14 @@ def launch_setup(context, *args, **kwargs):
             parameters=parameters,
             remappings=remappings,
         ),
+
+        Node(
+            package="tf2_ros",
+            executable="static_transform_publisher",
+            name="oak_static_transform_publisher",
+            output="screen",
+            arguments=["0", "0", ".777", "0", "0", "0", "base_link", "oak"]
+        ),
     ]
 
 
@@ -101,6 +125,5 @@ def generate_launch_description():
     ]
 
     return LaunchDescription(
-        launch_ros.actions.SetParameter(name='image_rect.jpeg_quality', value=10),
         declared_arguments + [OpaqueFunction(function=launch_setup)]
     )

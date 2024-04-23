@@ -2,8 +2,7 @@
 <!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
      Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
      For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
-<robot name='LARI' xmlns:xacro="http://www.ros.org/wiki/xacro">
-
+<robot name='LARI'>
   <link
     name="base_link">
     <inertial>
@@ -13,12 +12,12 @@
       <mass
         value="5.0909" />
       <inertia
-        ixx="0.0"
-        ixy="0.0"
-        ixz="0.0"
-        iyy="0.0"
-        iyz="0.0"
-        izz="0.0" />
+        ixx="0.17719"
+        ixy="-2.5081E-13"
+        ixz="2.9216E-15"
+        iyy="0.053928"
+        iyz="-2.6812E-10"
+        izz="0.22894" />
     </inertial>
     <visual>
       <origin
@@ -501,6 +500,47 @@
       velocity="5.23599" />
   </joint>
   
+  
+  
+<joint
+    name="camera_joint"
+    type="revolute">
+    <origin
+      xyz="-0.022 0 0.1"
+      rpy="0 0 0" />
+    <parent
+      link="camera_link" />
+    <child
+      link="base_link" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="0"
+      upper="6.2832"
+      effort="10"
+      velocity="3.1415" />
+  </joint>
+
+  <gazebo reference="camera_link">
+    <sensor name="camera" type="camera">
+      <pose> 0 0 0 0 0 0 </pose>
+      <!-- <visualize>true</visualize> -->
+      <update_rate>30</update_rate>
+      <camera>
+        <horizontal_fov>1.91986218</horizontal_fov>
+        <image>
+          <format>R8G8B8</format>
+          <width>1280</width>
+          <height>720</height>
+        </image>
+        <clip>
+          <near>0.05</near>
+          <far>8.0</far>
+        </clip>
+      </camera>
+      <topic>camera</topic>
+    </sensor>
+  </gazebo>
 
   <gazebo>
     <plugin
@@ -530,6 +570,9 @@
       <joint_name>br_wheel_link</joint_name>
       <initial_velocity>0.0</initial_velocity>
     </plugin>
+
+
+  <gazebo>
     <plugin
       filename="ignition-gazebo-joint-position-controller-system"
       name="ignition::gazebo::systems::JointPositionController">
@@ -566,5 +609,4 @@
       <cmd_min>-15</cmd_min>
     </plugin>
   </gazebo>
-
 </robot>

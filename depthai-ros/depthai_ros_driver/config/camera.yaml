@@ -8,3 +8,5 @@
     nn:
       i_nn_config_path: depthai_ros_driver/mobilenet
     use_sim_time: false
+    imu:
+      i_enable_rotation: false
