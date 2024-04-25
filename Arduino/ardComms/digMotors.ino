@@ -1,15 +1,14 @@
 // Define pin numbers
-#define appendageDeployLinears_PWM A8 //the pwm pin 
+#define appendageDeployLinears_PWM A10 //the pwm pin 
 #define appendageDeployLinears_IN1 A9
-#define appendageDeployLinears_IN2 A10
 
-#define slideOut_PWM A8 //was 13
-#define slideOut_IN1 A6
-#define slideOut_IN2 A7
+#define slideOut_PWM A6 //was 13 
+#define slideOut_IN1 A7
 
 #define appendageDigLin_PWM 8
 #define appendageDigLin_IN1 A13
 #define appendageDigLin_IN2 A5
+
 
 #define liveTrailer_PWM A12 // new is 11
 
@@ -18,6 +17,7 @@
 
 
 #define appendageBelt_PWM 7
+
 //TODO 
 // FUNCTION FOR EACH OF THE IMPORTANT MOTORS
 
@@ -28,7 +28,7 @@ void digSetup() {
   // Initialize motor pins as outputs
   pinMode(appendageDeployLinears_PWM, OUTPUT);
   pinMode(appendageDeployLinears_IN1, OUTPUT);
-  pinMode(appendageDeployLinears_IN2, OUTPUT);
+
 
   pinMode(bucketConveyor_PWM, OUTPUT);
   
@@ -38,28 +38,26 @@ void digSetup() {
 
   pinMode(slideOut_PWM, OUTPUT);
   pinMode(slideOut_IN1, OUTPUT);
-  pinMode(slideOut_IN2, OUTPUT);
 
   pinMode(liveTrailer_PWM, OUTPUT);
   digitalWrite(liveTrailer_PWM, LOW);
 
   //analogWrite(appendageDeployLinears_PWM, 255);
-  digitalWrite(A8, HIGH);
+  //digitalWrite(A8, HIGH);
 }
 
 
 void deployAppendageLinActuators(int duty){
   //if limit switch != true
   bool dir = duty > 0;
-  if (duty != 0){
-  digitalWrite(appendageDeployLinears_IN1, !dir); 
-  digitalWrite(appendageDeployLinears_IN2, dir); // high when +
-  }
-  else{
-    digitalWrite(appendageDeployLinears_IN1, 0); 
-    digitalWrite(appendageDeployLinears_IN2, 0); // high when +
+  if(duty != 0){
+    digitalWrite(appendageDeployLinears_PWM, HIGH);
+    digitalWrite(appendageDeployLinears_IN1, dir);
     }
-  
+  else{
+    digitalWrite(appendageDeployLinears_PWM, LOW);
+    digitalWrite(appendageDeployLinears_IN1, LOW);
+    }
 }
 
 void liveTrailer(int duty){
@@ -93,12 +91,12 @@ void digDepth(int duty){
 void slideOutAcutators(int duty){  
   //if limit switch != true
   bool dir = duty > 0;
-  if (duty != 0){
-  digitalWrite(slideOut_IN1, !dir);
-  digitalWrite(slideOut_IN2, dir);
-  }
+  if(duty != 0){
+    digitalWrite(slideOut_PWM, HIGH);
+    digitalWrite(slideOut_IN1, dir);
+    }
   else{
-  digitalWrite(slideOut_IN1, 0);
-  digitalWrite(slideOut_IN2, 0);
+    digitalWrite(slideOut_PWM, LOW);
+    digitalWrite(slideOut_IN1, LOW);
     }
 }

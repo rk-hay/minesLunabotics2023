@@ -30,7 +30,7 @@ char tempChars[numChars];
 #define br_d_pwm 5
 
 //drivers pos dir
-#define fl_d_for 39 //was 41
+#define fl_d_for 35 //was 39
 #define fr_d_for 40
 #define bl_d_for 36 //was 37
 #define br_d_for 12

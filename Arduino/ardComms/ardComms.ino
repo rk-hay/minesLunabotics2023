@@ -10,6 +10,14 @@ void setup() {
   digSetup();
   delay(4000);
   setupEncoders();
+
+
+
+
+
+
+
+  
   Serial.begin(115200);
   Serial.flush();
   //Serial.print(". ");
@@ -111,24 +119,24 @@ void loop() {
 //            Serial.print(br_s_pos);
 //            Serial.print("  ");
 //
-//            Serial.print(linear_x);
-//            Serial.print("  ");
-//            Serial.print(linear_y);
-//            Serial.print("  ");
-//            Serial.print(angular_z);
-//            Serial.print("  ");
+            Serial.print(linear_x);
+            Serial.print("  ");
+            Serial.print(linear_y);
+            Serial.print("  ");
+            Serial.print(angular_z);
+            Serial.print("  ");
 //            /
 
 
-              //  Serial.print(DeployButton);
-              //  Serial.print("  ");
-              //  Serial.print(DigLinButton);
-              //  Serial.print("  ");
-              //  Serial.print(ConveyorButton);
-              //  Serial.print("  ");
-              //  Serial.print(DigBeltButton);
-              //  Serial.print(" ");
-              //  Serial.println(BucketConveyor);
+                Serial.print(DeployButton);
+                Serial.print("  ");
+                Serial.print(DigLinButton);
+                Serial.print("  ");
+                Serial.print(ConveyorButton);
+                Serial.print("  ");
+                Serial.print(DigBeltButton);
+                Serial.print(" ");
+                Serial.println(BucketConveyor);
 
                Serial.println();
     print_timer = millis();

@@ -34,14 +34,14 @@ void readEncoders(){
   bl_enc_pos = bl_enc.read();
 
 
-  Serial.print(fl_enc.read());//11
-  Serial.print("  ");
-  Serial.print(fr_enc.read());
-  Serial.print("  ");
-  Serial.print(bl_enc.read());
-  Serial.print("  ");
-  Serial.print(br_enc.read()); //7
-  Serial.println("  ");
+//  Serial.print(fl_enc.read());//11
+//  Serial.print("  ");
+//  Serial.print(fr_enc.read());
+//  Serial.print("  ");
+//  Serial.print(bl_enc.read());
+//  Serial.print("  ");
+//  Serial.print(br_enc.read()); //7
+//  Serial.println("  ");
 
   if (fl_enc_pos > 5281 || fl_enc_pos < -5281){
     int sig = (fl_enc_pos > 0) ? 1:-1;
