@@ -7,12 +7,17 @@ from std_msgs.msg import String
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Joy
 from nav2_simple_commander.robot_navigator import BasicNavigator
+from rclpy.node import Node
+from geometry_msgs.msg import PoseStamped
+from nav_msgs.msg import Odometry
+from std_msgs.msg import Bool
+from tf_transformations import quaternion_from_euler
 
 liveTrailer = 0
 foldOut = 0
 plunge = 0
 buckeyConveyor = 0
-slidOut = 0
+slideOut = 0
 
 x = 0
 y = 0
@@ -20,12 +25,6 @@ z= 0
 
 #Run this on pi
 
-import rclpy
-from rclpy.node import Node
-from geometry_msgs.msg import PoseStamped
-from nav_msgs.msg import Odometry
-from std_msgs.msg import Bool
-from tf_transformations import quaternion_from_euler
 
 #nav.waitUntilNav2Active() 
 
@@ -37,6 +36,7 @@ class AutoNode(Node):
     DigBeltButton = 0
     BucketConveyor = 0
     digActivate = 0
+
     #Velocities
     x = 0
     y = 0
@@ -60,7 +60,7 @@ class AutoNode(Node):
         #self.goal_publisher = self.create_publisher(PoseStamped, '/goal_pose', 10)
 
         #Subscribers
-        self.odom_sub = self.create_subscription(Odometry, 'odom', self.odom_callback, 10)#TODO change odom call back to globalOdom
+        self.odom_sub = self.create_subscription(Odometry, '/globalOdom', self.odom_callback, 10)#TODO change odom call back to globalOdom
         self.start_digging_sub = self.create_subscription(Bool, 'start_digging', self.start_digging_callback, 10)
         self.subscription = self.create_subscription( Twist, 'cmd_vel', self.listener_callback, 10)
         #TODO ADD CAMERA SUBSCRIBER
@@ -107,16 +107,6 @@ class AutoNode(Node):
         self.current_pose = msg.pose.pose
 
         # Check if the current waypoint is reached
-        if self.check_waypoint_reached():
-            # Publish that the waypoint is reached
-            msg = Bool()
-            msg.data = True
-            self.reached_waypoint_pub.publish(msg)
-
-            # Move to the next waypoint
-            self.current_waypoint_index += 1
-            if self.current_waypoint_index >= len(self.waypoints):
-                self.start_digging_cycle()
 
     def start_digging_callback(self, msg):
         """Callback function for starting digging cycle."""
@@ -163,7 +153,9 @@ class AutoNode(Node):
     def stateMachine(self):
         print(self.state)
         #states
-        #0 -> map until marker found #TODO FIX MARKERS
+        #0 -> map until marker found 
+            #goto target orientation
+        self.current_pose.orientation.z
         #1 -> publish goal
         #2 -> loop goal reached?? ->branch after x seconds to dif options
         #3 -> publish line up
