@@ -67,6 +67,86 @@ void motors_init(){
 //--------------------------------------//
 //5 options front 2 at once, back 2 at once, all three at once same angle, opposite angle, front angles and back angles pick same time
 
+void stepper_adjust(int fl, int fr, int bl, int br){
+ 
+  stepper_locked = true;
+
+  int fl_del = max(-MAX_ANGLE, min(MAX_ANGLE, fl)); 
+  int fr_del = max(-MAX_ANGLE, min(MAX_ANGLE, fr));
+  int bl_del = max(-MAX_ANGLE, min(MAX_ANGLE, bl));
+  int br_del = max(-MAX_ANGLE, min(MAX_ANGLE, br));
+
+  bool fl_dir_ang = fl_del > 0;
+  bool fr_dir_ang = fr_del > 0;
+  bool bl_dir_ang = bl_del > 0;
+  bool br_dir_ang = br_del > 0;
+
+  int fl_steps = deg_to_step(fl_del);
+  int fr_steps = deg_to_step(fr_del);
+  int bl_steps = deg_to_step(bl_del);
+  int br_steps = deg_to_step(br_del);
+
+  digitalWrite(fl_s_ndir, fl_dir_ang);
+  digitalWrite(fl_s_pdir, !fl_dir_ang);
+  digitalWrite(fl_s_npwm, LOW);
+  
+  digitalWrite(fr_s_ndir, fr_dir_ang);
+  digitalWrite(fr_s_pdir, !fr_dir_ang);
+  digitalWrite(fr_s_npwm, LOW);
+
+  digitalWrite(bl_s_ndir, bl_dir_ang);
+  digitalWrite(bl_s_pdir, !bl_dir_ang);
+  digitalWrite(bl_s_npwm, LOW);
+  
+  digitalWrite(br_s_ndir, br_dir_ang);
+  digitalWrite(br_s_pdir, !br_dir_ang);
+  digitalWrite(br_s_npwm, LOW);
+
+  int fl_cnt = 0;
+  int fr_cnt = 0;
+  int bl_cnt = 0;
+  int br_cnt = 0;
+            // Serial.print(fl_steps);
+            // Serial.print(" ");
+            // Serial.print(fr_steps);
+            // Serial.print(" ");
+            // Serial.print(bl_steps);
+            // Serial.print(" ");
+            // Serial.print(br_steps);
+            // Serial.println(" ");
+  while ( (fl_cnt <= abs(fl_steps))
+        ||(fr_cnt <= abs(fr_steps))
+        ||(bl_cnt <= abs(bl_steps))
+        ||(br_cnt <= abs(br_steps))){
+            // Serial.print(fl_cnt);
+            // Serial.print(" ");
+            // Serial.print(fr_cnt);
+            // Serial.print(" ");
+            // Serial.print(bl_cnt);
+            // Serial.print(" ");
+            // Serial.print(br_cnt);
+            // Serial.println(" ");
+        if (Serial.available()> 0){
+        newComms();
+        }
+        if (fl_cnt < abs(fl_steps)){digitalWrite(fl_s_ppwm, HIGH); }
+        if (fr_cnt < abs(fr_steps)){digitalWrite(fr_s_ppwm, HIGH); }
+        if (bl_cnt < abs(bl_steps)){digitalWrite(bl_s_ppwm, HIGH); }
+        if (br_cnt < abs(br_steps)){digitalWrite(br_s_ppwm, HIGH); }
+    
+        delayMicroseconds(50000);
+        digitalWrite(fl_s_ppwm, LOW);
+        digitalWrite(fr_s_ppwm, LOW);
+        digitalWrite(bl_s_ppwm, LOW);
+        digitalWrite(br_s_ppwm, LOW);
+        
+        fl_cnt++;
+        fr_cnt++;
+        bl_cnt++;
+        br_cnt++;
+        stepper_locked = false;  
+}
+}//end while
 void step_pos(float p[3]){
   
   stepper_locked = true;

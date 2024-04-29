@@ -10,13 +10,6 @@ void setup() {
   digSetup();
   delay(4000);
   setupEncoders();
-
-
-
-
-
-
-
   
   Serial.begin(115200);
   Serial.flush();
@@ -48,7 +41,7 @@ void loop() {
 #ifdef CONTROL_LOOP
   if (millis() - control_loop_timer > 24) {
     diggingTime(digToggle);
-    if(digModeButton == 0){
+    if(digToggle == 0){ //for manual driving use digModeButton
       if (linear_x == 0 && linear_y == 0 && angular_z != 0){
         driveMode = 3; //pivot mode
         }
@@ -76,9 +69,20 @@ void loop() {
     controller_control_loop();
     control_loop_timer = millis();
   }
-  deployAppendageLinActuators(DeployButton); //DeployButton fold out
-  digDepth(DigLinButton); // linear actuator
+  if(digToggle == 0){
+  deployAppendageLinActuators(DeployButton); //DeployButton fold out 
   slideOutAcutators(ConveyorButton); // 
+  }
+  else{
+    //if(digitalRead(!pinConnectedToStop)){
+    //slideOutAcutators(254);
+  //}
+    //else if(digitalRead(!pinConnectedToFoldOut)){
+      //deployAppendageLinActuators(254);
+    //}
+    //
+  }
+  digDepth(7);
   bucketConveyor(DigBeltButton); //
   liveTrailer(BucketConveyor);
 #endif 
@@ -152,3 +156,35 @@ void diggingTime(bool Toggle){
   }
   prevState = Toggle;
 }
+
+
+
+// #define fl_pot_pin
+// #define fr_pot_pin  
+// #define bl_pot_pin
+// #define br_pot_pin
+// void fixSteppers(){
+//   int fl_cor = 0;
+//   int fr_cor = 0;
+//   int bl_cor = 0;
+//   int br_cor = 0;
+
+//   int fl_POT = map(analogRead(fl_pot_pin), leftMostPotVal, rightMostPotVal, -90, 90) //TODO double check that -90 is left and 90 is right
+//   int fr_POT = map(analogRead(fr_pot_pin), leftMostPotVal, rightMostPotVal, -90, 90)
+//   int bl_POT = map(analogRead(bl_pot_pin), leftMostPotVal, rightMostPotVal, -90, 90)
+//   int fr_POT = map(analogRead(fr_pot_pin), leftMostPotVal, rightMostPotVal, -90, 90)
+  
+//   if (abs(fl_POT-fl_s_pos) > 5){
+//     fl_cor = fl_s_pos-fl_POT;
+//   }
+//   if (abs(fr_POT-fr_s_pos) > 5){
+//     fr_cor = fr_s_pos-fr_POT;
+//   }
+//   if (abs(bl_POT-bl_s_pos) > 5){
+//     bl_cor = bl_s_pos-bl_POT;
+//   }
+//   if (abs(br_POT-br_s_pos) > 5){
+//     br_cor = br_s_pos-br_POT;
+//   }
+//   stepper_adjust(fl_cor, fr_cor, bl_cor, br_cor);
+// }

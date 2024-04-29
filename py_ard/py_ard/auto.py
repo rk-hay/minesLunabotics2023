@@ -12,19 +12,9 @@ from geometry_msgs.msg import PoseStamped
 from nav_msgs.msg import Odometry
 from std_msgs.msg import Bool
 from tf_transformations import quaternion_from_euler
-
-liveTrailer = 0
-foldOut = 0
-plunge = 0
-buckeyConveyor = 0
-slideOut = 0
-
-x = 0
-y = 0
-z= 0
+import time, threading
 
 #Run this on pi
-
 
 #nav.waitUntilNav2Active() 
 
@@ -36,15 +26,28 @@ class AutoNode(Node):
     DigBeltButton = 0
     BucketConveyor = 0
     digActivate = 0
+    state = 'markerFound'
 
     #Velocities
+    cmd_x = 0
+    cmd_y = 0
+    cmd_z = 0
+    my_x = 0
+    my_y = 0
+    my_z = 0 
     x = 0
     y = 0
     z = 0
+    cmd_vel_from_cmd_vel = True
     #MISC
     firstTime = True
     nav = BasicNavigator()
-    state = 0 #if state is 0 -> rotate in place to find tag
+
+    #CONSTANTS
+    xBerm = 6.10
+    yBerm = 1.43
+    lengthLARI = 1.44
+
     #Serial start
     ser = serial.Serial('/dev/ttyACM0', baudrate=115200, timeout=0) #TODO rules to change port name to MEGA
     ser.reset_input_buffer()
@@ -52,17 +55,16 @@ class AutoNode(Node):
 
     def __init__(self):
         super().__init__('auto_node')
-        self.waypoints = []  # List to store waypoints
-        self.current_waypoint_index = 0  # Index of current waypoint
-        self.waypoint_tolerance = 0.1  # Tolerance for considering waypoint as reached
-
         #Publishers
         #self.goal_publisher = self.create_publisher(PoseStamped, '/goal_pose', 10)
 
         #Subscribers
-        self.odom_sub = self.create_subscription(Odometry, '/globalOdom', self.odom_callback, 10)#TODO change odom call back to globalOdom
-        self.start_digging_sub = self.create_subscription(Bool, 'start_digging', self.start_digging_callback, 10)
-        self.subscription = self.create_subscription( Twist, 'cmd_vel', self.listener_callback, 10)
+        self.globalOdom_sub = self.create_subscription(Odometry, '/globalOdom', self.globalOdom_callback, 10) #TODO change odom call back to globalOdom
+        self.Odom_sub = self.create_subscription(Odometry, '/Odom', self.Odom_callback, 10)
+        self.subscription = self.create_subscription( Twist, '/cmd_vel', self.listener_callback, 10)
+        self.SerialWrite()
+        self.stateMachine()
+
         #TODO ADD CAMERA SUBSCRIBER
         
     def publish_goal_pose(self, x, y, z, yaw, pitch, roll):
@@ -82,36 +84,34 @@ class AutoNode(Node):
         self.nav.goToPose(msg)
         #self.goal_publisher.publish(msg)
 
+
     def check_waypoint_reached(self):
         """Check if the current waypoint is reached."""
         if not self.nav.isTaskComplete():
             feedback = self.nav.getFeedback()
             if feedback.navigation_duration > 6000: #TODO CHANGE TO REASONABLE AMOUNT OF TIME
                 self.nav.cancelTask()
+            return 1
         else:
             result = self.nav.getResult()
             if result == self.nav.TaskResult.SUCCEEDED: #TODO IS THIS THE RIGHT SYNTAX FOR TASK GOOD?
                 print('Goal succeeded!')
+                return 2
             elif result == self.nav.TaskResult.CANCELED:
                 print('Goal was canceled!')
+                return -1
             elif result == self.nav.TaskResult.FAILED:
                 print('Goal failed!')
+                return -1
 
-    def start_digging_cycle(self):
-        """Start the digging cycle."""
-        # Implement your digging logic here
-        pass
 
-    def odom_callback(self, msg):
+    def globalOdom_callback(self, msg):
         """Callback function for odometry subscriber."""
-        self.current_pose = msg.pose.pose
+        self.UWB_pose = msg.pose.pose
 
-        # Check if the current waypoint is reached
-
-    def start_digging_callback(self, msg):
-        """Callback function for starting digging cycle."""
-        if msg.data:
-            self.start_digging_cycle()
+    def Odom_callback(self, msg):
+        """Callback function for odometry subscriber."""
+        self.CAM_pose = msg.pose.pose
     
     def navigate_to_p1():
         print("write NAV function")
@@ -121,48 +121,135 @@ class AutoNode(Node):
         #line_up_approach()
 
 
-    def dig_cycle():
+    def dig_cycle(self):
         print("Write Dig Cycle")
+        #ConveyorButton = 0
+        #DeployButton = 0
+        #DigLinButton = 0
+        #DigBeltButton = 0
+        #BucketConveyor = 0
+        #digActivate = 0
+        
         #turn off cmd_vel sending stuff
-        #slide_out_until_stopped()
-        #fold_out()
-        #turn_on_bucket_conveyor()
-        #start_timer_1()
-        #start_slow_plunge()
-        #turn_on_live_conveyor()
-        #start_timer_2()
-
-        #while not at_p3.y():
-        #    if timer_1_hits(val):
-        #        stop_for_x_seconds()
-        #        reset_timer_1()
-        #    if timer_2_hits(val2):
-        #        reverse_plunge()
-        #        reset_timer_1()
-
-        #exit_dig_mode()
-        #set_x_speed_high() go forward a smidge 
-
-        #while not close_to_p4.y():
-        #    if at_p4():
-        #        set_x_speed_high_for_seconds()
-        #    if at_p5():
-        #        // Perform specific actions for p5
-
+        #slide_out_until_stopped
+        self.digActivate = 1
+        self.x = 0
+        sleep(15) #TODO adjust time or add feedback from PI
+        self.DigBeltButton = 254
+        self.BucketConveyor = 254
+        currTime = time.time()
+        plunge = True
+        #going one way!
+        while(abs(self.UWB_pose.postion.x-.5+self.xBerm) > .1): # repeat while front not to close to the dump zone
+            while abs(self.UWB_pose.postion.y - 1.5+self.yBerm) > .2: #if we are on one side of the berm start diggin
+                self.digActivate = 1
+                self.DigBeltButton = 254 
+                self.BucketConveyor = 254
+                while time.time() - currTime < 45: #TODO change to more accurate timing?
+                    if plunge == True:
+                        self.DigLinButton = 179
+                        plunge = False
+                    else:
+                        self.DigLinButton = 0
+                        plunge = True
+                    time.sleep(3)  # Wait for 3 seconds between state changes
+                self.DigLinButton = -254
+                self.DigBeltButton = 0 
+                self.BucketConveyor = 0
+                time.sleep(15) #TODO TIME
+                self.x = .8
+                time.sleep(1)
+                self.x = 0.0
+                currTime = time.time()
+            ##exit_dig_mode
+            self.digActivate = 0
+            #ADD CHECK TO MAKE SURE PERPENDICULAR TO DIG ZONE
+            
+            #go forward a smidge 
+            time.sleep(1)
+            self.x = .8
+            time.sleep(1)
+            self.x = 0
+            while abs(self.UWB_pose.postion.y - self.yBerm) > .2:
+                self.digActivate = 1
+                self.DigBeltButton = 254 
+                self.BucketConveyor = 254
+                while time.time() - currTime < 45: #TODO change to more accurate timing?
+                    if plunge == True:
+                        self.DigLinButton = 179
+                        plunge = False
+                    else:
+                        self.DigLinButton = 0
+                        plunge = True
+                    time.sleep(5)  # Wait for 5 seconds between state changes
+                self.DigLinButton = -254
+                self.DigBeltButton = 0 
+                self.BucketConveyor = 0
+                time.sleep(15) #TODO TIME
+                self.x = -.8
+                time.sleep(1)
+                self.x = 0.0
+                currTime = time.time()
+            self.digActivate = 0
+            #ADD CHECK TO MAKE SURE PERPENDICULAR TO DIG ZONE
+            
+            #go forward a smidge 
+            time.sleep(1)
+            self.x = .8
+            time.sleep(1)
+            self.x = 0
+        self.state = 'IDK'
 
     def stateMachine(self):
         print(self.state)
         #states
+
         #0 -> map until marker found 
             #goto target orientation
-        self.current_pose.orientation.z
+        if (state == 'markerFound'):
+            while (abs(1.57 - self.UWB_pose.orientation.z) > .78): #TODO THIS WHILE LOOP MIGHT NEED TO BE NONBLOCKING
+                prevOrient = self.UWB_pose.orientation.z
+                self.cmd_vel_from_cmd_vel = False
+                self.z = .5
+                self.SerialWrite()
+                sleep(1.5)
+                self.z = 0
+                self.SerialWrite()
+                while(abs(self.UWB_pose.orientation.z-prevOrient) > .01):
+                    #TODO WATCHDOG
+                    print("Waiting for orientation update")
+            state = 'gotoDig'
         #1 -> publish goal
-        #2 -> loop goal reached?? ->branch after x seconds to dif options
+        elif(state == 'gotoDig'):
+            self.publish_goal_pose(self.xBerm, self.yBerm+self.lengthLARI, self.CAM_pose.position.z, 1.57, 0.0, 0.0): #TODO UPDATE FOR KENNEDY #FOR UCF X=6.10 (close side of berm) Y=1.43 Lari is 1.44 M long
+            self.cmd_vel_from_cmd_vel = True 
+            while self.check_waypoint_reached() != 2:
+                #state = 'linedUP' #add
+                self.cmd_vel_from_cmd_vel = False
+                state = 'digCycle'
+        #->branch after x seconds to dif options
         #3 -> publish line up
         #4 -> loop goal reached?? ->branch close enough (fix using uwb??)
         #5 -> dig cycle
+        elif(state == 'digCycle'):
+            self.dig_cycle()
+        elif(state == 'IDK'):
+            print("AT END")
+            self.x = 0
+            self.y = 0
+            self.z = 0
 
-    def SerialWrite(self, msg):
+        if self.cmd_vel_from_cmd_vel == True:
+            self.x = self.cmd_x
+            self.y = self.cmd_y
+            self.z = self.cmd_z
+        else:
+            self.x = self.my_x
+            self.y = self.my_y
+            self.z = self.my_z
+        
+
+    def SerialWrite(self):
         #TODO MAKE SURE BUTTONS ARE CORRECTLY NAMED 
         if self.firstTime == True:
             self.get_logger().info('waiting for arduino')
@@ -196,24 +283,20 @@ class AutoNode(Node):
         #TODO IF DEBUGGER THEN PRINT
         #self.get_logger().info('I heard: "%s"' % self.digActivate)
         #TODO MESS WITH SHORTER TIMES?
-        sleep(0.1)
+        threading.Timer(.1, self.SerialWrite).start()
 
 
     def cmd_vel_listener(self, msg):
         #self.get_logger().info('I heard: "%s"' % msg.linear.x)
-        self.x = msg.linear.x
-        self.y = msg.linear.y
-        self.z = msg.angular.z
+        self.cmd_x = msg.linear.x
+        self.cmd_y = msg.linear.y
+        self.cmd_z = msg.angular.z
 
 
 
 def main(args=None):
     rclpy.init(args=args)
     auto_node = AutoNode()
-    
-    # Set waypoints
-    waypoints = [...]  # Define your waypoints here
-    auto_node.set_waypoints(waypoints)
 
     rclpy.spin(auto_node)
 
@@ -227,6 +310,3 @@ if __name__ == '__main__':
     main()
 
 
-
-if __name__ == '__main__':
-    main()
