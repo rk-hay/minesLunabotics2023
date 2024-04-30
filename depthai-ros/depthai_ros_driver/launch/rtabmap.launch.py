@@ -31,7 +31,7 @@ def launch_setup(context, *args, **kwargs):
             "Grid/NoiseFilteringRadius": "1.0",
             "RGBD/MarkerDetection": "True",
             "Marker/Dictionary": "20", 
-            "Marker/Priors": "9 4 0 .77 1.57 0 0",
+            "Marker/Priors": "9 4.58 1 .34 1.57 0 -1.57|10 4.58 7.14 .34 1.57 0 -1.57",
             "Marker/VarianceAngular": "9999",
             #"Optimizer/PriorsIgnored": "False",
             #"cloud_subtract_filtering": True,

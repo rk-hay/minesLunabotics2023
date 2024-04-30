@@ -16,6 +16,7 @@ void setup() {
   //Serial.print(". ");
   //readEncoders();
 
+  
 }
 
 
@@ -63,17 +64,17 @@ void loop() {
     if (stepper_locked == false) {
       step_pos(pos_angs);
       control_vel_updated(lin_vels);
-      //global_angle_select(0, 0, 0, -45);
+      //global_angle_select(90, 90, 90, 90);
       step_timer = millis();
     }
     controller_control_loop();
     control_loop_timer = millis();
   }
-  if(digToggle == 0){
-  deployAppendageLinActuators(DeployButton); //DeployButton fold out 
-  slideOutAcutators(ConveyorButton); // 
-  }
-  else{
+  //if(digToggle == 0){
+  deployAppendageLinActuators(DeployButton); //Screenshot && Select
+  slideOutAcutators(ConveyorButton); // XY
+  //}
+  //else{
     //if(digitalRead(!pinConnectedToStop)){
     //slideOutAcutators(254);
   //}
@@ -81,13 +82,14 @@ void loop() {
       //deployAppendageLinActuators(254);
     //}
     //
-  }
-  digDepth(7);
+  //}
+  digDepth(DigLinButton);
   bucketConveyor(DigBeltButton); //
   liveTrailer(BucketConveyor);
 #endif 
 
-
+fixSteppers();
+  
 #ifdef PRINT
   if (millis() - print_timer > 100) {
         // Serial.print(fl_d_vel());
@@ -104,43 +106,52 @@ void loop() {
         //  Serial.print("  ");
         //  Serial.print(pos_angs[3]
  
-          Serial.print(fl_enc_pos);//11
-          Serial.print("  ");
-          Serial.print(fr_enc_pos);
-          Serial.print("  ");
-          Serial.print(bl_enc_pos);
-          Serial.print("  ");
-          Serial.print(br_enc_pos); //7
-          Serial.print("  ");
+//          Serial.print(fl_enc_pos);//11
+//          Serial.print("  ");
+//          Serial.print(fr_enc_pos);
+//          Serial.print("  ");
+//          Serial.print(bl_enc_pos);
+//          Serial.print("  ");
+//          Serial.print(br_enc_pos); //7
+//          Serial.print("  ");
 
-
-//            Serial.print(fl_s_pos);
-//            Serial.print("  ");
-//            Serial.print(fr_s_pos);
-//            Serial.print("  ");
-//            Serial.print(bl_s_pos);
-//            Serial.print("  ");
-//            Serial.print(br_s_pos);
-//            Serial.print("  ");
+              Serial.print("Fl_act: ");
+            Serial.print(fl_s_pos);
+            Serial.print(" Fr: ");
+            Serial.print(fr_s_pos);
+            Serial.print(" BL: ");
+            Serial.print(bl_s_pos);
+            Serial.print(" Br: ");
+            Serial.print(br_s_pos);
+            Serial.println("  ");
 //
-            Serial.print(linear_x);
-            Serial.print("  ");
-            Serial.print(linear_y);
-            Serial.print("  ");
-            Serial.print(angular_z);
-            Serial.print("  ");
+//            Serial.print(linear_x);
+//            Serial.print("  ");
+//            Serial.print(linear_y);
+//            Serial.print("  ");
+//            Serial.print(angular_z);
+//            Serial.print("  ");
 //            /
-
-
+                Serial.print("Fl_POT: ");
+                Serial.print(fl_POT);
+                Serial.print(" Fr: ");
+                Serial.print(fr_POT);
+                Serial.print(" Bl: ");
+                Serial.print(bl_POT);
+                Serial.print(" Br: ");
+                Serial.println(br_POT);
+/**
                 Serial.print(DeployButton);
                 Serial.print("  ");
-                Serial.print(DigLinButton);
-                Serial.print("  ");
                 Serial.print(ConveyorButton);
+                Serial.print("  ");
+                Serial.print(DigLinButton);
                 Serial.print("  ");
                 Serial.print(DigBeltButton);
                 Serial.print(" ");
                 Serial.println(BucketConveyor);
+**/
+
 
                Serial.println();
     print_timer = millis();
@@ -159,21 +170,18 @@ void diggingTime(bool Toggle){
 
 
 
-// #define fl_pot_pin
-// #define fr_pot_pin  
-// #define bl_pot_pin
-// #define br_pot_pin
-// void fixSteppers(){
-//   int fl_cor = 0;
-//   int fr_cor = 0;
-//   int bl_cor = 0;
-//   int br_cor = 0;
 
-//   int fl_POT = map(analogRead(fl_pot_pin), leftMostPotVal, rightMostPotVal, -90, 90) //TODO double check that -90 is left and 90 is right
-//   int fr_POT = map(analogRead(fr_pot_pin), leftMostPotVal, rightMostPotVal, -90, 90)
-//   int bl_POT = map(analogRead(bl_pot_pin), leftMostPotVal, rightMostPotVal, -90, 90)
-//   int fr_POT = map(analogRead(fr_pot_pin), leftMostPotVal, rightMostPotVal, -90, 90)
-  
+ void fixSteppers(){
+   int fl_cor = 0;
+   int fr_cor = 0;
+   int bl_cor = 0;
+   int br_cor = 0;
+
+   fl_POT = map(analogRead(fl_pot_pin), 127, 175, -90, 90); //TODO double check that -90 is left and 90 is right
+   fr_POT = map(analogRead(fr_pot_pin), 1007, 1007, -90, 90);
+   bl_POT = map(analogRead(bl_pot_pin), 225, 335, -90, 90);
+   br_POT = map(analogRead(br_pot_pin), 224, 331, -90, 90);
+
 //   if (abs(fl_POT-fl_s_pos) > 5){
 //     fl_cor = fl_s_pos-fl_POT;
 //   }
@@ -187,4 +195,4 @@ void diggingTime(bool Toggle){
 //     br_cor = br_s_pos-br_POT;
 //   }
 //   stepper_adjust(fl_cor, fr_cor, bl_cor, br_cor);
-// }
+ }

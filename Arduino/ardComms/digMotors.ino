@@ -1,9 +1,9 @@
 // Define pin numbers
-#define appendageDeployLinears_PWM A10 //the pwm pin 
-#define appendageDeployLinears_IN1 A9
+#define appendageDeployLinears_PWM A6//the pwm pin 
+#define appendageDeployLinears_IN1 A7
 
-#define slideOut_PWM A6 //was 13 
-#define slideOut_IN1 A7
+#define slideOut_PWM A10 //was 13 
+#define slideOut_IN1 A9
 
 #define appendageDigLin_PWM 8
 #define appendageDigLin_IN1 A13
@@ -41,7 +41,11 @@ void digSetup() {
 
   pinMode(liveTrailer_PWM, OUTPUT);
   digitalWrite(liveTrailer_PWM, LOW);
-
+  
+  pinMode(fl_pot_pin, INPUT);
+  pinMode(fr_pot_pin, INPUT);
+  pinMode(bl_pot_pin, INPUT);
+  pinMode(br_pot_pin, INPUT);
   //analogWrite(appendageDeployLinears_PWM, 255);
   //digitalWrite(A8, HIGH);
 }
