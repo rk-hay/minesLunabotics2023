@@ -111,7 +111,7 @@ def launch_setup(context, *args, **kwargs):
             executable="static_transform_publisher",
             name="oak_static_transform_publisher",
             output="screen",
-            arguments=["0", "0", ".70", "0", "0", "0", "base_link", "oak"]
+            arguments=["0", "0", ".70", "3.16", "0", "0", "base_link", "oak"]
         ),
     ]
 
