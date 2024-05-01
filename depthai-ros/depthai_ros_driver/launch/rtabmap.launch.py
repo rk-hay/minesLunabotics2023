@@ -32,7 +32,7 @@ def launch_setup(context, *args, **kwargs):
             "RGBD/MarkerDetection": "True",
             "Marker/Dictionary": "20", 
             "Marker/Priors": "9 1 4.58 .34 0 0 -1.5708|10 7.14 4.58 .34 0 0 -1.5708",
-            "Marker/VarianceAngular": "9999",
+            "Marker/VarianceAngular": ".001",
             "queue_size": 500,
             "rtabmapviz": "false",
             "Odometry/initial_pose": ".5 .5 0 -1.57 0 0 "
