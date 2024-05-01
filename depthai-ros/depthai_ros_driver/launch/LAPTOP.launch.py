@@ -43,36 +43,13 @@ def launch_setup(context, *args, **kwargs):
     ]
 
     remappings = [
-        ("rgb/image", name+"/rgb/image_rect"),
+        ("rgb/image", name+"/rgb/image_rect/compressed"),
         ("rgb/camera_info", name+"/rgb/camera_info"),
-        ("depth/image", name+"/stereo/image_raw"),
+        ("depth/image", name+"/stereo/image_raw/compressed"),
         ("/map", "/arena"),
     ]
 
-    return [
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(
-                os.path.join(depthai_prefix, 'launch', 'camera.launch.py')),
-            launch_arguments={"name": name,
-                              "params_file": params_file}.items()),
-
-        LoadComposableNodes(
-            condition=IfCondition(LaunchConfiguration("rectify_rgb")),
-            target_container=name+"_container",
-            composable_node_descriptions=[
-                ComposableNode(
-                    package="image_proc",
-                    plugin="image_proc::RectifyNode",
-                    name="rectify_color_node",
-                    remappings=[('image', name+'/rgb/image_raw'),
-                                ('camera_info', name+'/rgb/camera_info'),
-                                ('image_rect', name+'/rgb/image_rect'),
-                                ('image_rect/compressed', name+'/rgb/image_rect/compressed'),
-                                ('image_rect/compressedDepth', name+'/rgb/image_rect/compressedDepth'),
-                                ('image_rect/theora', name+'/rgb/image_rect/theora')]
-                )
-            ]),
-        
+    return [        
         LoadComposableNodes(
             target_container=name+"_container",
             composable_node_descriptions=[
