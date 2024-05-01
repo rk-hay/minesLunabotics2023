@@ -31,11 +31,11 @@ def launch_setup(context, *args, **kwargs):
             "Grid/NoiseFilteringRadius": "1.0",
             "RGBD/MarkerDetection": "True",
             "Marker/Dictionary": "20", 
-            "Marker/Priors": "9 1 4.58 .34 0 0 -1.57|10 7.14 4.58 .34 0 0 -1.57",
+            "Marker/Priors": "9 1 4.58 .34 0 0 1.57|10 7.14 4.58 .34 0 0 1.57",
             "Marker/VarianceAngular": ".01",
             "queue_size": 500,
-            "rtabmapviz": "false"
-            #Odometry: initial_pose
+            "rtabmapviz": "false",
+            "Odometry/initial_pose": ".5 .5 0 -1.57 0 0 "
             #"Optimizer/PriorsIgnored": "False",
             #"cloud_subtract_filtering": True,
             #"cloud_subtract_filtering_min_neighbors": "6",
