@@ -72,49 +72,7 @@ def launch_setup(context, *args, **kwargs):
                                 ('image_rect/theora', name+'/rgb/image_rect/theora')]
                 )
             ]),
-        
-        LoadComposableNodes(
-            target_container=name+"_container",
-            composable_node_descriptions=[
-                ComposableNode(
-                    package='rtabmap_odom',
-                    plugin='rtabmap_odom::RGBDOdometry',
-                    name='rgbd_odometry',
-                    parameters=parameters,
-                    remappings=remappings,
-                ),
-            ],
-        ),
-
-        LoadComposableNodes(
-            target_container=name+"_container",
-            composable_node_descriptions=[
-                ComposableNode(
-                    package='rtabmap_slam',
-                    plugin='rtabmap_slam::CoreWrapper',
-                    name='rtabmap',
-                    parameters=parameters,
-                    remappings=remappings,
-                ),
-            ],
-        ),
-
-        Node(
-            package="rtabmap_viz",
-            executable="rtabmap_viz",
-            output="screen",
-            parameters=parameters,
-            remappings=remappings,
-        ),
-
-        Node(
-            package="tf2_ros",
-            executable="static_transform_publisher",
-            name="oak_static_transform_publisher",
-            output="screen",
-            arguments=["0", "0", ".70", "3.16", "0", "0", "base_link", "oak"]
-        ),
-    ]
+            ]
 
 
 def generate_launch_description():
