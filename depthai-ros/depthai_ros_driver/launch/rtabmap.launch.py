@@ -35,7 +35,7 @@ def launch_setup(context, *args, **kwargs):
             "Marker/VarianceAngular": ".001",
             "queue_size": 500,
             "rtabmapviz": "false",
-            "Odometry/initial_pose": ".5 .5 0 -1.57 0 0 "
+            "Odometry/initial_pose": ".5 .5 0 1.57 0 0 "
             #"Optimizer/PriorsIgnored": "False",
             #"cloud_subtract_filtering": True,
             #"cloud_subtract_filtering_min_neighbors": "6",
