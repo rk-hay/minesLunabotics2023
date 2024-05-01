@@ -21,6 +21,7 @@ def launch_setup(context, *args, **kwargs):
             "subscribe_depth": True,
             "subscribe_odom_info": True,
             "approx_sync": True,
+            "compressed":True,
             "Rtabmap/DetectionRate": "3.5",
             "rtabmap_args:=": "--delete_db_on_start",
             "Grid/MaxGroundAngle": "60",

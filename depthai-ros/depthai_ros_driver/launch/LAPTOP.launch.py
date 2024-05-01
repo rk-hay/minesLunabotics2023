@@ -21,6 +21,7 @@ def launch_setup(context, *args, **kwargs):
             "subscribe_depth": True,
             "subscribe_odom_info": True,
             "approx_sync": True,
+            "compressed":True,
             "Rtabmap/DetectionRate": "3.5",
             "rtabmap_args:=": "--delete_db_on_start",
             "Grid/MaxGroundAngle": "60",
@@ -43,9 +44,9 @@ def launch_setup(context, *args, **kwargs):
     ]
 
     remappings = [
-        ("rgb/image", name+"/rgb/image_rect/compressed"),
+        ("rgb/image", name+"/rgb/image_rect"),
         ("rgb/camera_info", name+"/rgb/camera_info"),
-        ("depth/image", name+"/stereo/image_raw/compressed"),
+        ("depth/image", name+"/stereo/image_raw"),
         ("/map", "/arena"),
     ]
 
