@@ -34,7 +34,7 @@ def launch_setup(context, *args, **kwargs):
             "Marker/Priors": "9 1 4.58 .34 0 0 -1.57|10 7.14 4.58 .34 0 0 -1.57",
             "Marker/VarianceAngular": ".01",
             "queue_size": 500,
-            "rtabmapviz": "false",
+            "rtabmapviz": "false"
             #Odometry: initial_pose
             #"Optimizer/PriorsIgnored": "False",
             #"cloud_subtract_filtering": True,
@@ -108,13 +108,13 @@ def launch_setup(context, *args, **kwargs):
             parameters=parameters,
             remappings=remappings,
         ),
-''''''
+
         Node(
             package="tf2_ros",
             executable="static_transform_publisher",
             name="oak_static_transform_publisher",
             output="screen",
-            arguments=["0", "0", ".70", "0", "0", "0", "base_link", "oak"]
+            arguments=["0", "0", ".70", "3.16", "0", "0", "base_link", "oak"]
         ),
     ]
 
