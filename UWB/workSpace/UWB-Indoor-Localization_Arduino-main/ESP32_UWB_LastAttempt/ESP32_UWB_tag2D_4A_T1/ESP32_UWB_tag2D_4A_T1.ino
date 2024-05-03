@@ -67,12 +67,13 @@ typedef enum State_t {
 } State;
 
 State my_state;
-
+#define arenaLength 8.14
+#define arenaHeight 4.57
 float anchor_matrix[N_ANCHORS][3] = { //list of anchor coordinates, relative to chosen origin.
   {0.0, 0.0, 0.0},  //Anchor labeled #1
-  {1.65, 0, 0.0},//Anchor labeled #2
-  {2.0, 2.5, 0.0}, //Anchor labeled #3
-  {0, 2.5, 0.0} //Anchor labeled #4
+  {0.0, arenaHeight, 0.0},//Anchor labeled #2
+  {arenaLength, 0, 0.0}, //Anchor labeled #3
+  {arenaLength, arenaHeight, 0.0} //Anchor labeled #4
 };  //Z values are ignored in this code, except to compute RMS distance error
 float last_anchor_distance[N_ANCHORS] = {0.0}; //most recent distance reports
 float current_tag_position[2] = {0.0, 0.0}; //global current position (meters with respect to anchor origin)
