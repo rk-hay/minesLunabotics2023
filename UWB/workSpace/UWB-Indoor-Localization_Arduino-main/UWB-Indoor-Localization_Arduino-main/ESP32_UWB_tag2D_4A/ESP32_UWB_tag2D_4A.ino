@@ -33,12 +33,14 @@ char tag_addr[] = "7D:00:22:EA:82:60:3B:9C";
 
 // global variables, input and output 
 
+#define arenaLength 8.14
+#define arenaHeight 4.57
 float anchor_matrix[N_ANCHORS][3] = { //list of anchor coordinates, relative to chosen origin.
   {0.0, 0.0, 0.0},  //Anchor labeled #1
-  {2, 0, 0.0},//Anchor labeled #2
-  {1.5, 2, 0.0}, //Anchor labeled #3
-  {.5 2, 0.0} //Anchor labeled #4
-};  //Z values are ignored in this code, except to compute RMS distance error
+  {0.0, arenaHeight, 0.0},//Anchor labeled #2
+  {arenaLength, 0, 0.0}, //Anchor labeled #3
+  {arenaLength, arenaHeight, 0.0} //Anchor labeled #4
+};   //Z values are ignored in this code, except to compute RMS distance error
 
 uint32_t last_anchor_update[N_ANCHORS] = {0}; //millis() value last time anchor was seen
 float last_anchor_distance[N_ANCHORS] = {0.0}; //most recent distance reports

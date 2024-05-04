@@ -12,13 +12,12 @@
 char anchor_addr[] = "81:00:5B:D5:A9:9A:E2:9C"; //#4
 
 //calibrated Antenna Delay setting for this anchor
-uint16_t Adelay = 16600; //UPDATE
+uint16_t Adelay = 16554; //UPDATE
 
-// previously determined calibration results for antenna delay
-// #1 16630 
-// #2 16610 
-// #3 16607 
-// #4 16580
+//1 16554
+//2 16549
+//3 16555
+//4 16558
 
 // calibration distance
 float dist_m = 8; //meters
@@ -50,11 +49,11 @@ void setup()
   // set antenna delay for anchors only. Tag is default (16384)
   DW1000.setAntennaDelay(Adelay);
   //start the module as an anchor, do not assign random short address
-  //DW1000Ranging.startAsAnchor(anchor_addr, DW1000.MODE_LONGDATA_RANGE_LOWPOWER, false);
+  DW1000Ranging.startAsAnchor(anchor_addr, DW1000.MODE_LONGDATA_RANGE_LOWPOWER, false);
   // DW1000Ranging.startAsAnchor(ANCHOR_ADD, DW1000.MODE_SHORTDATA_FAST_LOWPOWER);
   // DW1000Ranging.startAsAnchor(ANCHOR_ADD, DW1000.MODE_LONGDATA_FAST_LOWPOWER);
   // DW1000Ranging.startAsAnchor(ANCHOR_ADD, DW1000.MODE_SHORTDATA_FAST_ACCURACY);
-   DW1000Ranging.startAsAnchor(anchor_addr, DW1000.MODE_LONGDATA_FAST_ACCURACY, false);
+  // DW1000Ranging.startAsAnchor(anchor_addr, DW1000.MODE_LONGDATA_FAST_ACCURACY, false);
   // DW1000Ranging.startAsAnchor(ANCHOR_ADD, DW1000.MODE_LONGDATA_RANGE_ACCURACY);
 }
 char arr[120];
@@ -64,5 +63,3 @@ void loop()
   //DW1000.getPrintableDeviceMode(arr);
   //Serial.println(arr);
 }
-
-

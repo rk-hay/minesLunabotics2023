@@ -30,14 +30,15 @@ const uint8_t PIN_SS = 4;   // spi select pin
 
 
 char this_anchor_addr[] = "84:00:22:EA:82:60:3B:9C";
-float this_anchor_target_distance = 2.5654; //measured distance to anchor in m
+float this_anchor_target_distance = 4.58; //measured distance to anchor in m
 
 uint16_t this_anchor_Adelay = 16600; //starting value
 uint16_t Adelay_delta = 100; //initial binary search step size
 
-//1 21023 18525 18530 16382
-//2 13358
-//3 17173
+//1 16554
+//2 16549
+//3 16555
+//4 16558
 void setup()
 {
   Serial.begin(115200);

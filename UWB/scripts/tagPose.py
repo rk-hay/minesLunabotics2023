@@ -21,12 +21,13 @@ class tagPublisher(Node):
     mag = 0.0
     e = 0.0
     port1 = '/dev/ttyUSB0'
-    port2 = '/dev/ttyUSB1' 
-    currPort = port1
-    targets = [b'2', b'3', b'4', b'5']
-    target_index = 0
-    attempt_no = 0
-    T1 = serial.Serial(currPort, 115200, timeout=.1, write_timeout=0.1)
+    values_x = []
+    values_y = []
+    average_x= 0
+    average_y = 0
+    prevYaw = 0
+    T1 = serial.Serial(port1, 115200, timeout=.1, write_timeout=0.1)
+
     prevX_comms = 0
     prevY_comms = 0
     def __init__(self):
@@ -39,71 +40,62 @@ class tagPublisher(Node):
         odom = Odometry()
         odom.header.frame_id = "globalOdom"
         odom.header.stamp = self.get_clock().now().to_msg()
-        odom.pose.pose.position.x = self.x_1
-        odom.pose.pose.position.y = self.y_1
+        odom.pose.pose.position.x = float(self.average_x)
+        odom.pose.pose.position.y = float(self.average_y)
         odom.pose.pose.position.z = 0.0
-        dx = self.x_2 - self.x_1
-        dy = self.y_2 - self.y_1
         self.mag = math.sqrt(self.dx*self.dx+self.dy*self.dy)
-        self.yaw = math.atan2(dy, dx) 
+        self.yaw = math.atan2(self.dy, self.dx) 
+        if self.dx < .07 and self.dy < .07:
+            self.yaw = self.prevYaw
         quat = quaternion_from_euler(0, 0, self.yaw)
         odom.pose.pose.orientation = Quaternion(x=quat[0], y=quat[1], z=quat[2], w=quat[3])
         odom.child_frame_id = "base_link"
-        odom.twist.twist.linear.x = 0.0#(self.x_1-self.prevX)/(self.get_clock().now()-self.prevTime)
-        odom.twist.twist.linear.y = 0.0#(self.y_1-self.prevY)/(self.get_clock().now()-self.prevTime)
+        odom.twist.twist.linear.x = 0.0#(self.dx)/(self.get_clock().now()-self.prevTime)
+        odom.twist.twist.linear.y = 0.0#(self.dy)/(self.get_clock().now()-self.prevTime)
         odom.twist.twist.linear.z = 0.0
-        self.prevX = self.x_1
-        self.prevY = self.y_1
         self.prevTime = self.get_clock().now()
         #print("Publishing point: ", self.x_1, self.y_1)
         self.publisher_.publish(odom)
-
+        self.prevYaw = self.yaw
     def comms(self):
         try:
+            #print("\n---------------T1---------------")
             T1_in = self.T1.readline().decode().strip()
             #print(T1_in)
-            self.attempt_no += 1
-            if self.attempt_no > 20:
-                #print("watchdog " + str(self.currPort))
-                self.tag()
             if T1_in.startswith("P="):  # Check if the received data starts with "P="
-                data2 = T1_in.split('=')[1].split(',')
-                if len(data2) == 2:  # Check if there are two values separated by ","
-                    x = float(data2[0])
-                    y = float(data2[1])
-                    #print("Received position", x, y)
-                    if x > 10 or x < -10 or y > 10 or y < -10:
-                        x = self.prevX_comms
-                        y = self.prevY_comms
-                        self.prevX_comms = x
-                        self.prevY_comms = y
-                    if self.currPort == self.port1:
-                        self.x_1 = x
-                        self.y_1 = y
-                    elif self.currPort == self.port2:
-                        self.x_2 = x
-                        self.y_2 = y
-                    print("Received position", x, y)
-            if T1_in.startswith("c="):
-                distance = T1_in.split('=')
-                #print(str(self.currPort) + " Index: " + str(self.target_index) + " D: " + str(distance[1]) + " Atmpt: " + str(self.attempt_no)) # after this has successfully ranged all 4 targets swap to UWB 2
-                self.target_index += 1
-                if self.target_index >= len(self.targets):    
-                    self.target_index = 0
-                    #change to new com port
-                    self.currPort = self.port2 if self.currPort == self.port1 else self.port1
-                    self.T1.close()
-                    self.T1 = serial.Serial(self.currPort, 115200, timeout=.1, write_timeout=0.1)
-                self.tag()
+                data = T1_in.split('=')[1].split(',')
+                if len(data) == 3:  # Check if there are two values separated by ","
+                    self.x_1 = self.x_2
+                    self.y_1 = self.x_2
+
+                    self.x_2 = float(data[0])
+                    self.y_2 = float(data[1])
+                    
+                    if abs(self.x_2-self.x_1) > 1.5 or abs(self.y_2-self.y_1) > 1.5:
+                        self.x_2 = self.x_1
+                        self.y_2 = self.x_1
+
+                self.values_x.append(self.x_2)
+                self.values_y.append(self.y_2)
+
+                # Check if there are 5 values in the list
+                if len(self.values_x) == 5:
+                    # Calculate the average of the 5 values
+                    self.prevX = self.average_x
+                    self.prevY = self.average_y
+
+                    self.average_x = sum(self.values_x) / 5
+                    self.average_y = sum(self.values_y) / 5
+                    self.dx = self.average_x - self.prevX
+                    self.dy = self.average_y - self.prevY
+
+
+                    # Clear the list for the next set of values
+                    self.values_x.clear()
+                    self.values_y.clear()
 
         except Exception as e:
             print("exception:", e)
-
-    def tag(self):
-        #print("watchdog " + str(self.currPort) + " " + str(self.target_index))
-        self.T1.write(b't')
-        self.T1.write(self.targets[self.target_index])
-        self.attempt_no = 0
 
 
 def main(args=None):

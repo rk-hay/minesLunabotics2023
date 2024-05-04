@@ -4,8 +4,8 @@ import time
 import threading
 
 class uwb_Control():
-    port1 = 'COM5'
-    port2 = 'COM14' 
+    port1 = '/dev/ttyUSB0'
+    port2 = '/dev/ttyUSB1' 
     currPort = port1
     targets = [b'2', b'3', b'4', b'5']
     #targets = [b'5', b'5', b'5', b'5']
@@ -60,7 +60,7 @@ class uwb_Control():
             print("exception:", e)
 
     def tag(self):
-        #print("watchdog " + str(self.currPort) + " " + str(self.target_index))
+        print("watchdog " + str(self.currPort) + " " + str(self.target_index))
         self.T1.write(b't')
         self.T1.write(self.targets[self.target_index])
         self.attempt_no = 0

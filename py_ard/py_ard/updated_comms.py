@@ -36,6 +36,9 @@ class VelocityComm(Node):
     y = 0
     z= 0
 
+    y_offset = -.877
+    x_offset = .296
+
     cmd_vel_from_cmd_vel = True
     dig = 0
     prevDig = 0
@@ -152,14 +155,14 @@ class VelocityComm(Node):
         startTime = time.time()
         plunge = True
         #going one way!
-        #while(abs(self.UWB_pose.postion.x-.5+self.xBerm) > .1): # repeat while front not to close to the dump zone
-        while(time.time()-startTime < 140):
+        while(abs(self.UWB_pose.postion.x+self.x_offset-.5+self.xBerm) > .1): # repeat while front not to close to the dump zone
+        #while(time.time()-startTime < 140):
             #while abs(self.UWB_pose.postion.y - 1.5+self.yBerm) > .2: #if we are on one side of the berm start diggin
             while(time.time()-startTime < 60):
                 self.digActivate = 1
                 self.DigBeltButton = 254 
                 currTime = time.time()
-                while time.time() - currTime < 30: #TODO change to more accurate timing?
+                while time.time() - currTime < 10: #TODO change to more accurate timing?
                     if plunge == True:
                         self.DigLinButton = 179
                         self.BucketConveyor = 254
@@ -186,12 +189,12 @@ class VelocityComm(Node):
             self.x = .8
             time.sleep(1)
             self.x = 0
-            #while abs(self.UWB_pose.postion.y - self.yBerm) > .2:
-            while(time.time()-startTime < 120):
+            while abs(self.UWB_pose.postion.y+self.y_offset - self.yBerm) > .2:
+            #while(time.time()-startTime < 120):
                 self.digActivate = 1
                 self.DigBeltButton = 254 
                 currTime = time.time()
-                while time.time() - currTime < 20: #TODO change to more accurate timing?
+                while time.time() - currTime < 10: #TODO change to more accurate timing?
                     if plunge == True:
                         self.DigLinButton = 179
                         self.BucketConveyor = 254
