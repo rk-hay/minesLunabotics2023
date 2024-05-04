@@ -71,7 +71,7 @@ class tagPublisher(Node):
                     self.x_2 = float(data[0])
                     self.y_2 = float(data[1])
                     
-                    if abs(self.x_2-self.x_1) > 8.5 or abs(self.y_2-self.y_1) > 4.57:
+                    if abs(self.x_2-self.x_1) > 8.5 or abs(self.y_2-self.y_1) > 4.57 or abs(self.x_2) > 8.5 or abs(self.y_2) > 4.57:
                         self.x_2 = self.x_1
                         self.y_2 = self.x_1
 
