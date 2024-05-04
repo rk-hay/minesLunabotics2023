@@ -42,8 +42,8 @@ class tagPublisher(Node):
         odom.header.stamp = self.get_clock().now().to_msg()
         odom.pose.pose.position.x = float(self.average_x)
         odom.pose.pose.position.y = float(self.average_y)
-        self.get_logger().info("X: '%s'" % self.average_x)
-        self.get_logger().info("Y: '%s'" % self.average_y)
+        self.get_logger().info("X: '%s'" % self.x_2)
+        self.get_logger().info("Y: '%s'" % self.y_2)
         odom.pose.pose.position.z = 0.0
         self.mag = math.sqrt(self.dx*self.dx+self.dy*self.dy)
         self.yaw = math.atan2(self.dy, self.dx) 
@@ -72,10 +72,10 @@ class tagPublisher(Node):
 
                     self.x_2 = float(data[0])
                     self.y_2 = float(data[1])
-                    
+
                     if abs(self.x_2-self.x_1) > 8.5 or abs(self.y_2-self.y_1) > 4.57 or abs(self.x_2) > 8.5 or abs(self.y_2) > 4.57:
                         self.x_2 = self.x_1
-                        self.y_2 = self.x_1
+                        self.y_2 = self.y_1
 
                 self.values_x.append(self.x_2)
                 self.values_y.append(self.y_2)
