@@ -141,7 +141,7 @@ class VelocityComm(Node):
 
 
     def dig_cycle(self):
-        print("Write Dig Cycle")
+        print("Dig Cycle")
         self.cmd_vel_from_cmd_vel = False
 
         self.digActivate = 1 #wheels go 90
@@ -166,11 +166,11 @@ class VelocityComm(Node):
         #x_offset = -.877
         #y_offset = .296
         
-        while(abs(self.UWB_pose.postion.y-(.5+self.yBerm)) > .1): # repeat while front not to close to the dump zone
+        while(abs(self.UWB_pose.position.y-(.5+self.yBerm)) > .1): # repeat while front not to close to the dump zone
         #while(time.time()-startTime < 140):
-            self.get_logger().info('distance stop Y postion : "%s"' % abs(self.UWB_pose.postion.y-(.5+self.yBerm)))
-            while abs(self.UWB_pose.postion.x - (1.5+self.xBerm)) > .2: #if we are on one side of the berm start diggin
-                self.get_logger().info('distance stop X postion : "%s"' % abs(self.UWB_pose.postion.x - (1.5+self.xBerm)))    
+            self.get_logger().info('distance stop Y postion : "%s"' % abs(self.UWB_pose.position.y-(.5+self.yBerm)))
+            while abs(self.UWB_pose.position.x - (1.5+self.xBerm)) > .2: #if we are on one side of the berm start diggin
+                self.get_logger().info('distance stop X postion : "%s"' % abs(self.UWB_pose.position.x - (1.5+self.xBerm)))    
             #while(time.time()-startTime < 60):
                 self.digActivate = 1
                 self.DigBeltButton = 254 
@@ -205,7 +205,7 @@ class VelocityComm(Node):
             time.sleep(1)
             self.x = 0
             
-            while abs(self.UWB_pose.postion.x - self.xBerm) > .2:
+            while abs(self.UWB_pose.position.x - self.xBerm) > .2:
             #while(time.time()-startTime < 120):
                 self.digActivate = 1
                 self.DigBeltButton = 254 
