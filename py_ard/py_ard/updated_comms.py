@@ -92,7 +92,7 @@ class VelocityComm(Node):
         self._digActivate = float(msg.buttons[4])
         self.dig = msg.buttons[8]
         if self.dig and self.dig != self.prevDig:
-            self.dig_cycle()
+            threading.Thread(target=self.dig_cycle).start()
             self.prevDig = self.dig
 
     def comms(self):
@@ -171,10 +171,8 @@ class VelocityComm(Node):
         
         while(abs(self.UWB_pose.pose.pose.position.y-(.59+self.yBerm)) > .1): # repeat while front not to close to the dump zone
         #while(time.time()-startTime < 140):
-            self.globalOdom_callback
             self.get_logger().info('distance stop Y postion : "%s"' % abs(self.UWB_pose.pose.pose.position.y-(.5+self.yBerm)))
             while abs(self.UWB_pose.pose.pose.position.x - (1.5+self.xBerm)) > .2: #if we are on one side of the berm start diggin
-                self.globalOdom_callback
                 self.get_logger().info('distance stop X postion : "%s"' % abs(self.UWB_pose.pose.pose.position.x - (1.5+self.xBerm)))    
             #while(time.time()-startTime < 60):
     
@@ -214,7 +212,6 @@ class VelocityComm(Node):
 
 
             while abs(self.UWB_pose.pose.pose.position.x - self.xBerm) > .2:
-                self.globalOdom_callback
             #while(time.time()-startTime < 120):
     
                 self.digActivate = 1
