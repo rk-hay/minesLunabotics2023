@@ -51,7 +51,7 @@ class VelocityComm(Node):
 
     UWB_pose = Odometry()
 
-    state = 'Deploy'
+    state = 'deploy'
     keep_dig = False
 
     ArenaLength = 8.14
