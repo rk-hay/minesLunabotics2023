@@ -42,8 +42,8 @@ class tagPublisher(Node):
         odom.header.stamp = self.get_clock().now().to_msg()
         odom.pose.pose.position.x = float(self.average_x)
         odom.pose.pose.position.y = float(self.average_y)
-        self.get_logger().info("X: '%s'", self.average_x)
-        self.get_logger().info("Y: '%s'", self.average_y)
+        self.get_logger().info("X: '%s'" % self.average_x)
+        self.get_logger().info("Y: '%s'" % self.average_y)
         odom.pose.pose.position.z = 0.0
         self.mag = math.sqrt(self.dx*self.dx+self.dy*self.dy)
         self.yaw = math.atan2(self.dy, self.dx) 
