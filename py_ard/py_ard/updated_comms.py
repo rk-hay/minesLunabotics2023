@@ -168,10 +168,12 @@ class VelocityComm(Node):
         
         while(abs(self.UWB_pose.position.y-(.59+self.yBerm)) > .1): # repeat while front not to close to the dump zone
         #while(time.time()-startTime < 140):
+            self.globalOdom_callback()
             self.get_logger().info('distance stop Y postion : "%s"' % abs(self.UWB_pose.position.y-(.5+self.yBerm)))
             while abs(self.UWB_pose.position.x - (1.5+self.xBerm)) > .2: #if we are on one side of the berm start diggin
                 self.get_logger().info('distance stop X postion : "%s"' % abs(self.UWB_pose.position.x - (1.5+self.xBerm)))    
             #while(time.time()-startTime < 60):
+                self.globalOdom_callback()
                 self.digActivate = 1
                 self.DigBeltButton = 254 
                 currTime = time.time()-1
@@ -204,9 +206,11 @@ class VelocityComm(Node):
             self.x = .8
             time.sleep(1)
             self.x = 0
-            
+
+            self.globalOdom_callback()
             while abs(self.UWB_pose.position.x - self.xBerm) > .2:
             #while(time.time()-startTime < 120):
+                self.globalOdom_callback()
                 self.digActivate = 1
                 self.DigBeltButton = 254 
                 currTime = time.time()
