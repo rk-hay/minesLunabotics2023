@@ -28,8 +28,8 @@ def uwb_Control():
 
                 x_2 = float(data[0])
                 y_2 = float(data[1])
-                
-                if abs(x_2-x_1) > 1.5 or abs(y_2-y_1) > 1.5:
+
+                if abs(x_2-x_1) > 8.5 or abs(y_2-y_1) > 8.5:
                     x_2 = x_1
                     y_2 = x_1
 
