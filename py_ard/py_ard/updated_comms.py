@@ -129,7 +129,7 @@ class VelocityComm(Node):
         ser.write(str(',').encode())
         ser.write(str(float(self.BucketConveyor)).encode())
         ser.write(finish.encode())
-        self.get_logger().info('I heard: "%s"' % self.digActivate)
+        #self.get_logger().info('I heard: "%s"' % self.digActivate)
         
         threading.Timer(.1, self.comms).start()
 
@@ -162,17 +162,21 @@ class VelocityComm(Node):
         
         while(abs(self.UWB_pose.postion.y-(.5+self.yBerm)) > .1): # repeat while front not to close to the dump zone
         #while(time.time()-startTime < 140):
+            self.get_logger().info('distance stop Y postion : "%s"' % abs(self.UWB_pose.postion.y-(.5+self.yBerm)))
             while abs(self.UWB_pose.postion.x - (1.5+self.xBerm)) > .2: #if we are on one side of the berm start diggin
+                self.get_logger().info('distance stop X postion : "%s"' % abs(self.UWB_pose.postion.x - (1.5+self.xBerm)))    
             #while(time.time()-startTime < 60):
                 self.digActivate = 1
                 self.DigBeltButton = 254 
-                currTime = time.time()
-                while time.time() - currTime < 30: #TODO change to more accurate timing?
+                currTime = time.time()-1
+                while time.time() - currTime < 20: #TODO change to more accurate timing?
                     if plunge == True:
+                        self.get_logger().info('Plunge On')
                         self.DigLinButton = 179
                         self.BucketConveyor = 254
                         plunge = False
                     else:
+                        self.get_logger().info('Plunge Off')
                         self.DigLinButton = 0
                         self.BucketConveyor = 0
                         plunge = True
