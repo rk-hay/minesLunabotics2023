@@ -80,6 +80,7 @@ class VelocityComm(Node):
     def globalOdom_callback(self, msg):
         """Callback function for odometry subscriber."""
         self.UWB_pose = msg
+        self.get_logger().info('I heard: "%s"' % self.UWB_pose.pose.pose.position.x)
 
 
     def CallMe(self, msg):
