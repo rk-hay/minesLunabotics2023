@@ -49,7 +49,7 @@ class VelocityComm(Node):
     yBerm = 4.57-1.43
     lengthLARI = 1.44
 
-    UWB_pose = Odometry.pose
+    UWB_pose = Odometry.pose.pose
 
     ArenaLength = 8.14
     ArenaHeight = 4.57
