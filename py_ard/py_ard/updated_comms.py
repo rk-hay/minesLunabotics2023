@@ -49,7 +49,7 @@ class VelocityComm(Node):
     yBerm = 4.57-1.43
     lengthLARI = 1.44
 
-    UWB_pose = Odometry.pose.pose
+    UWB_pose = Odometry()
 
     ArenaLength = 8.14
     ArenaHeight = 4.57
@@ -79,7 +79,7 @@ class VelocityComm(Node):
 
     def globalOdom_callback(self, msg):
         """Callback function for odometry subscriber."""
-        self.UWB_pose = msg.pose.pose  
+        self.UWB_pose = msg
 
 
     def CallMe(self, msg):
@@ -168,12 +168,12 @@ class VelocityComm(Node):
         #x_offset = -.877
         #y_offset = .296
         
-        while(abs(self.UWB_pose.position.y-(.59+self.yBerm)) > .1): # repeat while front not to close to the dump zone
+        while(abs(self.UWB_pose.pose.pose.position.y-(.59+self.yBerm)) > .1): # repeat while front not to close to the dump zone
         #while(time.time()-startTime < 140):
 
-            self.get_logger().info('distance stop Y postion : "%s"' % abs(self.UWB_pose.position.y-(.5+self.yBerm)))
-            while abs(self.UWB_pose.position.x - (1.5+self.xBerm)) > .2: #if we are on one side of the berm start diggin
-                self.get_logger().info('distance stop X postion : "%s"' % abs(self.UWB_pose.position.x - (1.5+self.xBerm)))    
+            self.get_logger().info('distance stop Y postion : "%s"' % abs(self.UWB_pose.pose.pose.position.y-(.5+self.yBerm)))
+            while abs(self.UWB_pose.pose.pose.position.x - (1.5+self.xBerm)) > .2: #if we are on one side of the berm start diggin
+                self.get_logger().info('distance stop X postion : "%s"' % abs(self.UWB_pose.pose.pose.position.x - (1.5+self.xBerm)))    
             #while(time.time()-startTime < 60):
     
                 self.digActivate = 1
@@ -208,9 +208,10 @@ class VelocityComm(Node):
             self.x = .8
             time.sleep(1)
             self.x = 0
+            self.DigBeltButton = 0
 
 
-            while abs(self.UWB_pose.position.x - self.xBerm) > .2:
+            while abs(self.UWB_pose.pose.pose.position.x - self.xBerm) > .2:
             #while(time.time()-startTime < 120):
     
                 self.digActivate = 1
