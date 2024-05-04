@@ -57,7 +57,7 @@ class VelocityComm(Node):
     ArenaLength = 8.14
     ArenaHeight = 4.57
     plunge = True
-    
+
     def __init__(self):
         super().__init__('Comm')
         self.subscription2 = self.create_subscription(
@@ -263,6 +263,7 @@ class VelocityComm(Node):
             self.x = 0
             self.get_logger().info("Dig Complete")
             self.state = 'done'
+            self.dig = False
 
 def main(args=None):
     rclpy.init(args=args)
