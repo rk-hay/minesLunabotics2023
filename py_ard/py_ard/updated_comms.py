@@ -4,6 +4,8 @@ import serial
 from time import sleep
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Joy
+from nav_msgs.msg import Odometry
+
 import time, threading
 
 ser = serial.Serial('/dev/ttyACM0', baudrate=115200, timeout=0)
@@ -61,6 +63,7 @@ class VelocityComm(Node):
             'cmd_vel',
             self.listener_callback,
             10)
+        self.globalOdom_sub = self.create_subscription(Odometry, '/globalOdom', self.globalOdom_callback, 10) #TODO change odom call back to globalOdom
         self.comms()
 
         self.subscription
@@ -72,7 +75,9 @@ class VelocityComm(Node):
         self.cmd_z = msg.angular.z
             
 
-            
+    def globalOdom_callback(self, msg):
+        """Callback function for odometry subscriber."""
+        self.UWB_pose = msg.pose.pose  
 
 
     def CallMe(self, msg):
@@ -91,6 +96,7 @@ class VelocityComm(Node):
         if self.firstTime == True:
             self.get_logger().info('waiting for arduino')
             sleep(5)
+            self.get_logger().info('arduino ready')
             self.firstTime = False  
 
         if self.cmd_vel_from_cmd_vel:
