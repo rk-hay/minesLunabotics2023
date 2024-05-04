@@ -56,6 +56,8 @@ class VelocityComm(Node):
 
     ArenaLength = 8.14
     ArenaHeight = 4.57
+    plunge = True
+    
     def __init__(self):
         super().__init__('Comm')
         self.subscription2 = self.create_subscription(
@@ -166,7 +168,7 @@ class VelocityComm(Node):
             #self.BucketConveyor = 254
             currTime = time.time()
             startTime = time.time()
-            plunge = True
+            self.plunge = True
             self.state = '+x'
         #going one way!
         #xBerm = 6.10
@@ -186,21 +188,21 @@ class VelocityComm(Node):
                     self.DigBeltButton = 254 
                     currTime = time.time()
                     while time.time() - currTime < 20: #TODO change to more accurate timing?
-                        if plunge == True:
-                            self.get_logger().info('Plunge On')
+                        if self.plunge == True:
+                            self.get_logger().info('self.Plunge On')
                             self.DigLinButton = 179
                             self.BucketConveyor = 254
-                            plunge = False
+                            self.plunge = False
                         else:
-                            self.get_logger().info('Plunge Off')
+                            self.get_logger().info('self.Plunge Off')
                             self.DigLinButton = 0
                             self.BucketConveyor = 0
-                            plunge = True
+                            self.plunge = True
                         time.sleep(3)  # Wait for 3 seconds between state changes
                     self.DigLinButton = -254
                     self.DigBeltButton = 0 
                     self.BucketConveyor = 0
-                    time.sleep(15) #TODO TIME to retract plunger
+                    time.sleep(15) #TODO TIME to retract self.plunger
                     self.x = .8
                     time.sleep(1)
                     self.x = 0.0
@@ -226,21 +228,21 @@ class VelocityComm(Node):
                     self.DigBeltButton = 254 
                     currTime = time.time()
                     while time.time() - currTime < 20: #TODO change to more accurate timing?
-                        if plunge == True:
-                            self.get_logger().info('Plunge On')
+                        if self.plunge == True:
+                            self.get_logger().info('self.Plunge On')
                             self.DigLinButton = 179
                             self.BucketConveyor = 254
-                            plunge = False
+                            self.plunge = False
                         else:
-                            self.get_logger().info('Plunge Off')
+                            self.get_logger().info('self.Plunge Off')
                             self.DigLinButton = 0
                             self.BucketConveyor = 0
-                            plunge = True
+                            self.plunge = True
                         time.sleep(3)  # Wait for 3 seconds between state changes
                     self.DigLinButton = -254
                     self.DigBeltButton = 0 
                     self.BucketConveyor = 0
-                    time.sleep(15) #TODO TIME to retract plunger
+                    time.sleep(15) #TODO TIME to retract self.plunger
                     self.x = -.8
                     time.sleep(1)
                     self.x = 0.0
