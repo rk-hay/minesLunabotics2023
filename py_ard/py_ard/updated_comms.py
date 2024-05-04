@@ -51,6 +51,9 @@ class VelocityComm(Node):
 
     UWB_pose = Odometry()
 
+    state = 'Deploy'
+    keep_dig = True
+    
     ArenaLength = 8.14
     ArenaHeight = 4.57
     def __init__(self):
@@ -91,8 +94,9 @@ class VelocityComm(Node):
         self._BucketConveyor = float(msg.buttons[5])*255
         self._digActivate = float(msg.buttons[4])
         self.dig = msg.buttons[8]
-        if self.dig and self.dig != self.prevDig:
-            threading.Thread(target=self.dig_cycle).start()
+        if self.dig and self.dig != self.prevDig or self.keep_dig:
+            self.dig_cycle()
+            self.keep_dig = True
             self.prevDig = self.dig
 
     def comms(self):
@@ -145,105 +149,118 @@ class VelocityComm(Node):
 
     def dig_cycle(self):
         print("Dig Cycle")
-        self.cmd_vel_from_cmd_vel = False
-
-        self.digActivate = 1 #wheels go 90
-        self.ConveyorButton = -254 #slide out moves forward
-        self.x = 0 # speed is 0
-        self.y = 0
-        self.z = 0
-        sleep(20) #TODO adjust time or add feedback from PI
-        self.ConveyorButton = 0 #stop the slide outs
-        self.DeployButton = 254
-        sleep(7)
-        self.DeployButton = 0
-        sleep(5)
-        self.DigBeltButton = 254
-        #self.BucketConveyor = 254
-        currTime = time.time()
-        startTime = time.time()
-        plunge = True
+        if self.state == 'deploy':
+            self.cmd_vel_from_cmd_vel = False
+            self.digActivate = 1 #wheels go 90
+            self.ConveyorButton = -254 #slide out moves forward
+            self.x = 0 # speed is 0
+            self.y = 0
+            self.z = 0
+            sleep(20) #TODO adjust time or add feedback from PI
+            self.ConveyorButton = 0 #stop the slide outs
+            self.DeployButton = 254
+            sleep(7)
+            self.DeployButton = 0
+            sleep(5)
+            self.DigBeltButton = 254
+            #self.BucketConveyor = 254
+            currTime = time.time()
+            startTime = time.time()
+            plunge = True
+            self.state = '+x'
         #going one way!
         #xBerm = 6.10
         #yBerm = 3.14
         #x_offset = -.877
         #y_offset = .296
-        
-        while(abs(self.UWB_pose.pose.pose.position.y-(.59+self.yBerm)) > .1): # repeat while front not to close to the dump zone
+
+        if(abs(self.UWB_pose.pose.pose.position.y-(.59+self.yBerm)) > .1): # repeat while front not to close to the dump zone
         #while(time.time()-startTime < 140):
-            self.get_logger().info('distance stop Y postion : "%s"' % abs(self.UWB_pose.pose.pose.position.y-(.5+self.yBerm)))
-            while abs(self.UWB_pose.pose.pose.position.x - (1.5+self.xBerm)) > .2: #if we are on one side of the berm start diggin
-                self.get_logger().info('distance stop X postion : "%s"' % abs(self.UWB_pose.pose.pose.position.x - (1.5+self.xBerm)))    
-            #while(time.time()-startTime < 60):
-    
-                self.digActivate = 1
-                self.DigBeltButton = 254 
-                currTime = time.time()-1
-                while time.time() - currTime < 20: #TODO change to more accurate timing?
-                    if plunge == True:
-                        self.get_logger().info('Plunge On')
-                        self.DigLinButton = 179
-                        self.BucketConveyor = 254
-                        plunge = False
-                    else:
-                        self.get_logger().info('Plunge Off')
-                        self.DigLinButton = 0
-                        self.BucketConveyor = 0
-                        plunge = True
-                    time.sleep(3)  # Wait for 3 seconds between state changes
-                self.DigLinButton = -254
-                self.DigBeltButton = 0 
-                self.BucketConveyor = 0
-                time.sleep(15) #TODO TIME to retract plunger
-                self.x = .8
-                time.sleep(1)
-                self.x = 0.0
+            if self.state == '+x':
+                self.get_logger().info('distance stop Y postion : "%s"' % abs(self.UWB_pose.pose.pose.position.y-(.5+self.yBerm)))
+                if abs(self.UWB_pose.pose.pose.position.x - (1.5+self.xBerm)) > .2: #if we are on one side of the berm start diggin
+                    self.get_logger().info('distance stop X postion : "%s"' % abs(self.UWB_pose.pose.pose.position.x - (1.5+self.xBerm)))    
                 
-            ##exit_dig_mode
-            self.digActivate = 0
-            #ADD CHECK TO MAKE SURE PERPENDICULAR TO DIG ZONE
-            
-            #go forward a smidge 
-            time.sleep(2)
-            self.x = .8
-            time.sleep(1)
-            self.x = 0
-            self.DigBeltButton = 0
+        
+                    self.digActivate = 1
+                    self.DigBeltButton = 254 
+                    currTime = time.time()
+                    while time.time() - currTime < 20: #TODO change to more accurate timing?
+                        if plunge == True:
+                            self.get_logger().info('Plunge On')
+                            self.DigLinButton = 179
+                            self.BucketConveyor = 254
+                            plunge = False
+                        else:
+                            self.get_logger().info('Plunge Off')
+                            self.DigLinButton = 0
+                            self.BucketConveyor = 0
+                            plunge = True
+                        time.sleep(3)  # Wait for 3 seconds between state changes
+                    self.DigLinButton = -254
+                    self.DigBeltButton = 0 
+                    self.BucketConveyor = 0
+                    time.sleep(15) #TODO TIME to retract plunger
+                    self.x = .8
+                    time.sleep(1)
+                    self.x = 0.0
+                    return
+                else:
+                    self.state = '-x'
+                ##exit_dig_mode
+                    self.digActivate = 0
+                    #ADD CHECK TO MAKE SURE PERPENDICULAR TO DIG ZONE
+                    
+                    #go forward a smidge 
+                    time.sleep(2)
+                    self.x = .8
+                    time.sleep(1)
+                    self.x = 0
+                    self.DigBeltButton = 0
+                    return
 
-
-            while abs(self.UWB_pose.pose.pose.position.x - self.xBerm) > .2:
-            #while(time.time()-startTime < 120):
-    
-                self.digActivate = 1
-                self.DigBeltButton = 254 
-                currTime = time.time()
-                while time.time() - currTime < 20: #TODO change to more accurate timing?
-                    if plunge == True:
-                        self.DigLinButton = 179
-                        self.BucketConveyor = 254
-                        plunge = False
-                    else:
-                        self.DigLinButton = 0
-                        self.BucketConveyor = 0
-                        plunge = True
-                    time.sleep(3)  # Wait for 3 seconds between state changes
-                self.DigLinButton = -254
-                self.DigBeltButton = 0 
-                self.BucketConveyor = 0
-                time.sleep(15) #TODO TIME to retract plunger
-                self.x = -.8
-                time.sleep(1)
-                self.x = 0.0
-                currTime = time.time()
-            ##exit_dig_mode
-            self.digActivate = 0
-            #ADD CHECK TO MAKE SURE PERPENDICULAR TO DIG ZONE
-            
-            #go forward a smidge 
-            time.sleep(1)
-            self.x = .8
-            time.sleep(1)
+            elif self.state == '-x':
+                if abs(self.UWB_pose.pose.pose.position.x - self.xBerm) > .2:
+                    self.get_logger().info('distance stop X postion : "%s"' % abs(self.UWB_pose.pose.pose.position.x - (self.xBerm)))    
+                    self.digActivate = 1
+                    self.DigBeltButton = 254 
+                    currTime = time.time()
+                    while time.time() - currTime < 20: #TODO change to more accurate timing?
+                        if plunge == True:
+                            self.get_logger().info('Plunge On')
+                            self.DigLinButton = 179
+                            self.BucketConveyor = 254
+                            plunge = False
+                        else:
+                            self.get_logger().info('Plunge Off')
+                            self.DigLinButton = 0
+                            self.BucketConveyor = 0
+                            plunge = True
+                        time.sleep(3)  # Wait for 3 seconds between state changes
+                    self.DigLinButton = -254
+                    self.DigBeltButton = 0 
+                    self.BucketConveyor = 0
+                    time.sleep(15) #TODO TIME to retract plunger
+                    self.x = -.8
+                    time.sleep(1)
+                    self.x = 0.0
+                    return
+                else:
+                    self.state = 'x'
+                ##exit_dig_mode
+                    self.digActivate = 0
+                    #ADD CHECK TO MAKE SURE PERPENDICULAR TO DIG ZONE
+                    #go forward a smidge 
+                    time.sleep(2)
+                    self.x = .8
+                    time.sleep(1)
+                    self.x = 0
+                    self.DigBeltButton = 0
+                    return
+        else:
             self.x = 0
+            self.get_logger().info("Dig Complete")
+            self.state = 'done'
 
 def main(args=None):
     rclpy.init(args=args)
