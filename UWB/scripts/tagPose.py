@@ -68,7 +68,7 @@ class tagPublisher(Node):
                 data = T1_in.split('=')[1].split(',')
                 if len(data) == 3:  # Check if there are two values separated by ","
                     self.x_1 = self.x_2
-                    self.y_1 = self.x_2
+                    self.y_1 = self.y_2
 
                     self.x_2 = float(data[0])
                     self.y_2 = float(data[1])
