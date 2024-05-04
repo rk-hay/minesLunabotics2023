@@ -52,8 +52,8 @@ class VelocityComm(Node):
     UWB_pose = Odometry()
 
     state = 'Deploy'
-    keep_dig = True
-    
+    keep_dig = False
+
     ArenaLength = 8.14
     ArenaHeight = 4.57
     def __init__(self):
