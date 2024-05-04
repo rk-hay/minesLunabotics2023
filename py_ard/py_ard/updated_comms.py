@@ -166,7 +166,7 @@ class VelocityComm(Node):
         #x_offset = -.877
         #y_offset = .296
         
-        while(abs(self.UWB_pose.position.y-(.5+self.yBerm)) > .1): # repeat while front not to close to the dump zone
+        while(abs(self.UWB_pose.position.y-(.59+self.yBerm)) > .1): # repeat while front not to close to the dump zone
         #while(time.time()-startTime < 140):
             self.get_logger().info('distance stop Y postion : "%s"' % abs(self.UWB_pose.position.y-(.5+self.yBerm)))
             while abs(self.UWB_pose.position.x - (1.5+self.xBerm)) > .2: #if we are on one side of the berm start diggin
