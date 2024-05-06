@@ -60,7 +60,7 @@ class uwb_Control():
             print("exception:", e)
 
     def tag(self):
-        print("watchdog " + str(self.currPort) + " " + str(self.target_index))
+        #print("watchdog " + str(self.currPort) + " " + str(self.target_index))
         self.T1.write(b't')
         self.T1.write(self.targets[self.target_index])
         self.attempt_no = 0

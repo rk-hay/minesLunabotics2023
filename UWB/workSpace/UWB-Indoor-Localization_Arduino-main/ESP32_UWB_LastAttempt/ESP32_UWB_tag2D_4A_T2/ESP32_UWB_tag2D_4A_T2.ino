@@ -57,7 +57,7 @@ uint8_t msg_sent = 0;
 uint8_t my_freq = 5;
 uint8_t switchedFreq = 0;
 
-byte MY_NUM = 1;
+byte MY_NUM = 2;
 byte OTHER_NUM = 0; // will need to update
 byte FREQUENCY = 5;
 
@@ -113,7 +113,7 @@ int8_t setDW(byte freq) {
   DW1000.setDefaults(); // we'll change this to dyanimically take a 
   DW1000.setDeviceAddress(MY_NUM);
   DW1000.setNetworkId(10);
-  DW1000.enableMode(DW1000.MODE_SHORTDATA_FAST_ACCURACY);
+  DW1000.enableMode(DW1000.MODE_LONGDATA_RANGE_LOWPOWER);
   DW1000.setAntennaDelay(Adelay);
   DW1000.commitConfiguration();
   return 0;

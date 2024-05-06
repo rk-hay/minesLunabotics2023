@@ -38,8 +38,8 @@ class VelocityComm(Node):
     y = 0
     z= 0
 
-    x_offset = -.877
-    y_offset = .296
+    x_offset = -.877 #check before comp and update
+    y_offset = .296 #
 
     cmd_vel_from_cmd_vel = True
     dig = 0
@@ -91,7 +91,7 @@ class VelocityComm(Node):
     def CallMe(self, msg):
         self._ConveyorButton = (msg.buttons[2]-msg.buttons[3])*255
         self._DeployButton = float(msg.buttons[6]-msg.buttons[7])*255
-        self._DigLinButton = float(-1*(msg.axes[2])*255) #int(abs(msg.axes[2]-1)*255/2)
+        self._DigLinButton = float((msg.axes[7])*125) #int(abs(msg.axes[2]-1)*255/2)
         self._DigBeltButton = float(abs(msg.axes[5]-1)*255/2)
         self._BucketConveyor = float(msg.buttons[5])*255
         self._digActivate = float(msg.buttons[4])
@@ -158,16 +158,18 @@ class VelocityComm(Node):
             self.x = 0 # speed is 0
             self.y = 0
             self.z = 0
-            sleep(20) #TODO adjust time or add feedback from PI
+            sleep(20) #TODO adjusself.cmd_vel_from_cmd_vel = Falset time or add feedback from PI
             self.ConveyorButton = 0 #stop the slide outs
             self.DeployButton = 254
             sleep(7)
             self.DeployButton = 0
-            sleep(5)
+            self.DigLinButton = 254
+            sleep(3)
+            self.DigLinButton = 0
             self.DigBeltButton = 254
             #self.BucketConveyor = 254
             currTime = time.time()
-            startTime = time.time()
+            
             self.plunge = True
             self.state = '+x'
         #going one way!
@@ -183,7 +185,6 @@ class VelocityComm(Node):
                 if abs(self.UWB_pose.pose.pose.position.x - (1.5+self.xBerm)) > .2: #if we are on one side of the berm start diggin
                     self.get_logger().info('distance stop X postion : "%s"' % abs(self.UWB_pose.pose.pose.position.x - (1.5+self.xBerm)))    
                 
-        
                     self.digActivate = 1
                     self.DigBeltButton = 254 
                     currTime = time.time()
@@ -264,6 +265,7 @@ class VelocityComm(Node):
             self.get_logger().info("Dig Complete")
             self.state = 'done'
             self.dig = False
+
 
 def main(args=None):
     rclpy.init(args=args)
