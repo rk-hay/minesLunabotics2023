@@ -91,7 +91,7 @@ class VelocityComm(Node):
     def CallMe(self, msg):
         self._ConveyorButton = (msg.buttons[2]-msg.buttons[3])*255
         self._DeployButton = float(msg.buttons[6]-msg.buttons[7])*255
-        self._DigLinButton = float((msg.axes[7])*60) #int(abs(msg.axes[2]-1)*255/2)
+        self._DigLinButton = float(-1*(msg.axes[7])*60) #int(abs(msg.axes[2]-1)*255/2)
         self._DigBeltButton = float(abs(msg.axes[5]-1)*255/2)
         self._BucketConveyor = float(msg.buttons[5])*255
         self._digActivate = float(msg.buttons[4])

@@ -42,10 +42,10 @@ void digSetup() {
   pinMode(liveTrailer_PWM, OUTPUT);
   digitalWrite(liveTrailer_PWM, LOW);
   
-  pinMode(fl_pot_pin, INPUT);
-  pinMode(fr_pot_pin, INPUT);
-  pinMode(bl_pot_pin, INPUT);
-  pinMode(br_pot_pin, INPUT);
+  //pinMode(fl_pot_pin, INPUT);
+  //pinMode(fr_pot_pin, INPUT);
+  //pinMode(bl_pot_pin, INPUT);
+  //pinMode(br_pot_pin, INPUT);
   //analogWrite(appendageDeployLinears_PWM, 255);
   //digitalWrite(A8, HIGH);
 }

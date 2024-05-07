@@ -22,7 +22,7 @@ char tempChars[numChars];
 #define fl_pot_pin A15
 #define fr_pot_pin A14
 #define bl_pot_pin A4
-#define br_pot_pin A8 
+#define br_pot_pin A2 
 
 int fl_POT = 0;
 int fr_POT = 0;

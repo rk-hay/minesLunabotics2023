@@ -60,35 +60,27 @@ void loop() {
 
 
     four_ws_control(linear_x, linear_y, angular_z, driveMode);
-    //four_ws_control(0.2, 0.0, -0.5, 1);
+
     if (stepper_locked == false) {
       step_pos(pos_angs);
+      fixSteppers();
+      //global_angle_select(-90, -90, -90, -90);
       control_vel_updated(lin_vels);
-      //global_angle_select(90, 90, 90, 90);
+      
+      
       step_timer = millis();
     }
     controller_control_loop();
     control_loop_timer = millis();
   }
-  //if(digToggle == 0){
   deployAppendageLinActuators(DeployButton); //Screenshot && Select
   slideOutAcutators(ConveyorButton); // XY
-  //}
-  //else{
-    //if(digitalRead(!pinConnectedToStop)){
-    //slideOutAcutators(254);
-  //}
-    //else if(digitalRead(!pinConnectedToFoldOut)){
-      //deployAppendageLinActuators(254);
-    //}
-    //
-  //}
   digDepth(DigLinButton);
   bucketConveyor(DigBeltButton); //
   liveTrailer(BucketConveyor);
 #endif 
 
-fixSteppers();
+
   
 #ifdef PRINT
   if (millis() - print_timer > 100) {
@@ -106,14 +98,14 @@ fixSteppers();
         //  Serial.print("  ");
         //  Serial.print(pos_angs[3]
  
-//          Serial.print(fl_enc_pos);//11
-//          Serial.print("  ");
-//          Serial.print(fr_enc_pos);
-//          Serial.print("  ");
-//          Serial.print(bl_enc_pos);
-//          Serial.print("  ");
-//          Serial.print(br_enc_pos); //7
-//          Serial.print("  ");
+          Serial.print(fl_enc_pos);//11
+          Serial.print("  ");
+          Serial.print(fr_enc_pos);
+          Serial.print("  ");
+          Serial.print(bl_enc_pos);
+          Serial.print("  ");
+          Serial.print(br_enc_pos); //7
+          Serial.print("  ");
 
               Serial.print("Fl_act: ");
             Serial.print(fl_s_pos);
@@ -124,7 +116,7 @@ fixSteppers();
             Serial.print(" Br: ");
             Serial.print(br_s_pos);
             Serial.println("  ");
-//
+
 //            Serial.print(linear_x);
 //            Serial.print("  ");
 //            Serial.print(linear_y);
@@ -132,14 +124,7 @@ fixSteppers();
 //            Serial.print(angular_z);
 //            Serial.print("  ");
 //            /
-                Serial.print("Fl_POT: ");
-                Serial.print(fl_POT);
-                Serial.print(" Fr: ");
-                Serial.print(fr_POT);
-                Serial.print(" Bl: ");
-                Serial.print(bl_POT);
-                Serial.print(" Br: ");
-                Serial.println(br_POT);
+
 /**
                 Serial.print(DeployButton);
                 Serial.print("  ");
@@ -172,27 +157,46 @@ void diggingTime(bool Toggle){
 
 
  void fixSteppers(){
-   int fl_cor = 0;
-   int fr_cor = 0;
-   int bl_cor = 0;
-   int br_cor = 0;
+ int fl = 0, fr = 0, bl = 0, br = 0;
+ int fl_cor=0, fr_cor=0, bl_cor=0, br_cor=0;
+  
+  for (int i = 0; i < 50; i++) {
+    fl += analogRead(fl_pot_pin) & 0b1111111111111100;
+    fr += analogRead(fr_pot_pin) & 0b1111111111111100;
+    bl += analogRead(bl_pot_pin) & 0b1111111111111100;
+    br += analogRead(br_pot_pin) & 0b1111111111111100;
+    //delay(10); // optional delay to stabilize readings
+  }
+  
+  fl /= 50;
+  fr /= 50;
+  bl /= 50;
+  br /= 50;
 
-   fl_POT = map(analogRead(fl_pot_pin), 127, 175, -90, 90); //TODO double check that -90 is left and 90 is right
-   fr_POT = map(analogRead(fr_pot_pin), 1007, 1007, -90, 90);
-   bl_POT = map(analogRead(bl_pot_pin), 225, 335, -90, 90);
-   br_POT = map(analogRead(br_pot_pin), 224, 331, -90, 90);
-
-//   if (abs(fl_POT-fl_s_pos) > 5){
-//     fl_cor = fl_s_pos-fl_POT;
-//   }
-//   if (abs(fr_POT-fr_s_pos) > 5){
-//     fr_cor = fr_s_pos-fr_POT;
-//   }
-//   if (abs(bl_POT-bl_s_pos) > 5){
-//     bl_cor = bl_s_pos-bl_POT;
-//   }
-//   if (abs(br_POT-br_s_pos) > 5){
-//     br_cor = br_s_pos-br_POT;
-//   }
-//   stepper_adjust(fl_cor, fr_cor, bl_cor, br_cor);
+  int fl_map = map(fl, 213, 327, -90, 90);
+  int fr_map = map(fr, 228, 256, -90, 90);
+  int bl_map = map(bl, 225, 338, -90, 90);
+  int br_map = map(br, 78, 190, -90, 90);
+  
+  Serial.print("Fl: ");
+  Serial.print(fl);
+  Serial.print(" Fr: ");
+  Serial.print(fr_map);  
+  Serial.print(" Bl: ");
+  Serial.print(bl_map);
+  Serial.print(" Br: ");
+  Serial.println(br_map);
+  // if (abs(fl_map-fl_s_pos) > 5){
+  //   fl_cor = fl_s_pos-fl_map;
+  // }
+   if (abs(fr_map-fr_s_pos) > 20){
+     fr_cor = fr_s_pos-fr_map;
+   }
+   if (abs(bl_map-bl_s_pos) > 5){
+     bl_cor = bl_s_pos-bl_map;
+   }
+   if (abs(br_map-br_s_pos) > 5){
+     br_cor = br_s_pos-br_map;
+   }
+   //stepper_adjust(fl_cor, fr_cor, bl_cor, br_cor);
  }
