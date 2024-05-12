@@ -2,36 +2,64 @@ import rclpy
 from rclpy.node import Node
 import serial
 from time import sleep
-import struct
-from std_msgs.msg import String
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Joy
-ser = serial.Serial('/dev/ttyACM0', baudrate=19200)
+from nav_msgs.msg import Odometry
+
+import time, threading
+
+ser = serial.Serial('/dev/ttyACM0', baudrate=115200, timeout=0)
 ser.reset_input_buffer()
-prevX = 0
-prevY = 0
-prevZ = 0
-
-ConveyorButton = 0
-DeployButton = 0
-DigLinButton = 0
-DigBeltButton = 0
-BucketConveyor = 0
 
 
-prevConveyorButton = 0
-prevDeployButton = 0
-prevDigLinButton = 0
-prevDigBeltButton = 0
-msgSend = 0
-prevMsgSend = 0
-prevBucketConveyor = 0
-
-x = 0
-y = 0
-z= 0
 
 class VelocityComm(Node):
+    cmd_x = 0
+    cmd_y = 0
+    cmd_z = 0
+
+    ConveyorButton = 0
+    DeployButton = 0
+    DigLinButton = 0
+    DigBeltButton = 0
+    BucketConveyor = 0
+    digActivate = 0
+
+    _ConveyorButton = 0
+    _DeployButton = 0
+    _DigLinButton = 0
+    _DigBeltButton = 0
+    _BucketConveyor = 0
+    _digActivate = 0
+
+    firstTime = True
+
+    x = 0
+    y = 0
+    z= 0
+
+    x_offset = -.877 #check before comp and update
+    y_offset = .296 #
+
+    cmd_vel_from_cmd_vel = True
+    dig = 0
+    prevDig = 0
+
+    xBerm = 6.10
+    yBerm = 4.57-1.43
+    lengthLARI = 1.44
+
+    UWB_pose = Odometry()
+
+    state = 'deploy'
+    keep_dig = False
+
+    ArenaLength = 8.14
+    ArenaHeight = 4.57
+    plunge = True
+
+    plungeTime = 60 #120 for 11in sus
+
     def __init__(self):
         super().__init__('Comm')
         self.subscription2 = self.create_subscription(
@@ -44,81 +72,143 @@ class VelocityComm(Node):
             'cmd_vel',
             self.listener_callback,
             10)
+        self.globalOdom_sub = self.create_subscription(Odometry, '/globalOdom', self.globalOdom_callback, 10) #TODO change odom call back to globalOdom
+        self.comms()
 
         self.subscription
-        self.subscription2  # prevent unused variable warning
-
+        self.subscription2   
     def listener_callback(self, msg):
         #self.get_logger().info('I heard: "%s"' % msg.linear.x)
-        global prevX, prevY, prevZ
-        global ConveyorButton, prevConveyorButton 
-        global DeployButton, prevDeployButton
-        global DigLinButton, prevDigLinButton
-        global DigBeltButton, prevDigBeltButton
-        global msgSend, prevMsgSend
-        global x, y, z
-        x = msg.linear.x
-        y = msg.linear.y
-        z = msg.angular.z
+        self.cmd_x = msg.linear.x
+        self.cmd_y = msg.linear.y
+        self.cmd_z = msg.angular.z
             
 
-            
+    def globalOdom_callback(self, msg):
+        """Callback function for odometry subscriber."""
+        self.UWB_pose = msg
+        self.get_logger().info('I heard: "%s"' % self.UWB_pose.pose.pose.position.x)
 
 
     def CallMe(self, msg):
-        global prevX, prevY, prevZ
-        global ConveyorButton, prevConveyorButton 
-        global DeployButton, prevDeployButton
-        global DigLinButton, prevDigLinButton
-        global DigBeltButton, prevDigBeltButton
-        global msgSend, prevMsgSend
-        global BucketConveyor, prevBucketConveyor
-        global x, y, z
-        ConveyorButton = (msg.buttons[2]-msg.buttons[3])*255
-        DeployButton = float(msg.buttons[6]-msg.buttons[7])*200
-        DigLinButton = float(-1*(msg.axes[2])*255/2) #int(abs(msg.axes[2]-1)*255/2)
-        DigBeltButton = float(abs(msg.axes[5]-1)*255)
-        BucketConveyor = float(msg.buttons[8])
-        if abs(x - prevX) > .03 or abs(y - prevY) > .03 or abs(z - prevZ) > .02 or prevConveyorButton != ConveyorButton or prevDeployButton != DeployButton or prevDigLinButton != DigLinButton or prevDigBeltButton != DigBeltButton or msgSend !=prevMsgSend or BucketConveyor != prevBucketConveyor:
-            ser.reset_input_buffer()
-            ser.reset_output_buffer()
+        self._ConveyorButton = (msg.buttons[2]-msg.buttons[3])*255
+        self._DeployButton = float(msg.buttons[6]-msg.buttons[7])*255
+        self._DigLinButton = float(-1*(msg.axes[7])*60) #int(abs(msg.axes[2]-1)*255/2)
+        self._DigBeltButton = float(abs(msg.axes[5]-1)*255/2)
+        self._BucketConveyor = float(msg.buttons[5])*255
+        self._digActivate = float(msg.buttons[4])
+        self.dig = msg.buttons[8]
 
-            start = "<"
-            finish = str(">")
-            ser.write(start.encode())
-            ser.write(str(float(x)).encode())
-            ser.write(str(',').encode())
-            ser.write(str(float(y)).encode())
-            ser.write(str(',').encode())
-            ser.write(str(float(z)).encode())
-            ser.write(str(',').encode())
-            ser.write(str(float(ConveyorButton)).encode())
-            ser.write(str(',').encode())
-            ser.write(str(float(DeployButton)).encode())
-            ser.write(str(',').encode())
-            ser.write(str(float(DigLinButton)).encode())
-            ser.write(str(',').encode())
-            ser.write(str(float(DigBeltButton)).encode())
-            ser.write(str(',').encode())
-            ser.write(str(float(BucketConveyor)).encode())
-            ser.write(finish.encode())
-            sleep(0.1)
+        if self.dig and self.dig != self.prevDig:
+            self.dig_cycle()
+            self.prevDig = self.dig
 
-            prevX = x
-            prevY = y
-            prevZ = z
-            self.get_logger().info('I heard: "%s"' % prevDeployButton)
-            self.get_logger().info('\n I heard: "%s"' % DeployButton)
-            prevMsgSend = msgSend
-            prevConveyorButton = ConveyorButton
-            prevDeployButton = DeployButton
-            prevDigLinButton = DigLinButton
-            prevDigBeltButton = DigBeltButton   
-            prevBucketConveyor = BucketConveyor    
-            self.get_logger().info('test\n')
-            sleep(0.1)
+    def comms(self):
+        if self.firstTime == True:
+            self.get_logger().info('waiting for arduino')
+            sleep(5)
+            self.get_logger().info('arduino ready')
+            self.firstTime = False  
+
+        if self.cmd_vel_from_cmd_vel:
+            self.x = self.cmd_x
+            self.y = self.cmd_y
+            self.z = self.cmd_z
+            self.ConveyorButton = self._ConveyorButton
+            self.DeployButton = self._DeployButton
+            self.DigLinButton = self._DigLinButton
+            self.DigBeltButton = self._DigBeltButton
+            self.BucketConveyor = self._BucketConveyor
+            self.digActivate = self._digActivate
+            
 
 
+        ser.reset_input_buffer()
+        ser.reset_output_buffer()
+        start = "<"
+        finish = str(">")
+        ser.write(start.encode())
+        ser.write(str(float(self.x)).encode())
+        ser.write(str(',').encode())
+        ser.write(str(float(self.y)).encode())
+        ser.write(str(',').encode())
+        ser.write(str(float(self.z)).encode())
+        ser.write(str(',').encode())
+        ser.write(str(float(self.digActivate)).encode())
+        ser.write(str(',').encode())
+        ser.write(str(float(self.ConveyorButton)).encode())
+        ser.write(str(',').encode())
+        ser.write(str(float(self.DeployButton)).encode())
+        ser.write(str(',').encode())
+        ser.write(str(float(self.DigLinButton)).encode())
+        ser.write(str(',').encode())
+        ser.write(str(float(self.DigBeltButton)).encode())
+        ser.write(str(',').encode())
+        ser.write(str(float(self.BucketConveyor)).encode())
+        ser.write(finish.encode())
+        #self.get_logger().info('I heard: "%s"' % self.digActivate)
+        
+        threading.Timer(.1, self.comms).start()
+
+
+    def dig_cycle(self):
+        print("Dig Cycle")
+        if self.state == 'deploy':
+            self.digActivate = 1 #wheels go 90
+            self.ConveyorButton = -254 #slide out moves forward
+            self.x = 0 # speed is 0
+            self.y = 0
+            self.z = 0
+            sleep(20) #TODO adjusself.cmd_vel_from_cmd_vel = Falset time or add feedback from PI
+            self.ConveyorButton = 0 #stop the slide outs
+            self.DeployButton = 254
+            sleep(7)
+            self.DeployButton = 0
+
+            #self.BucketConveyor = 254
+            currTime = time.time()
+            
+            self.plunge = True
+            self.state = 'dig'
+            return
+        
+        elif self.state == 'dig':
+            self.get_logger().info('DIG')   
+            self.DigLinButton = 254
+            sleep(3)
+            self.DigLinButton = 0
+
+            self.digActivate = 1
+            self.DigBeltButton = 254 
+            currTime = time.time()
+
+
+            while time.time() - currTime < self.plungeTime: #TODO change to more accurate timing?
+
+                if self.plunge == True:
+                    self.get_logger().info('self.Plunge On')
+                    self.DigLinButton = 60
+                    self.BucketConveyor = 254
+                    self.plunge = False
+                else:
+                    self.get_logger().info('self.Plunge Off')
+                    self.DigLinButton = 0
+                    self.BucketConveyor = 0
+                    self.plunge = True
+                time.sleep(3)  # Wait for 3 seconds between state changes
+
+            self.DigLinButton = -254
+            self.DigBeltButton = 0 
+            self.BucketConveyor = 0
+
+            time.sleep(int((self.plungeTime*60)/254)) #TODO TIME to retract self.plunger
+            self.x = .8
+            time.sleep(1)
+            self.x = 0.0
+
+            self.cmd_vel_from_cmd_vel = True
+            return
+        
 
 def main(args=None):
     rclpy.init(args=args)

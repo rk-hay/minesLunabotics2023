@@ -422,10 +422,9 @@ void loop_tag() {
         Serial.println(current_tag_position[1]);
       }
       Serial.println("");
-      Serial.print("c="); // tell localino node we completed
+      Serial.print("c="); // tell  node we completed
       Serial.println(curRange);
 
-      //print2msi(curRange); // send the range to the msi
       becomeAnchor(); // we got the distance !!
       noteActivity();
       }

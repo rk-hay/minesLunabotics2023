@@ -1,67 +1,146 @@
 #!/usr/bin/python3
-import math
-
-from geometry_msgs.msg import TransformStamped
-from geometry_msgs.msg import PoseStamped 
-import numpy as np
-
 import rclpy
 from rclpy.node import Node
+from geometry_msgs.msg import Quaternion
+from nav_msgs.msg import Odometry
+from tf_transformations import quaternion_from_euler
+import math
+import serial
 
-from tf2_ros import TransformBroadcaster
-
-from turtlesim.msg import Pose
-
-
-class FramePublisher(Node):
-
+class tagPublisher(Node):
+    x_1 = 0.0
+    y_1 = 0.0
+    x_2 = 0.0
+    y_2 = 0.0
+    dx = 0.0
+    dy = 0.0
+    prevX = 0.0
+    prevY = 0.0
+    prevTime = 0.0
+    yaw = 0.0
+    mag = 0.0
+    e = 0.0
+    port1 = '/dev/ttyUSB0'
+    port2 = '/dev/ttyUSB1' 
+    currPort = port1
+    targets = [b'2', b'3', b'4', b'5']
+    target_index = 0
+    attempt_no = 0
+    T1 = serial.Serial(currPort, 115200, timeout=.1, write_timeout=0.1)
+    prevX_comms = 0
+    prevY_comms = 0
+    i = 0
+    avgX1 = 0
+    avgX2 = 0
+    avgY1 = 0
+    avgY2 = 0
+    i1 = 0
+    i2 = 0
     def __init__(self):
-        super().__init__('UWB_tf2_frame_publisher')
+        super().__init__('tagPublisher')
+        self.publisher_ = self.create_publisher(Odometry , '/globalOdom', 10)
+        self.timer = self.create_timer(.01, self.publish_PoseStamped)
 
-        # Initialize the transform broadcaster
-        self.tf_broadcaster = TransformBroadcaster(self)
+    def publish_PoseStamped(self):
+        self.comms()
+        odom = Odometry()
+        odom.header.frame_id = "globalOdom"
+        odom.header.stamp = self.get_clock().now().to_msg()
+        odom.pose.pose.position.x = self.x_1
+        odom.pose.pose.position.y = self.y_1
+        #print("Received position", self.x_1, self.y_1)
+        odom.pose.pose.position.z = 0.0
+        dx = self.x_2 - self.x_1
+        dy = self.y_2 - self.y_1
+        self.mag = math.sqrt(self.dx*self.dx+self.dy*self.dy)
+        self.yaw = math.atan2(dy, dx) 
+        quat = quaternion_from_euler(0, 0, self.yaw)
+        odom.pose.pose.orientation = Quaternion(x=quat[0], y=quat[1], z=quat[2], w=quat[3])
+        odom.child_frame_id = "base_link"
+        odom.twist.twist.linear.x = 0.0#(self.x_1-self.prevX)/(self.get_clock().now()-self.prevTime)
+        odom.twist.twist.linear.y = 0.0#(self.y_1-self.prevY)/(self.get_clock().now()-self.prevTime)
+        odom.twist.twist.linear.z = 0.0
+        self.prevX = self.x_1
+        self.prevY = self.y_1
+        self.prevTime = self.get_clock().now()
+        #print("Publishing point: ", self.x_1, self.y_1)
+        self.publisher_.publish(odom)
 
-        self.subscription = self.create_subscription(
-            PoseStamped,
-            '/PoseStamped',
-            self.handle_turtle_pose,
-            1)
-        self.subscription  # prevent unused variable warning
+    def comms(self):
+        try:
+            T1_in = self.T1.readline().decode().strip()
+            print(T1_in)
+            self.attempt_no += 1
+            if self.attempt_no > 20:
+                #print("watchdog " + str(self.currPort))
+                self.tag()
+            if T1_in.startswith("P="):  # Check if the received data starts with "P="
+                data2 = T1_in.split('=')[1].split(',')
+                if len(data2) == 2:  # Check if there are two values separated by ","
+                    x = float(data2[0])
+                    y = float(data2[1])
+                    print("Received position", x, y)
+                    if x > 10 or x < -10 or y > 10 or y < -10:
+                        x = self.prevX_comms
+                        y = self.prevY_comms
+                        self.prevX_comms = x
+                        self.prevY_comms = y
 
-    def handle_turtle_pose(self, msg):
-        t = TransformStamped()
+                    if self.currPort == self.port1:
+                        self.avgX1 += x
+                        self.avgY1 += y
+                        self.i1 += 1
+                        print(str(self.i1))
+                        if self.i1 >= 5:
+                            self.x_1 = self.avgX1/5
+                            self.y_1 = self.avgY1/5
+                            self.avgX1 = 0
+                            self.avgY1 = 0
+                            self.i1 = 0
+                        
+                    elif self.currPort == self.port2:
+                        self.avgX2 += x
+                        self.avgY2 += y
+                        self.i2 += 1
 
-        # Read message content and assign it to
-        # corresponding tf variables
-        t.header.stamp = self.get_clock().now().to_msg()
-        t.header.frame_id = 'map'
-        t.child_frame_id = "UWB"
+                        if self.i2 == 5:
+                            self.x_2 = self.avgX2/5
+                            self.y_2 = self.avgY2/5
+                            self.avgX2 = 0
+                            self.avgY2 = 0
+                            self.i2 = 0
 
-        # Turtle only exists in 2D, thus we get x and y translation
-        # coordinates from the message and set the z coordinate to 0
-        t.transform.translation.x = msg.postion.x
-        t.transform.translation.y = msg.position.y
-        t.transform.translation.z = 0.0
+                    
 
-        # For the same reason, turtle can only rotate around one axis
-        # and this why we set rotation in x and y to 0 and obtain
-        # rotation in z axis from the message
-        #q = quaternion_from_euler(0, 0, msg.theta)
-        t.transform.rotation.x = 0.0
-        t.transform.rotation.y = 0.0
-        t.transform.rotation.z = 0.0
-        t.transform.rotation.w = 0.0
+            if T1_in.startswith("c="):
+                #distance = T1_in.split('=')
+                #print(str(self.currPort) + " Index: " + str(self.target_index) + " D: " + str(distance[1]) + " Atmpt: " + str(self.attempt_no)) # after this has successfully ranged all 4 targets swap to UWB 2
+                
+                self.target_index += 1
+                if self.target_index >= len(self.targets):    
+                    self.target_index = 0
+                    #change to new com port
+                    self.currPort = self.port2 if self.currPort == self.port1 else self.port1
+                    self.T1.close()
+                    self.T1 = serial.Serial(self.currPort, 115200, timeout=.1, write_timeout=0.1)
+                self.tag()
 
-        # Send the transformation
-        self.tf_broadcaster.sendTransform(t)
+        except Exception as e:
+            print("exception:", e)
+
+    def tag(self):
+        print("watchdog " + str(self.currPort) + " " + str(self.target_index))
+        self.T1.write(b't')
+        self.T1.write(self.targets[self.target_index])
+        self.attempt_no = 0
 
 
-def main():
-    rclpy.init()
-    node = FramePublisher()
-    try:
-        rclpy.spin(node)
-    except KeyboardInterrupt:
-        pass
-
+def main(args=None):
+    rclpy.init(args=args)
+    node = tagPublisher()
+    rclpy.spin(node)
+    node.destroy_node()
     rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()

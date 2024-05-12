@@ -1,4 +1,3 @@
-
 import serial
 import time
 import threading
@@ -43,7 +42,7 @@ class uwb_Control():
                     elif self.currPort == 'COM14':
                         self.x_2 = x
                         self.y_2 = y
-                    print("Received position", x, y)
+                    print("Received position", x, y, " from: " + str(self.currPort))
             if T1_in.startswith("c="):
                 distance = T1_in.split('=')
                 #print(str(self.currPort) + " Index: " + str(self.target_index) + " D: " + str(distance[1]) + " Atmpt: " + str(self.attempt_no)) # after this has successfully ranged all 4 targets swap to UWB 2
@@ -60,7 +59,7 @@ class uwb_Control():
             print("exception:", e)
 
     def tag(self):
-        #print("watchdog " + str(self.currPort) + " " + str(self.target_index))
+        print("watchdog " + str(self.currPort) + " " + str(self.target_index))
         self.T1.write(b't')
         self.T1.write(self.targets[self.target_index])
         self.attempt_no = 0

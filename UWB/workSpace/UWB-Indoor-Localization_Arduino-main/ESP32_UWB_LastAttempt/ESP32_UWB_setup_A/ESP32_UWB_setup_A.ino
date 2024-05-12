@@ -37,7 +37,7 @@ DW1000Time timeComputedRange;
 #define LEN_DATA 18 // last two bytes are [to who, from who]
 #define N_ANCHORS 4
 byte data[LEN_DATA];
-#define Adelay 16430// 16428 for A1 // 16439 for A2 // 16430 for A3$A4
+#define Adelay 16430// 16428 for A1 // 16439 for A2 // 16430 for A3$ A4 16430
 // watchdog and reset period
 uint32_t lastActivity;
 uint32_t resetPeriod = 250;
