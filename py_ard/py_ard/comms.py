@@ -131,7 +131,7 @@ class VelocityComm(Node):
             self.digActivate = self._digActivate
             
 
-
+        print("dig speed:" + str(self.DigLinButton))
         ser.reset_input_buffer()
         ser.reset_output_buffer()
         start = "<"
