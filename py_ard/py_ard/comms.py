@@ -103,11 +103,15 @@ class VelocityComm(Node):
         self.dig = msg.buttons[8]
         self.wheelToAdjust += msg.axes[6]
         self.adjustAmount += msg.axes[0]
-        if self.wheelToAdjust > 4 or self.wheelToAdjust < 4:
+        if self.wheelToAdjust > 3 or self.wheelToAdjust < 3:
             self.wheelToAdjust = 4
         else:
             print("controlling wheel: " + str(self.wheelToAdjust) + " by: " + str(self.adjustAmount))
-
+        if self.adjustAmount > 255:
+            self.adjustAmount = 255
+        elif self.adjustAmount < -255:
+            self.adjustAmount = -255
+            
         if self.dig and self.dig != self.prevDig:
             self.dig_cycle()
             self.prevDig = self.dig
