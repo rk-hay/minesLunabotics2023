@@ -19,10 +19,10 @@ char receivedChars[numChars];
 char tempChars[numChars]; 
 
 
-#define fl_pot_pin A15
-#define fr_pot_pin A14
+#define fl_pot_pin A14
+#define fr_pot_pin A2
 #define bl_pot_pin A4
-#define br_pot_pin A2 
+#define br_pot_pin A0
 
 int fl_POT = 0;
 int fr_POT = 0;
@@ -47,7 +47,7 @@ int br_POT = 0;
 #define fl_d_rev 41 //was 39
 #define fr_d_rev 38
 #define bl_d_rev 37 // was 36
-#define br_d_rev A0
+#define br_d_rev 13
 
 //stepper pos enable -PULL HIGH //fl is turning fr  //fr is turning br //bl is turning fl //br is turning bl
 #define fl_s_nenable 52  //was 52

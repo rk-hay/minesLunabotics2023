@@ -5,7 +5,7 @@
 #define CONTROL_LOOP
 #define PRINT
 
-void setup() { 
+void setup() {
   motors_init();
   digSetup();
   delay(4000);
@@ -14,9 +14,7 @@ void setup() {
   Serial.begin(115200);
   Serial.flush();
   //Serial.print(". ");
-  //readEncoders();
-
-  
+  //readEncoders();  
 }
 
 
@@ -30,6 +28,7 @@ void loop() {
   static float prev_fl_enc = 0;
   static float comms_timer = 0;
   static float step_timer = 0;
+  static float prevStepPos[4] = {0 ,0 ,0, 0};
   //readEncoders();
 #ifdef COMMS_LOOP
   newComms();
@@ -63,8 +62,23 @@ void loop() {
 
     if (stepper_locked == false) {
       step_pos(pos_angs);
+      
+      //if theortical pos of stepper ! = prev theortical postion{
+      if(
+             prevStepPos[0] != pos_angs[0] ||
+      prevStepPos[1] != pos_angs[1] ||
+      prevStepPos[2] != pos_angs[2] ||
+      prevStepPos[3] != pos_angs[3]){
+      Serial.println("BLERP BLERP BLERP BLERP");
       fixSteppers();
-      //global_angle_select(-90, -90, -90, -90);
+      prevStepPos[0] = pos_angs[0];
+      prevStepPos[1] = pos_angs[1];
+      prevStepPos[2] = pos_angs[2];
+      prevStepPos[3] = pos_angs[3];
+      }
+  // prevPostion = current postion
+     //}
+      //global_angle_select(90, 90, 90, 90);
       control_vel_updated(lin_vels);
       
       
@@ -173,23 +187,25 @@ void diggingTime(bool Toggle){
   bl /= 50;
   br /= 50;
 
-  int fl_map = map(fl, 213, 327, -90, 90);
-  int fr_map = map(fr, 228, 256, -90, 90);
-  int bl_map = map(bl, 225, 338, -90, 90);
-  int br_map = map(br, 78, 190, -90, 90);
+  int fl_map = map(fl, 246, 275, -90, 90);
+  int fr_map = map(fr, 124, 236, -90, 90);
+  int bl_map = map(bl, 216, 328, -90, 90);
+  int br_map = map(br, 139, 251, -90, 90);
   
   Serial.print("Fl: ");
   Serial.print(fl);
+  Serial.print("  FL - map ");
+  Serial.print(fl_map);
   Serial.print(" Fr: ");
   Serial.print(fr_map);  
   Serial.print(" Bl: ");
   Serial.print(bl_map);
   Serial.print(" Br: ");
   Serial.println(br_map);
-  // if (abs(fl_map-fl_s_pos) > 5){
-  //   fl_cor = fl_s_pos-fl_map;
-  // }
-   if (abs(fr_map-fr_s_pos) > 20){
+   if (abs(fl_map-fl_s_pos) > 5){
+     //fl_cor = fl_s_pos-fl_map;
+   }
+   if (abs(fr_map-fr_s_pos) > 5){
      fr_cor = fr_s_pos-fr_map;
    }
    if (abs(bl_map-bl_s_pos) > 5){
@@ -198,5 +214,5 @@ void diggingTime(bool Toggle){
    if (abs(br_map-br_s_pos) > 5){
      br_cor = br_s_pos-br_map;
    }
-   //stepper_adjust(fl_cor, fr_cor, bl_cor, br_cor);
+   stepper_adjust(fl_cor, fr_cor, bl_cor, br_cor);
  }
