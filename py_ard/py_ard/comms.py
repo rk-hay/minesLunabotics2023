@@ -154,6 +154,7 @@ class VelocityComm(Node):
     def dig_cycle(self):
         print("Dig Cycle")
         if self.state == 'deploy':
+            self.cmd_vel_from_cmd_vel = False
             self.digActivate = 1 #wheels go 90
             self.ConveyorButton = -254 #slide out moves forward
             self.x = 0 # speed is 0
@@ -170,9 +171,11 @@ class VelocityComm(Node):
             
             self.plunge = True
             self.state = 'dig'
+            self.cmd_vel_from_cmd_vel = True
             return
         
         elif self.state == 'dig':
+            self.cmd_vel_from_cmd_vel = False
             self.get_logger().info('DIG')   
             self.DigLinButton = 254
             sleep(3)
