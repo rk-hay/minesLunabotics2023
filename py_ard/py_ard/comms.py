@@ -18,6 +18,9 @@ class VelocityComm(Node):
     cmd_y = 0
     cmd_z = 0
 
+    wheelToAdjust = 4
+    adjustAmount = 0
+
     ConveyorButton = 0
     DeployButton = 0
     DigLinButton = 0
@@ -93,11 +96,17 @@ class VelocityComm(Node):
     def CallMe(self, msg):
         self._ConveyorButton = (msg.buttons[2]-msg.buttons[3])*255
         self._DeployButton = float(msg.buttons[6]-msg.buttons[7])*255
-        self._DigLinButton = float(-1*(msg.axes[7])*60) #int(abs(msg.axes[2]-1)*255/2)
+        self._DigLinButton += float(-1*(msg.axes[7])*30) #int(abs(msg.axes[2]-1)*255/2)
         self._DigBeltButton = float(abs(msg.axes[5]-1)*255/2)
         self._BucketConveyor = float(msg.buttons[5])*255
         self._digActivate = float(msg.buttons[4])
         self.dig = msg.buttons[8]
+        self.wheelToAdjust += msg.axes[6]
+        self.adjustAmount += msg.axes[0]
+        if self.wheelToAdjust > 4 or self.wheelToAdjust < 4:
+            self.wheelToAdjust = 4
+        else:
+            print("controlling wheel: " + str(self.wheelToAdjust) + " by: " + str(self.adjustAmount))
 
         if self.dig and self.dig != self.prevDig:
             self.dig_cycle()
@@ -145,6 +154,10 @@ class VelocityComm(Node):
         ser.write(str(float(self.DigBeltButton)).encode())
         ser.write(str(',').encode())
         ser.write(str(float(self.BucketConveyor)).encode())
+        ser.write(str(',').encode())
+        ser.write(str(float(self.wheelToAdjust)).encode())
+        ser.write(str(',').encode())
+        ser.write(str(float(self.adjustAmount)).encode())
         ser.write(finish.encode())
         #self.get_logger().info('I heard: "%s"' % self.digActivate)
         
